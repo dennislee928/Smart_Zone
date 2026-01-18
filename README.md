@@ -4,11 +4,14 @@ This repository automates scholarship reminder pushes (lunch, evening, weekend) 
 
 ## Schedule (Asia/Taipei)
 
-| Reminder | Local time | UTC cron |
-| --- | --- | --- |
-| Lunch | 12:10 | `10 4 * * 1-5` |
-| Evening | 21:10 | `10 13 * * 1-5` |
-| Weekend | 10:00 | `0 2 * * 6,0` |
+| Workflow | Local time | UTC cron | Frequency |
+| --- | --- | --- | --- |
+| Reminder (Lunch) | 12:10 | `10 4 * * 1-5` | Weekdays |
+| Reminder (Evening) | 21:10 | `10 13 * * 1-5` | Weekdays |
+| Reminder (Weekend) | 10:00 | `0 2 * * 6,0` | Weekends |
+| Search | 21:10 | `10 13 * * 3` | Wednesday |
+| Schedule | 12:10 | `10 4 * * 1` | Monday |
+| Track | 21:10 | `10 13 * * 5` | Friday |
 
 The workflow always runs on the default branch with the latest commit, as required by GitHub Actions scheduled events.
 
@@ -44,8 +47,12 @@ Daily reminders at lunch (12:10), evening (21:10), and weekend (10:00) Asia/Taip
 Weekly scholarship search via web scraping (Rust). Runs every Wednesday 21:10 Asia/Taipei.
 
 - Searches university websites, government sites, and third-party databases
-- Filters by eligibility criteria
+- Filters by eligibility criteria with advanced profile matching
+- Multi-dimensional sorting by ROI, urgency, and source reliability
 - Updates `tracking/leads.json`
+- Generates multi-format reports (HTML, Markdown, TXT) in `scripts/productions/YYYY-MM-DD_HH-MM/`
+- Automatically commits report folders to repository
+- Sends summary notifications via Telegram/Slack/Discord
 
 ### Schedule Workflow (`.github/workflows/schedule.yml`)
 
@@ -89,11 +96,35 @@ Weekly progress tracking report (Go). Runs every Friday 21:10 Asia/Taipei.
 - `tracking/criteria.yml`: search eligibility criteria (YAML)
 - `tracking/sources.yml`: manually maintained scraping targets (YAML)
 
+### Generated Reports
+
+- `scripts/productions/YYYY-MM-DD_HH-MM/`: Date-based report folders containing:
+  - `report.html`: HTML format with styled tables and responsive design
+  - `report.md`: Markdown format with tables and detailed information
+  - `report.txt`: Plain text format for easy reading
+
 ## Data Formats
 
 - **JSON**: Used for `applications.json`, `leads.json` (efficient for program processing)
 - **YAML**: Used for `criteria.yml`, `sources.yml`, `tasks/*.yml` (easy manual editing)
 - **Dual format support**: Go/Rust programs can read/write both formats
+
+## Report Generation
+
+The search workflow automatically generates comprehensive reports in three formats:
+
+- **HTML**: Styled reports with tables, color-coded urgency indicators, and responsive design
+- **Markdown**: Formatted reports with tables and detailed scholarship information
+- **TXT**: Plain text reports for easy reading and processing
+
+Reports are saved in date-based folders (`scripts/productions/YYYY-MM-DD_HH-MM/`) and automatically committed to the repository. Each report includes:
+
+- Complete list of qualified scholarships (no truncation)
+- Multi-dimensional sorting scores (Match + ROI + Urgency + Source Reliability)
+- Detailed eligibility information and match reasons
+- Deadline urgency indicators (D-7, D-14, D-21)
+- Filtered out scholarships summary
+- Error reports for failed scraping attempts
 
 ## Updating
 
@@ -101,3 +132,4 @@ Weekly progress tracking report (Go). Runs every Friday 21:10 Asia/Taipei.
 - Weekly: update `tasks/deadlines.yml` with new confirmed deadlines.
 - Scholarship search: update `tracking/sources.yml` to add new scraping targets.
 - Application tracking: update `tracking/applications.json` manually or via scripts.
+- Search criteria: update `tracking/criteria.yml` to modify eligibility requirements and profile information.
