@@ -9,7 +9,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 concurrency:
@@ -62,6 +62,22 @@ jobs:
             scripts/search_scholarships/report.txt
             scripts/search_scholarships/summary.txt
           retention-days: 30
+
+      - name: Commit full report folder
+        if: always()
+        run: |
+          # Find the latest report folder in scripts/productions (format: YYYY-MM-DD_HH-MM)
+          REPORT_DIR=$(find scripts/productions -type d -name "20*_*" | sort | tail -1)
+          if [ -n "$REPORT_DIR" ] && [ -d "$REPORT_DIR" ]; then
+            echo "Found report directory: $REPORT_DIR"
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add "$REPORT_DIR" || true
+            git diff --staged --quiet || git commit -m "Add search report: $(basename $REPORT_DIR)"
+            git push || true
+          else
+            echo "No report directory found"
+          fi
 
       - name: Send summary to Discord
         if: always()
