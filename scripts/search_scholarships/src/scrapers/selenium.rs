@@ -240,23 +240,25 @@ fn extract_url(element: &scraper::ElementRef, base_url: &str) -> String {
     if let Ok(selector) = Selector::parse("a[href]") {
         if let Some(link) = element.select(&selector).next() {
             if let Some(href) = link.value().attr("href") {
-                // 處理相對 URL
-                if href.starts_with("http") {
+                // 處理絕對 URL
+                if href.starts_with("http://") || href.starts_with("https://") {
                     return href.to_string();
-                } else if href.starts_with('/') {
-                    if let Ok(url::Url::parse(base_url)) = url::Url::parse(base_url) {
-                        if let Ok(base) = url::Url::parse(base_url) {
-                            if let Ok(absolute) = base.join(href) {
-                                return absolute.to_string();
-                            }
+                }
+                // 處理相對 URL（簡化版本）
+                else if href.starts_with('/') {
+                    // 從 base_url 提取協議和域名
+                    if let Some(scheme_end) = base_url.find("://") {
+                        let scheme = &base_url[..scheme_end + 3];
+                        if let Some(host_start) = base_url[scheme_end + 3..].find('/') {
+                            let host = &base_url[..scheme_end + 3 + host_start];
+                            return format!("{}{}", host, href);
                         }
                     }
-                } else {
-                    if let Ok(base) = url::Url::parse(base_url) {
-                        if let Ok(absolute) = base.join(href) {
-                            return absolute.to_string();
-                        }
-                    }
+                }
+                // 處理相對路徑
+                else {
+                    let base = base_url.trim_end_matches('/');
+                    return format!("{}/{}", base, href);
                 }
             }
         }
