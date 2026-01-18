@@ -22,6 +22,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Chrome and ChromeDriver
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+
+      - name: Start ChromeDriver
+        run: |
+          chromedriver --port=9515 &
+          sleep 3
+          echo "ChromeDriver started on port 9515"
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
