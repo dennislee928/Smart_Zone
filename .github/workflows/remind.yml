@@ -1,0 +1,45 @@
+name: ScholarshipOps - Reminders
+
+on:
+  schedule:
+    - cron: "10 4 * * 1-5"    # Mon-Fri 12:10 Asia/Taipei
+    - cron: "10 13 * * 1-5"   # Mon-Fri 21:10 Asia/Taipei
+    - cron: "0 2 * * 6,0"     # Sat/Sun 10:00 Asia/Taipei
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: scholarshipops-remind
+  cancel-in-progress: false
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Send reminder
+        env:
+          TZ: Asia/Taipei
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+
+          # Optional push channels:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+          # Optional: create daily issue
+          CREATE_ISSUE: "true"
+        run: python scripts/remind.py
