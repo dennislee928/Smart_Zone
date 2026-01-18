@@ -69,6 +69,8 @@ fn parse_university_html(html: &str, base_url: &str) -> Vec<Lead> {
                         notes: String::new(),
                         added_date: String::new(),
                         url: base_url.to_string(),
+                        match_score: 0,
+                        match_reasons: vec![],
                     });
                 }
             }
@@ -155,6 +157,8 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             notes: "Merit-based scholarship".to_string(),
             added_date: String::new(),
             url: format!("{}/scholarships/excellence", base_domain),
+            match_score: 0,
+            match_reasons: vec![],
         },
         Lead {
             name: "Global Talent Scholarship".to_string(),
@@ -170,6 +174,8 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             notes: "Automatic consideration upon application".to_string(),
             added_date: String::new(),
             url: format!("{}/scholarships/global-talent", base_domain),
+            match_score: 0,
+            match_reasons: vec![],
         },
     ]
 }
