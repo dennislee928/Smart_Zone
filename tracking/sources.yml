@@ -2,17 +2,3390 @@ sources:
   - name: "University of Glasgow Scholarships"
     type: "university"
     url: "https://www.gla.ac.uk/scholarships/"
-    enabled: true
+    enabled: True
     scraper: "university"
-    
+
   - name: "UK Government Scholarships"
     type: "government"
     url: "https://www.gov.uk/browse/education/student-finance"
-    enabled: true
+    enabled: True
     scraper: "government"
-    
+
   - name: "FindAPhD Scholarships"
     type: "third_party"
     url: "https://www.findaphd.com/funding/"
-    enabled: true
+    enabled: True
     scraper: "third_party"
+
+  - name: "Oxford Scholarships"
+    type: "university"
+    url: "https://www.oxford.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Cambridge Scholarships"
+    type: "university"
+    url: "https://www.cambridge.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Imperial Scholarships"
+    type: "university"
+    url: "https://www.imperial.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UCL Scholarships"
+    type: "university"
+    url: "https://www.ucl.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "LSE Scholarships"
+    type: "university"
+    url: "https://www.lse.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "KCL Scholarships"
+    type: "university"
+    url: "https://www.kcl.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Edinburgh Scholarships"
+    type: "university"
+    url: "https://www.edinburgh.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Manchester Scholarships"
+    type: "university"
+    url: "https://www.manchester.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Bristol Scholarships"
+    type: "university"
+    url: "https://www.bristol.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Warwick Scholarships"
+    type: "university"
+    url: "https://www.warwick.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Leeds Scholarships"
+    type: "university"
+    url: "https://www.leeds.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Glasgow Scholarships"
+    type: "university"
+    url: "https://www.glasgow.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Birmingham Scholarships"
+    type: "university"
+    url: "https://www.birmingham.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Sheffield Scholarships"
+    type: "university"
+    url: "https://www.sheffield.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Nottingham Scholarships"
+    type: "university"
+    url: "https://www.nottingham.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Southampton Scholarships"
+    type: "university"
+    url: "https://www.southampton.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "York Scholarships"
+    type: "university"
+    url: "https://www.york.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Durham Scholarships"
+    type: "university"
+    url: "https://www.durham.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Exeter Scholarships"
+    type: "university"
+    url: "https://www.exeter.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Bath Scholarships"
+    type: "university"
+    url: "https://www.bath.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "St Andrews Scholarships"
+    type: "university"
+    url: "https://www.standrews.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Liverpool Scholarships"
+    type: "university"
+    url: "https://www.liverpool.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "QMUL Scholarships"
+    type: "university"
+    url: "https://www.qmul.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Newcastle Scholarships"
+    type: "university"
+    url: "https://www.newcastle.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Reading Scholarships"
+    type: "university"
+    url: "https://www.reading.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Lancaster Scholarships"
+    type: "university"
+    url: "https://www.lancaster.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Cardiff Scholarships"
+    type: "university"
+    url: "https://www.cardiff.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Aberdeen Scholarships"
+    type: "university"
+    url: "https://www.aberdeen.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Dundee Scholarships"
+    type: "university"
+    url: "https://www.dundee.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Heriot-Watt Scholarships"
+    type: "university"
+    url: "https://www.heriot-watt.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Strathclyde Scholarships"
+    type: "university"
+    url: "https://www.strathclyde.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Cranfield Scholarships"
+    type: "university"
+    url: "https://www.cranfield.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Surrey Scholarships"
+    type: "university"
+    url: "https://www.surrey.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Royal Holloway Scholarships"
+    type: "university"
+    url: "https://www.royalholloway.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Sussex Scholarships"
+    type: "university"
+    url: "https://www.sussex.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UEA Scholarships"
+    type: "university"
+    url: "https://www.uea.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Kent Scholarships"
+    type: "university"
+    url: "https://www.kent.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Aston Scholarships"
+    type: "university"
+    url: "https://www.aston.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Brunel Scholarships"
+    type: "university"
+    url: "https://www.brunel.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "City Scholarships"
+    type: "university"
+    url: "https://www.city.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Goldsmiths Scholarships"
+    type: "university"
+    url: "https://www.goldsmiths.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "SOAS Scholarships"
+    type: "university"
+    url: "https://www.soas.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Birkbeck Scholarships"
+    type: "university"
+    url: "https://www.birkbeck.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Westminster Scholarships"
+    type: "university"
+    url: "https://www.westminster.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Kingston Scholarships"
+    type: "university"
+    url: "https://www.kingston.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Middlesex Scholarships"
+    type: "university"
+    url: "https://www.middlesex.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Greenwich Scholarships"
+    type: "university"
+    url: "https://www.greenwich.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Roehampton Scholarships"
+    type: "university"
+    url: "https://www.roehampton.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "London Met Scholarships"
+    type: "university"
+    url: "https://www.londonmet.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "East London Scholarships"
+    type: "university"
+    url: "https://www.eastlondon.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "West London Scholarships"
+    type: "university"
+    url: "https://www.westlondon.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UAL Scholarships"
+    type: "university"
+    url: "https://www.ual.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "RCA Scholarships"
+    type: "university"
+    url: "https://www.rca.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "RAM Scholarships"
+    type: "university"
+    url: "https://www.ram.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Guildhall Scholarships"
+    type: "university"
+    url: "https://www.guildhall.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Trinity Laban Scholarships"
+    type: "university"
+    url: "https://www.trinitylaban.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "RCS Scholarships"
+    type: "university"
+    url: "https://www.rcs.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Salford Scholarships"
+    type: "university"
+    url: "https://www.salford.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "MMU Scholarships"
+    type: "university"
+    url: "https://www.mmu.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Huddersfield Scholarships"
+    type: "university"
+    url: "https://www.huddersfield.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Bradford Scholarships"
+    type: "university"
+    url: "https://www.bradford.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Leeds Beckett Scholarships"
+    type: "university"
+    url: "https://www.leedsbeckett.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Sheffield Hallam Scholarships"
+    type: "university"
+    url: "https://www.sheffieldhallam.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Nottingham Trent Scholarships"
+    type: "university"
+    url: "https://www.nottinghamtrent.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "DMU Scholarships"
+    type: "university"
+    url: "https://www.dmu.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Leicester Scholarships"
+    type: "university"
+    url: "https://www.leicester.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Coventry Scholarships"
+    type: "university"
+    url: "https://www.coventry.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Northampton Scholarships"
+    type: "university"
+    url: "https://www.northampton.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Anglia Ruskin Scholarships"
+    type: "university"
+    url: "https://www.angliaruskin.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Essex Scholarships"
+    type: "university"
+    url: "https://www.essex.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Hertfordshire Scholarships"
+    type: "university"
+    url: "https://www.hertfordshire.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Bedfordshire Scholarships"
+    type: "university"
+    url: "https://www.bedfordshire.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Oxford Brookes Scholarships"
+    type: "university"
+    url: "https://www.oxfordbrookes.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Portsmouth Scholarships"
+    type: "university"
+    url: "https://www.portsmouth.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Chichester Scholarships"
+    type: "university"
+    url: "https://www.chichester.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Brighton Scholarships"
+    type: "university"
+    url: "https://www.brighton.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Canterbury Christ Church Scholarships"
+    type: "university"
+    url: "https://www.canterburychristchurch.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Winchester Scholarships"
+    type: "university"
+    url: "https://www.winchester.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Bournemouth Scholarships"
+    type: "university"
+    url: "https://www.bournemouth.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Plymouth Scholarships"
+    type: "university"
+    url: "https://www.plymouth.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UWE Scholarships"
+    type: "university"
+    url: "https://www.uwe.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Gloucestershire Scholarships"
+    type: "university"
+    url: "https://www.gloucestershire.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Bath Spa Scholarships"
+    type: "university"
+    url: "https://www.bathspa.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Worcester Scholarships"
+    type: "university"
+    url: "https://www.worcester.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Cumbria Scholarships"
+    type: "university"
+    url: "https://www.cumbria.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Edge Hill Scholarships"
+    type: "university"
+    url: "https://www.edgehill.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Liverpool Hope Scholarships"
+    type: "university"
+    url: "https://www.liverpoolhope.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "LJMU Scholarships"
+    type: "university"
+    url: "https://www.ljmu.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Chester Scholarships"
+    type: "university"
+    url: "https://www.chester.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Bangor Scholarships"
+    type: "university"
+    url: "https://www.bangor.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Aberystwyth Scholarships"
+    type: "university"
+    url: "https://www.aberystwyth.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Swansea Scholarships"
+    type: "university"
+    url: "https://www.swansea.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "South Wales Scholarships"
+    type: "university"
+    url: "https://www.southwales.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Cardiff Met Scholarships"
+    type: "university"
+    url: "https://www.cardiffmet.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UWTSD Scholarships"
+    type: "university"
+    url: "https://www.uwtsd.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UHI Scholarships"
+    type: "university"
+    url: "https://www.uhi.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "RGU Scholarships"
+    type: "university"
+    url: "https://www.rgu.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Abertay Scholarships"
+    type: "university"
+    url: "https://www.abertay.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "QUB Scholarships"
+    type: "university"
+    url: "https://www.qub.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Ulster Scholarships"
+    type: "university"
+    url: "https://www.ulster.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "St Marys Scholarships"
+    type: "university"
+    url: "https://www.stmarys.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "St Georges Scholarships"
+    type: "university"
+    url: "https://www.stgeorges.ac.uk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Harvard Scholarships"
+    type: "university"
+    url: "https://www.harvard.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "MIT Scholarships"
+    type: "university"
+    url: "https://www.web.mit.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Stanford Scholarships"
+    type: "university"
+    url: "https://www.stanford.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Yale Scholarships"
+    type: "university"
+    url: "https://www.yale.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Princeton Scholarships"
+    type: "university"
+    url: "https://www.princeton.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Columbia Scholarships"
+    type: "university"
+    url: "https://www.columbia.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Chicago Scholarships"
+    type: "university"
+    url: "https://www.uchicago.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Penn Scholarships"
+    type: "university"
+    url: "https://www.upenn.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Caltech Scholarships"
+    type: "university"
+    url: "https://www.caltech.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Johns Hopkins Scholarships"
+    type: "university"
+    url: "https://www.jhu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Northwestern Scholarships"
+    type: "university"
+    url: "https://www.northwestern.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Duke Scholarships"
+    type: "university"
+    url: "https://www.duke.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Cornell Scholarships"
+    type: "university"
+    url: "https://www.cornell.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Brown Scholarships"
+    type: "university"
+    url: "https://www.brown.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Dartmouth Scholarships"
+    type: "university"
+    url: "https://www.dartmouth.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Vanderbilt Scholarships"
+    type: "university"
+    url: "https://www.vanderbilt.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Rice Scholarships"
+    type: "university"
+    url: "https://www.rice.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "WashU Scholarships"
+    type: "university"
+    url: "https://www.wustl.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Emory Scholarships"
+    type: "university"
+    url: "https://www.emory.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Georgetown Scholarships"
+    type: "university"
+    url: "https://www.georgetown.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "CMU Scholarships"
+    type: "university"
+    url: "https://www.cmu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UCLA Scholarships"
+    type: "university"
+    url: "https://www.ucla.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UC Berkeley Scholarships"
+    type: "university"
+    url: "https://www.berkeley.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Michigan Scholarships"
+    type: "university"
+    url: "https://www.umich.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Virginia Scholarships"
+    type: "university"
+    url: "https://www.virginia.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UNC Scholarships"
+    type: "university"
+    url: "https://www.unc.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "NYU Scholarships"
+    type: "university"
+    url: "https://www.nyu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "USC Scholarships"
+    type: "university"
+    url: "https://www.usc.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Toronto Scholarships"
+    type: "university"
+    url: "https://www.utoronto.ca/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "McGill Scholarships"
+    type: "university"
+    url: "https://www.mcgill.ca/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UBC Scholarships"
+    type: "university"
+    url: "https://www.ubc.ca/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Melbourne Scholarships"
+    type: "university"
+    url: "https://www.unimelb.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Sydney Scholarships"
+    type: "university"
+    url: "https://www.sydney.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "ANU Scholarships"
+    type: "university"
+    url: "https://www.anu.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Tokyo Scholarships"
+    type: "university"
+    url: "https://www.u-tokyo.ac.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Kyoto Scholarships"
+    type: "university"
+    url: "https://www.kyoto-u.ac.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "NUS Scholarships"
+    type: "university"
+    url: "https://www.nus.edu.sg/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "NTU Scholarships"
+    type: "university"
+    url: "https://www.ntu.edu.sg/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Tsinghua Scholarships"
+    type: "university"
+    url: "https://www.tsinghua.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Peking Scholarships"
+    type: "university"
+    url: "https://www.pku.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "HKU Scholarships"
+    type: "university"
+    url: "https://www.hku.hk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "HKUST Scholarships"
+    type: "university"
+    url: "https://www.ust.hk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "CUHK Scholarships"
+    type: "university"
+    url: "https://www.cuhk.edu.hk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "SNU Scholarships"
+    type: "university"
+    url: "https://www.snu.ac.kr/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "KAIST Scholarships"
+    type: "university"
+    url: "https://www.kaist.ac.kr/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Yonsei Scholarships"
+    type: "university"
+    url: "https://www.yonsei.ac.kr/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "ETH Scholarships"
+    type: "university"
+    url: "https://www.ethz.ch/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "EPFL Scholarships"
+    type: "university"
+    url: "https://www.epfl.ch/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Zurich Scholarships"
+    type: "university"
+    url: "https://www.uzh.ch/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Amsterdam Scholarships"
+    type: "university"
+    url: "https://www.uva.nl/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Leiden Scholarships"
+    type: "university"
+    url: "https://www.universiteitleiden.nl/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Delft Scholarships"
+    type: "university"
+    url: "https://www.tudelft.nl/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Utrecht Scholarships"
+    type: "university"
+    url: "https://www.uu.nl/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Copenhagen Scholarships"
+    type: "university"
+    url: "https://www.ku.dk/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Lund Scholarships"
+    type: "university"
+    url: "https://www.lu.se/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Uppsala Scholarships"
+    type: "university"
+    url: "https://www.uu.se/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Stockholm Scholarships"
+    type: "university"
+    url: "https://www.su.se/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Karolinska Scholarships"
+    type: "university"
+    url: "https://www.ki.se/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Helsinki Scholarships"
+    type: "university"
+    url: "https://www.helsinki.fi/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Aalto Scholarships"
+    type: "university"
+    url: "https://www.aalto.fi/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Oslo Scholarships"
+    type: "university"
+    url: "https://www.uio.no/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "NTNU Scholarships"
+    type: "university"
+    url: "https://www.ntnu.no/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Sorbonne Scholarships"
+    type: "university"
+    url: "https://www.sorbonne-universite.fr/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Polytechnique Scholarships"
+    type: "university"
+    url: "https://www.polytechnique.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Sciences Po Scholarships"
+    type: "university"
+    url: "https://www.sciencespo.fr/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "HEC Scholarships"
+    type: "university"
+    url: "https://www.hec.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "INSEAD Scholarships"
+    type: "university"
+    url: "https://www.insead.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "LMU Scholarships"
+    type: "university"
+    url: "https://www.lmu.de/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "TUM Scholarships"
+    type: "university"
+    url: "https://www.tum.de/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Heidelberg Scholarships"
+    type: "university"
+    url: "https://www.uni-heidelberg.de/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "FU Berlin Scholarships"
+    type: "university"
+    url: "https://www.fu-berlin.de/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Humboldt Scholarships"
+    type: "university"
+    url: "https://www.hu-berlin.de/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Bonn Scholarships"
+    type: "university"
+    url: "https://www.uni-bonn.de/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Vienna Scholarships"
+    type: "university"
+    url: "https://www.univie.ac.at/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Bocconi Scholarships"
+    type: "university"
+    url: "https://www.unibocconi.it/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Sapienza Scholarships"
+    type: "university"
+    url: "https://www.uniroma1.it/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Barcelona Scholarships"
+    type: "university"
+    url: "https://www.ub.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Complutense Scholarships"
+    type: "university"
+    url: "https://www.ucm.es/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "IE Scholarships"
+    type: "university"
+    url: "https://www.ie.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "ESADE Scholarships"
+    type: "university"
+    url: "https://www.esade.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Lisbon Scholarships"
+    type: "university"
+    url: "https://www.ulisboa.pt/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Porto Scholarships"
+    type: "university"
+    url: "https://www.up.pt/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Warsaw Scholarships"
+    type: "university"
+    url: "https://www.uw.edu.pl/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Jagiellonian Scholarships"
+    type: "university"
+    url: "https://www.uj.edu.pl/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Charles Scholarships"
+    type: "university"
+    url: "https://www.cuni.cz/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Moscow State Scholarships"
+    type: "university"
+    url: "https://www.msu.ru/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "St Petersburg Scholarships"
+    type: "university"
+    url: "https://www.spbu.ru/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Cape Town Scholarships"
+    type: "university"
+    url: "https://www.uct.ac.za/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Wits Scholarships"
+    type: "university"
+    url: "https://www.wits.ac.za/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "São Paulo Scholarships"
+    type: "university"
+    url: "https://www.usp.br/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Unicamp Scholarships"
+    type: "university"
+    url: "https://www.unicamp.br/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Tec de Monterrey Scholarships"
+    type: "university"
+    url: "https://www.tec.mx/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UNAM Scholarships"
+    type: "university"
+    url: "https://www.unam.mx/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Buenos Aires Scholarships"
+    type: "university"
+    url: "https://www.uba.ar/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "PUC Chile Scholarships"
+    type: "university"
+    url: "https://www.uc.cl/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "IIT Scholarships"
+    type: "university"
+    url: "https://www.iit.ac.in/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "IISc Scholarships"
+    type: "university"
+    url: "https://www.iisc.ac.in/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Delhi Scholarships"
+    type: "university"
+    url: "https://www.du.ac.in/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "JNU Scholarships"
+    type: "university"
+    url: "https://www.jnu.ac.in/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Malaya Scholarships"
+    type: "university"
+    url: "https://www.um.edu.my/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Chula Scholarships"
+    type: "university"
+    url: "https://www.chula.ac.th/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Mahidol Scholarships"
+    type: "university"
+    url: "https://www.mahidol.ac.th/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UI Scholarships"
+    type: "university"
+    url: "https://www.ui.ac.id/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "ITB Scholarships"
+    type: "university"
+    url: "https://www.itb.ac.id/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Ateneo Scholarships"
+    type: "university"
+    url: "https://www.ateneo.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UP Scholarships"
+    type: "university"
+    url: "https://www.up.edu.ph/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Auckland Scholarships"
+    type: "university"
+    url: "https://www.auckland.ac.nz/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Otago Scholarships"
+    type: "university"
+    url: "https://www.otago.ac.nz/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Cairo Scholarships"
+    type: "university"
+    url: "https://www.cu.edu.eg/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "AUC Scholarships"
+    type: "university"
+    url: "https://www.aucegypt.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "TAU Scholarships"
+    type: "university"
+    url: "https://www.tau.ac.il/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Hebrew Scholarships"
+    type: "university"
+    url: "https://www.huji.ac.il/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Technion Scholarships"
+    type: "university"
+    url: "https://www.technion.ac.il/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Weizmann Scholarships"
+    type: "university"
+    url: "https://www.weizmann.ac.il/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "KSU Scholarships"
+    type: "university"
+    url: "https://www.ksu.edu.sa/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "KFUPM Scholarships"
+    type: "university"
+    url: "https://www.kfupm.edu.sa/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "AUB Scholarships"
+    type: "university"
+    url: "https://www.aub.edu.lb/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Jordan Scholarships"
+    type: "university"
+    url: "https://www.ju.edu.jo/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UC San Diego Scholarships"
+    type: "university"
+    url: "https://www.ucsd.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UC Davis Scholarships"
+    type: "university"
+    url: "https://www.ucdavis.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UC Irvine Scholarships"
+    type: "university"
+    url: "https://www.uci.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UC Santa Barbara Scholarships"
+    type: "university"
+    url: "https://www.ucsb.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UC Santa Cruz Scholarships"
+    type: "university"
+    url: "https://www.ucsc.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UC Riverside Scholarships"
+    type: "university"
+    url: "https://www.ucr.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Boston University Scholarships"
+    type: "university"
+    url: "https://www.bu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Boston College Scholarships"
+    type: "university"
+    url: "https://www.bc.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Northeastern Scholarships"
+    type: "university"
+    url: "https://www.northeastern.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Tufts Scholarships"
+    type: "university"
+    url: "https://www.tufts.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Brandeis Scholarships"
+    type: "university"
+    url: "https://www.brandeis.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UMass Scholarships"
+    type: "university"
+    url: "https://www.umass.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Rutgers Scholarships"
+    type: "university"
+    url: "https://www.rutgers.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Penn State Scholarships"
+    type: "university"
+    url: "https://www.psu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Ohio State Scholarships"
+    type: "university"
+    url: "https://www.osu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Purdue Scholarships"
+    type: "university"
+    url: "https://www.purdue.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Indiana Scholarships"
+    type: "university"
+    url: "https://www.iu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Illinois Scholarships"
+    type: "university"
+    url: "https://www.illinois.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Wisconsin Scholarships"
+    type: "university"
+    url: "https://www.wisc.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Minnesota Scholarships"
+    type: "university"
+    url: "https://www.umn.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Texas Scholarships"
+    type: "university"
+    url: "https://www.utexas.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Texas A&M Scholarships"
+    type: "university"
+    url: "https://www.tamu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Arizona State Scholarships"
+    type: "university"
+    url: "https://www.asu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UC Boulder Scholarships"
+    type: "university"
+    url: "https://www.colorado.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Washington Scholarships"
+    type: "university"
+    url: "https://www.washington.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Oregon Scholarships"
+    type: "university"
+    url: "https://www.uoregon.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Georgia Tech Scholarships"
+    type: "university"
+    url: "https://www.gatech.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "NC State Scholarships"
+    type: "university"
+    url: "https://www.ncsu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Virginia Tech Scholarships"
+    type: "university"
+    url: "https://www.vt.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Florida Scholarships"
+    type: "university"
+    url: "https://www.ufl.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Miami Scholarships"
+    type: "university"
+    url: "https://www.miami.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "FSU Scholarships"
+    type: "university"
+    url: "https://www.fsu.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Alberta Scholarships"
+    type: "university"
+    url: "https://www.ualberta.ca/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Waterloo Scholarships"
+    type: "university"
+    url: "https://www.uwaterloo.ca/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Western Scholarships"
+    type: "university"
+    url: "https://www.uwo.ca/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Queens Scholarships"
+    type: "university"
+    url: "https://www.queensu.ca/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "McMaster Scholarships"
+    type: "university"
+    url: "https://www.mcmaster.ca/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Dalhousie Scholarships"
+    type: "university"
+    url: "https://www.dal.ca/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Monash Scholarships"
+    type: "university"
+    url: "https://www.monash.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UNSW Scholarships"
+    type: "university"
+    url: "https://www.unsw.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Queensland Scholarships"
+    type: "university"
+    url: "https://www.uq.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Adelaide Scholarships"
+    type: "university"
+    url: "https://www.adelaide.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Western Australia Scholarships"
+    type: "university"
+    url: "https://www.uwa.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UTS Scholarships"
+    type: "university"
+    url: "https://www.uts.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "RMIT Scholarships"
+    type: "university"
+    url: "https://www.rmit.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Deakin Scholarships"
+    type: "university"
+    url: "https://www.deakin.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Griffith Scholarships"
+    type: "university"
+    url: "https://www.griffith.edu.au/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Waseda Scholarships"
+    type: "university"
+    url: "https://www.waseda.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Keio Scholarships"
+    type: "university"
+    url: "https://www.keio.ac.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Osaka Scholarships"
+    type: "university"
+    url: "https://www.osaka-u.ac.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Tohoku Scholarships"
+    type: "university"
+    url: "https://www.tohoku.ac.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Nagoya Scholarships"
+    type: "university"
+    url: "https://www.nagoya-u.ac.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Hokkaido Scholarships"
+    type: "university"
+    url: "https://www.hokudai.ac.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Kyushu Scholarships"
+    type: "university"
+    url: "https://www.kyushu-u.ac.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Hitotsubashi Scholarships"
+    type: "university"
+    url: "https://www.hit-u.ac.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Tokyo Tech Scholarships"
+    type: "university"
+    url: "https://www.titech.ac.jp/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Seoul Scholarships"
+    type: "university"
+    url: "https://www.snu.ac.kr/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Korea Scholarships"
+    type: "university"
+    url: "https://www.korea.ac.kr/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Hanyang Scholarships"
+    type: "university"
+    url: "https://www.hanyang.ac.kr/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Sungkyunkwan Scholarships"
+    type: "university"
+    url: "https://www.skku.edu/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "POSTECH Scholarships"
+    type: "university"
+    url: "https://www.postech.ac.kr/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Fudan Scholarships"
+    type: "university"
+    url: "https://www.fudan.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Shanghai Jiao Tong Scholarships"
+    type: "university"
+    url: "https://www.sjtu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Zhejiang Scholarships"
+    type: "university"
+    url: "https://www.zju.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Nanjing Scholarships"
+    type: "university"
+    url: "https://www.nju.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Wuhan Scholarships"
+    type: "university"
+    url: "https://www.whu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Harbin Institute Scholarships"
+    type: "university"
+    url: "https://www.hit.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Xi'an Jiaotong Scholarships"
+    type: "university"
+    url: "https://www.xjtu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Sun Yat-sen Scholarships"
+    type: "university"
+    url: "https://www.sysu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Tianjin Scholarships"
+    type: "university"
+    url: "https://www.tju.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Beijing Normal Scholarships"
+    type: "university"
+    url: "https://www.bnu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Renmin Scholarships"
+    type: "university"
+    url: "https://www.ruc.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Beihang Scholarships"
+    type: "university"
+    url: "https://www.buaa.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Tongji Scholarships"
+    type: "university"
+    url: "https://www.tongji.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Southeast Scholarships"
+    type: "university"
+    url: "https://www.seu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Dalian Tech Scholarships"
+    type: "university"
+    url: "https://www.dlut.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Central South Scholarships"
+    type: "university"
+    url: "https://www.csu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Hunan Scholarships"
+    type: "university"
+    url: "https://www.hnu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Sichuan Scholarships"
+    type: "university"
+    url: "https://www.scu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Chongqing Scholarships"
+    type: "university"
+    url: "https://www.cqu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Xiamen Scholarships"
+    type: "university"
+    url: "https://www.xmu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Shandong Scholarships"
+    type: "university"
+    url: "https://www.sdu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Jilin Scholarships"
+    type: "university"
+    url: "https://www.jlu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Lanzhou Scholarships"
+    type: "university"
+    url: "https://www.lzu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Northeast Normal Scholarships"
+    type: "university"
+    url: "https://www.nenu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "East China Normal Scholarships"
+    type: "university"
+    url: "https://www.ecnu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "South China Tech Scholarships"
+    type: "university"
+    url: "https://www.scut.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Beijing Tech Scholarships"
+    type: "university"
+    url: "https://www.bit.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Beijing Jiaotong Scholarships"
+    type: "university"
+    url: "https://www.bjtu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Beijing University of Posts Scholarships"
+    type: "university"
+    url: "https://www.bupt.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "China Agricultural Scholarships"
+    type: "university"
+    url: "https://www.cau.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "China University of Mining Scholarships"
+    type: "university"
+    url: "https://www.cumt.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Ocean University Scholarships"
+    type: "university"
+    url: "https://www.ouc.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Northeastern Scholarships"
+    type: "university"
+    url: "https://www.neu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Harbin Engineering Scholarships"
+    type: "university"
+    url: "https://www.hrbeu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Nanjing Tech Scholarships"
+    type: "university"
+    url: "https://www.njtech.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Jiangsu Scholarships"
+    type: "university"
+    url: "https://www.jsnu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Soochow Scholarships"
+    type: "university"
+    url: "https://www.suda.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Shanghai University Scholarships"
+    type: "university"
+    url: "https://www.shu.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Shanghai Tech Scholarships"
+    type: "university"
+    url: "https://www.shanghaitech.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Southern University of Science Scholarships"
+    type: "university"
+    url: "https://www.sustech.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Westlake Scholarships"
+    type: "university"
+    url: "https://www.westlake.edu.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "Chinese Academy of Sciences Scholarships"
+    type: "university"
+    url: "https://www.ucas.ac.cn/scholarships/"
+    enabled: True
+    scraper: "university"
+
+  - name: "UK Government Scholarships"
+    type: "government"
+    url: "https://www.gov.uk/education/student-finance"
+    enabled: True
+    scraper: "government"
+
+  - name: "UK Student Finance Scholarships"
+    type: "government"
+    url: "https://www.gov.uk/student-finance"
+    enabled: True
+    scraper: "government"
+
+  - name: "US Student Aid Scholarships"
+    type: "government"
+    url: "https://www.studentaid.gov/"
+    enabled: True
+    scraper: "government"
+
+  - name: "EducationUSA Scholarships"
+    type: "government"
+    url: "https://www.educationusa.state.gov/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "USAID Scholarships"
+    type: "government"
+    url: "https://www.usaid.gov/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Fulbright US Scholarships"
+    type: "government"
+    url: "https://www.fulbright.org/"
+    enabled: True
+    scraper: "government"
+
+  - name: "IIE Scholarships"
+    type: "government"
+    url: "https://www.iie.org/programs"
+    enabled: True
+    scraper: "government"
+
+  - name: "EU Education Scholarships"
+    type: "government"
+    url: "https://www.europa.eu/education/opportunities/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Erasmus Plus Scholarships"
+    type: "government"
+    url: "https://www.erasmusplus.org.uk/"
+    enabled: True
+    scraper: "government"
+
+  - name: "EACEA Scholarships"
+    type: "government"
+    url: "https://www.eacea.ec.europa.eu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Canada Student Aid Scholarships"
+    type: "government"
+    url: "https://www.canada.ca/services/education/student-financial-aid"
+    enabled: True
+    scraper: "government"
+
+  - name: "Canada International Scholarships"
+    type: "government"
+    url: "https://www.international.gc.ca/scholarships-bourses"
+    enabled: True
+    scraper: "government"
+
+  - name: "Australia Study Scholarships"
+    type: "government"
+    url: "https://www.studyinaustralia.gov.au/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Australia Awards Scholarships"
+    type: "government"
+    url: "https://www.dfat.gov.au/people-to-people/australia-awards"
+    enabled: True
+    scraper: "government"
+
+  - name: "NZ Education Scholarships"
+    type: "government"
+    url: "https://www.education.govt.nz/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "NZ Aid Scholarships"
+    type: "government"
+    url: "https://www.mfat.govt.nz/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "DAAD Scholarships"
+    type: "government"
+    url: "https://www.daad.de/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Germany Scholarships"
+    type: "government"
+    url: "https://www.study-in-germany.de/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Campus France Scholarships"
+    type: "government"
+    url: "https://www.campusfrance.org/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "France Diplomacy Scholarships"
+    type: "government"
+    url: "https://www.diplomatie.gouv.fr/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "NUFFIC Scholarships"
+    type: "government"
+    url: "https://www.nuffic.nl/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Holland Scholarships"
+    type: "government"
+    url: "https://www.studyinholland.nl/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Sweden Scholarships"
+    type: "government"
+    url: "https://www.studyinsweden.se/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Swedish Institute Scholarships"
+    type: "government"
+    url: "https://www.si.se/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Denmark Scholarships"
+    type: "government"
+    url: "https://www.studyindenmark.dk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Norway Scholarships"
+    type: "government"
+    url: "https://www.studyinnorway.no/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Finland Scholarships"
+    type: "government"
+    url: "https://www.studyinfinland.fi/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Swiss Universities Scholarships"
+    type: "government"
+    url: "https://www.swissuniversities.ch/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "OeAD Scholarships"
+    type: "government"
+    url: "https://www.oead.at/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Belgium Scholarships"
+    type: "government"
+    url: "https://www.studyinbelgium.be/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Spain Education Scholarships"
+    type: "government"
+    url: "https://www.educacionyfp.gob.es/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Italy Scholarships"
+    type: "government"
+    url: "https://www.studyinitaly.it/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Portugal Scholarships"
+    type: "government"
+    url: "https://www.studyportugal.eu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Poland Scholarships"
+    type: "government"
+    url: "https://www.studyinpoland.pl/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Czech Scholarships"
+    type: "government"
+    url: "https://www.studyin.cz/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Japan Scholarships"
+    type: "government"
+    url: "https://www.studyinjapan.go.jp/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "JASSO Scholarships"
+    type: "government"
+    url: "https://www.jasso.go.jp/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "MEXT Scholarships"
+    type: "government"
+    url: "https://www.mext.go.jp/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Korea Scholarships"
+    type: "government"
+    url: "https://www.studyinkorea.go.kr/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "KDI Scholarships"
+    type: "government"
+    url: "https://www.kdi.re.kr/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "CSC China Scholarships"
+    type: "government"
+    url: "https://www.csc.edu.cn/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in China Scholarships"
+    type: "government"
+    url: "https://www.studyinchina.edu.cn/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Singapore MOE Scholarships"
+    type: "government"
+    url: "https://www.moe.gov.sg/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "EDB Singapore Scholarships"
+    type: "government"
+    url: "https://www.edb.gov.sg/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Study in Taiwan Scholarships"
+    type: "government"
+    url: "https://www.studyintaiwan.org/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Taiwan MOE Scholarships"
+    type: "government"
+    url: "https://www.moe.gov.tw/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "HK EDB Scholarships"
+    type: "government"
+    url: "https://www.edb.gov.hk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "HK UGC Scholarships"
+    type: "government"
+    url: "https://www.ugc.edu.hk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Malaysia MOHE Scholarships"
+    type: "government"
+    url: "https://www.mohe.gov.my/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Thailand MUA Scholarships"
+    type: "government"
+    url: "https://www.mua.go.th/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Indonesia Kemdikbud Scholarships"
+    type: "government"
+    url: "https://www.kemdikbud.go.id/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Philippines CHED Scholarships"
+    type: "government"
+    url: "https://www.ched.gov.ph/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "India Education Scholarships"
+    type: "government"
+    url: "https://www.education.gov.in/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "AICTE India Scholarships"
+    type: "government"
+    url: "https://www.aicte-india.org/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "UAE MOE Scholarships"
+    type: "government"
+    url: "https://www.moe.gov.ae/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Saudi MOHE Scholarships"
+    type: "government"
+    url: "https://www.mohe.gov.sa/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Qatar Education Scholarships"
+    type: "government"
+    url: "https://www.edu.gov.qa/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Kuwait MOE Scholarships"
+    type: "government"
+    url: "https://www.moe.edu.kw/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Brazil MEC Scholarships"
+    type: "government"
+    url: "https://www.mec.gov.br/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Mexico SEP Scholarships"
+    type: "government"
+    url: "https://www.sep.gob.mx/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Argentina ME Scholarships"
+    type: "government"
+    url: "https://www.me.gov.ar/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Chile Mineduc Scholarships"
+    type: "government"
+    url: "https://www.mineduc.cl/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "South Africa DHET Scholarships"
+    type: "government"
+    url: "https://www.dhet.gov.za/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Egypt MOHE Scholarships"
+    type: "government"
+    url: "https://www.mohe.gov.eg/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Turkey YOK Scholarships"
+    type: "government"
+    url: "https://www.yok.gov.tr/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Russia Minobrnauki Scholarships"
+    type: "government"
+    url: "https://www.minobrnauki.gov.ru/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Israel MFA Scholarships"
+    type: "government"
+    url: "https://www.mfa.gov.il/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Chevening Scholarships"
+    type: "government"
+    url: "https://www.chevening.org/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Rhodes Scholarships"
+    type: "government"
+    url: "https://www.rhodeshouse.ox.ac.uk/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Gates Cambridge Scholarships"
+    type: "government"
+    url: "https://www.gatescambridge.org/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Marshall Scholarships"
+    type: "government"
+    url: "https://www.marshallscholarship.org/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Fulbright UK Scholarships"
+    type: "government"
+    url: "https://www.fulbright.org.uk/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Erasmus Mundus Scholarships"
+    type: "government"
+    url: "https://www.eacea.ec.europa.eu/erasmus-mundus"
+    enabled: True
+    scraper: "government"
+
+  - name: "Marie Curie Scholarships"
+    type: "government"
+    url: "https://www.marie-sklodowska-curie-actions.ec.europa.eu/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Horizon Europe Scholarships"
+    type: "government"
+    url: "https://www.ec.europa.eu/horizon-europe"
+    enabled: True
+    scraper: "government"
+
+  - name: "Newton Fund Scholarships"
+    type: "government"
+    url: "https://www.newtonfund.ac.uk/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Commonwealth Scholarship Scholarships"
+    type: "government"
+    url: "https://www.cscuk.fcdo.gov.uk/"
+    enabled: True
+    scraper: "government"
+
+  - name: "British Council Scholarships"
+    type: "government"
+    url: "https://www.britishcouncil.org/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Goethe Institute Scholarships"
+    type: "government"
+    url: "https://www.goethe.de/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Institut Français Scholarships"
+    type: "government"
+    url: "https://www.institutfrancais.com/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Japan Foundation Scholarships"
+    type: "government"
+    url: "https://www.jpf.go.jp/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Korea Foundation Scholarships"
+    type: "government"
+    url: "https://www.kf.or.kr/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Confucius Institute Scholarships"
+    type: "government"
+    url: "https://www.hanban.org/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "UNESCO Scholarships"
+    type: "government"
+    url: "https://www.unesco.org/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "World Bank Scholarships"
+    type: "government"
+    url: "https://www.worldbank.org/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Commonwealth Scholarships"
+    type: "government"
+    url: "https://www.thecommonwealth.org/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "UKRI Scholarships"
+    type: "government"
+    url: "https://www.ukri.org/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "EPSRC Scholarships"
+    type: "government"
+    url: "https://www.epsrc.ukri.org/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "ESRC Scholarships"
+    type: "government"
+    url: "https://www.esrc.ukri.org/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "AHRC Scholarships"
+    type: "government"
+    url: "https://www.ahrc.ukri.org/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "MRC Scholarships"
+    type: "government"
+    url: "https://www.mrc.ukri.org/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "STFC Scholarships"
+    type: "government"
+    url: "https://www.stfc.ukri.org/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "NERC Scholarships"
+    type: "government"
+    url: "https://www.nerc.ukri.org/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "BBSRC Scholarships"
+    type: "government"
+    url: "https://www.bbsrc.ukri.org/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "NSF Scholarships"
+    type: "government"
+    url: "https://www.nsf.gov/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "NIH Scholarships"
+    type: "government"
+    url: "https://www.nih.gov/training"
+    enabled: True
+    scraper: "government"
+
+  - name: "NASA Scholarships"
+    type: "government"
+    url: "https://www.nasa.gov/education"
+    enabled: True
+    scraper: "government"
+
+  - name: "DOE Scholarships"
+    type: "government"
+    url: "https://www.energy.gov/education"
+    enabled: True
+    scraper: "government"
+
+  - name: "NSERC Scholarships"
+    type: "government"
+    url: "https://www.nserc-crsng.gc.ca/"
+    enabled: True
+    scraper: "government"
+
+  - name: "SSHRC Scholarships"
+    type: "government"
+    url: "https://www.sshrc-crsh.gc.ca/"
+    enabled: True
+    scraper: "government"
+
+  - name: "CIHR Scholarships"
+    type: "government"
+    url: "https://www.cihr-irsc.gc.ca/"
+    enabled: True
+    scraper: "government"
+
+  - name: "ARC Scholarships"
+    type: "government"
+    url: "https://www.arc.gov.au/"
+    enabled: True
+    scraper: "government"
+
+  - name: "NHMRC Scholarships"
+    type: "government"
+    url: "https://www.nhmrc.gov.au/"
+    enabled: True
+    scraper: "government"
+
+  - name: "DFG Scholarships"
+    type: "government"
+    url: "https://www.dfg.de/"
+    enabled: True
+    scraper: "government"
+
+  - name: "ANR Scholarships"
+    type: "government"
+    url: "https://www.anr.fr/"
+    enabled: True
+    scraper: "government"
+
+  - name: "NWO Scholarships"
+    type: "government"
+    url: "https://www.nwo.nl/"
+    enabled: True
+    scraper: "government"
+
+  - name: "VR Scholarships"
+    type: "government"
+    url: "https://www.vr.se/"
+    enabled: True
+    scraper: "government"
+
+  - name: "JSPS Scholarships"
+    type: "government"
+    url: "https://www.jsps.go.jp/"
+    enabled: True
+    scraper: "government"
+
+  - name: "NSFC Scholarships"
+    type: "government"
+    url: "https://www.nsfc.gov.cn/"
+    enabled: True
+    scraper: "government"
+
+  - name: "NRF Korea Scholarships"
+    type: "government"
+    url: "https://www.nrf.re.kr/"
+    enabled: True
+    scraper: "government"
+
+  - name: "MOE Singapore Scholarships"
+    type: "government"
+    url: "https://www.moe.gov.sg/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "RGC HK Scholarships"
+    type: "government"
+    url: "https://www.ugc.edu.hk/funding"
+    enabled: True
+    scraper: "government"
+
+  - name: "MOST Taiwan Scholarships"
+    type: "government"
+    url: "https://www.most.gov.tw/"
+    enabled: True
+    scraper: "government"
+
+  - name: "DST India Scholarships"
+    type: "government"
+    url: "https://www.dst.gov.in/"
+    enabled: True
+    scraper: "government"
+
+  - name: "CSIR India Scholarships"
+    type: "government"
+    url: "https://www.csir.res.in/"
+    enabled: True
+    scraper: "government"
+
+  - name: "ICMR India Scholarships"
+    type: "government"
+    url: "https://www.icmr.gov.in/"
+    enabled: True
+    scraper: "government"
+
+  - name: "UGC India Scholarships"
+    type: "government"
+    url: "https://www.ugc.ac.in/"
+    enabled: True
+    scraper: "government"
+
+  - name: "AICTE India Scholarships"
+    type: "government"
+    url: "https://www.aicte-india.org/"
+    enabled: True
+    scraper: "government"
+
+  - name: "DST SA Scholarships"
+    type: "government"
+    url: "https://www.dst.gov.za/"
+    enabled: True
+    scraper: "government"
+
+  - name: "NRF SA Scholarships"
+    type: "government"
+    url: "https://www.nrf.ac.za/"
+    enabled: True
+    scraper: "government"
+
+  - name: "CNPq Scholarships"
+    type: "government"
+    url: "https://www.cnpq.br/"
+    enabled: True
+    scraper: "government"
+
+  - name: "CAPES Scholarships"
+    type: "government"
+    url: "https://www.capes.gov.br/"
+    enabled: True
+    scraper: "government"
+
+  - name: "FAPESP Scholarships"
+    type: "government"
+    url: "https://www.fapesp.br/"
+    enabled: True
+    scraper: "government"
+
+  - name: "CONACYT Scholarships"
+    type: "government"
+    url: "https://www.conacyt.mx/"
+    enabled: True
+    scraper: "government"
+
+  - name: "CONICET Scholarships"
+    type: "government"
+    url: "https://www.conicet.gov.ar/"
+    enabled: True
+    scraper: "government"
+
+  - name: "FONDECYT Scholarships"
+    type: "government"
+    url: "https://www.conicyt.cl/"
+    enabled: True
+    scraper: "government"
+
+  - name: "TUBITAK Scholarships"
+    type: "government"
+    url: "https://www.tubitak.gov.tr/"
+    enabled: True
+    scraper: "government"
+
+  - name: "RFBR Scholarships"
+    type: "government"
+    url: "https://www.rfbr.ru/"
+    enabled: True
+    scraper: "government"
+
+  - name: "RSCF Scholarships"
+    type: "government"
+    url: "https://www.rscf.ru/"
+    enabled: True
+    scraper: "government"
+
+  - name: "ISF Scholarships"
+    type: "government"
+    url: "https://www.isf.org.il/"
+    enabled: True
+    scraper: "government"
+
+  - name: "KAUST Scholarships"
+    type: "government"
+    url: "https://www.kaust.edu.sa/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Masdar Scholarships"
+    type: "government"
+    url: "https://www.masdar.ac.ae/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Qatar Foundation Scholarships"
+    type: "government"
+    url: "https://www.qf.org.qa/education"
+    enabled: True
+    scraper: "government"
+
+  - name: "Kuwait Foundation Scholarships"
+    type: "government"
+    url: "https://www.kfas.org/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Oman Research Scholarships"
+    type: "government"
+    url: "https://www.trc.gov.om/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Bahrain EDB Scholarships"
+    type: "government"
+    url: "https://www.bahrainedb.com/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Saudi Aramco Scholarships"
+    type: "government"
+    url: "https://www.aramco.com/education"
+    enabled: True
+    scraper: "government"
+
+  - name: "ADNOC Scholarships"
+    type: "government"
+    url: "https://www.adnoc.ae/education"
+    enabled: True
+    scraper: "government"
+
+  - name: "Petronas Scholarships"
+    type: "government"
+    url: "https://www.petronas.com/education"
+    enabled: True
+    scraper: "government"
+
+  - name: "SABIC Scholarships"
+    type: "government"
+    url: "https://www.sabic.com/education"
+    enabled: True
+    scraper: "government"
+
+  - name: "Emirates Foundation Scholarships"
+    type: "government"
+    url: "https://www.emiratesfoundation.ae/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Dubai Cares Scholarships"
+    type: "government"
+    url: "https://www.dubaicares.ae/"
+    enabled: True
+    scraper: "government"
+
+  - name: "ADEC Scholarships"
+    type: "government"
+    url: "https://www.adec.ac.ae/"
+    enabled: True
+    scraper: "government"
+
+  - name: "QNRF Scholarships"
+    type: "government"
+    url: "https://www.qnrf.org/"
+    enabled: True
+    scraper: "government"
+
+  - name: "Kuwait University Scholarships"
+    type: "government"
+    url: "https://www.ku.edu.kw/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "UAE University Scholarships"
+    type: "government"
+    url: "https://www.uaeu.ac.ae/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Zayed University Scholarships"
+    type: "government"
+    url: "https://www.zu.ac.ae/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "AUS Scholarships"
+    type: "government"
+    url: "https://www.aus.edu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "AUD Scholarships"
+    type: "government"
+    url: "https://www.aud.edu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "King Abdullah University Scholarships"
+    type: "government"
+    url: "https://www.kaust.edu.sa/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Mohammed Bin Rashid Scholarships"
+    type: "government"
+    url: "https://www.mbruniversity.ac.ae/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Khalifa University Scholarships"
+    type: "government"
+    url: "https://www.ku.ac.ae/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "NYU Abu Dhabi Scholarships"
+    type: "government"
+    url: "https://www.nyuad.nyu.edu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Sorbonne Abu Dhabi Scholarships"
+    type: "government"
+    url: "https://www.sorbonne.ae/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "INSEAD Abu Dhabi Scholarships"
+    type: "government"
+    url: "https://www.insead.edu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Hult Scholarships"
+    type: "government"
+    url: "https://www.hult.edu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "IE Business School Scholarships"
+    type: "government"
+    url: "https://www.ie.edu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "ESADE Scholarships"
+    type: "government"
+    url: "https://www.esade.edu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "IESE Scholarships"
+    type: "government"
+    url: "https://www.iese.edu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "IMD Scholarships"
+    type: "government"
+    url: "https://www.imd.org/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "London Business School Scholarships"
+    type: "government"
+    url: "https://www.london.edu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "INSEAD Scholarships"
+    type: "government"
+    url: "https://www.insead.edu/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Judge Business School Scholarships"
+    type: "government"
+    url: "https://www.jbs.cam.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Said Business School Scholarships"
+    type: "government"
+    url: "https://www.sbs.ox.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Imperial Business School Scholarships"
+    type: "government"
+    url: "https://www.imperial.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Warwick Business School Scholarships"
+    type: "government"
+    url: "https://www.wbs.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Manchester Business School Scholarships"
+    type: "government"
+    url: "https://www.mbs.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Cass Business School Scholarships"
+    type: "government"
+    url: "https://www.cass.city.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Cranfield School Scholarships"
+    type: "government"
+    url: "https://www.cranfield.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Durham Business School Scholarships"
+    type: "government"
+    url: "https://www.durham.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Edinburgh Business School Scholarships"
+    type: "government"
+    url: "https://www.ebs.hw.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Strathclyde Business School Scholarships"
+    type: "government"
+    url: "https://www.strath.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Birmingham Business School Scholarships"
+    type: "government"
+    url: "https://www.birmingham.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Leeds Business School Scholarships"
+    type: "government"
+    url: "https://www.lubs.leeds.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Nottingham Business School Scholarships"
+    type: "government"
+    url: "https://www.ntu.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Exeter Business School Scholarships"
+    type: "government"
+    url: "https://www.exeter.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Bath School of Management Scholarships"
+    type: "government"
+    url: "https://www.bath.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Lancaster Management School Scholarships"
+    type: "government"
+    url: "https://www.lancaster.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Sheffield Management School Scholarships"
+    type: "government"
+    url: "https://www.sheffield.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Southampton Business School Scholarships"
+    type: "government"
+    url: "https://www.southampton.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "York Management School Scholarships"
+    type: "government"
+    url: "https://www.york.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Surrey Business School Scholarships"
+    type: "government"
+    url: "https://www.surrey.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Reading Business School Scholarships"
+    type: "government"
+    url: "https://www.henley.reading.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Aston Business School Scholarships"
+    type: "government"
+    url: "https://www.aston.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Brunel Business School Scholarships"
+    type: "government"
+    url: "https://www.brunel.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "City Business School Scholarships"
+    type: "government"
+    url: "https://www.city.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Westminster Business School Scholarships"
+    type: "government"
+    url: "https://www.westminster.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Kingston Business School Scholarships"
+    type: "government"
+    url: "https://www.kingston.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Middlesex Business School Scholarships"
+    type: "government"
+    url: "https://www.mdx.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Greenwich Business School Scholarships"
+    type: "government"
+    url: "https://www.gre.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Roehampton Business School Scholarships"
+    type: "government"
+    url: "https://www.roehampton.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "London Met Business School Scholarships"
+    type: "government"
+    url: "https://www.londonmet.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "East London Business School Scholarships"
+    type: "government"
+    url: "https://www.uel.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "West London Business School Scholarships"
+    type: "government"
+    url: "https://www.uwl.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Salford Business School Scholarships"
+    type: "government"
+    url: "https://www.salford.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "MMU Business School Scholarships"
+    type: "government"
+    url: "https://www.mmu.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Huddersfield Business School Scholarships"
+    type: "government"
+    url: "https://www.hud.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Bradford Business School Scholarships"
+    type: "government"
+    url: "https://www.bradford.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Leeds Beckett Business School Scholarships"
+    type: "government"
+    url: "https://www.leedsbeckett.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Sheffield Hallam Business School Scholarships"
+    type: "government"
+    url: "https://www.shu.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Nottingham Trent Business School Scholarships"
+    type: "government"
+    url: "https://www.ntu.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "DMU Business School Scholarships"
+    type: "government"
+    url: "https://www.dmu.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Leicester Business School Scholarships"
+    type: "government"
+    url: "https://www.le.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Coventry Business School Scholarships"
+    type: "government"
+    url: "https://www.coventry.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Northampton Business School Scholarships"
+    type: "government"
+    url: "https://www.northampton.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Anglia Ruskin Business School Scholarships"
+    type: "government"
+    url: "https://www.aru.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Essex Business School Scholarships"
+    type: "government"
+    url: "https://www.essex.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Hertfordshire Business School Scholarships"
+    type: "government"
+    url: "https://www.herts.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Bedfordshire Business School Scholarships"
+    type: "government"
+    url: "https://www.beds.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Oxford Brookes Business School Scholarships"
+    type: "government"
+    url: "https://www.brookes.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Portsmouth Business School Scholarships"
+    type: "government"
+    url: "https://www.port.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Chichester Business School Scholarships"
+    type: "government"
+    url: "https://www.chi.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Brighton Business School Scholarships"
+    type: "government"
+    url: "https://www.brighton.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Canterbury Business School Scholarships"
+    type: "government"
+    url: "https://www.canterbury.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Winchester Business School Scholarships"
+    type: "government"
+    url: "https://www.winchester.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Bournemouth Business School Scholarships"
+    type: "government"
+    url: "https://www.bournemouth.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Plymouth Business School Scholarships"
+    type: "government"
+    url: "https://www.plymouth.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "UWE Business School Scholarships"
+    type: "government"
+    url: "https://www.uwe.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Gloucestershire Business School Scholarships"
+    type: "government"
+    url: "https://www.glos.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Bath Spa Business School Scholarships"
+    type: "government"
+    url: "https://www.bathspa.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Worcester Business School Scholarships"
+    type: "government"
+    url: "https://www.worc.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Cumbria Business School Scholarships"
+    type: "government"
+    url: "https://www.cumbria.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Edge Hill Business School Scholarships"
+    type: "government"
+    url: "https://www.edgehill.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Liverpool Hope Business School Scholarships"
+    type: "government"
+    url: "https://www.hope.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "LJMU Business School Scholarships"
+    type: "government"
+    url: "https://www.ljmu.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Chester Business School Scholarships"
+    type: "government"
+    url: "https://www.chester.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Bangor Business School Scholarships"
+    type: "government"
+    url: "https://www.bangor.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Aberystwyth Business School Scholarships"
+    type: "government"
+    url: "https://www.aber.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Swansea Business School Scholarships"
+    type: "government"
+    url: "https://www.swansea.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "South Wales Business School Scholarships"
+    type: "government"
+    url: "https://www.southwales.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Cardiff Met Business School Scholarships"
+    type: "government"
+    url: "https://www.cardiffmet.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "UWTSD Business School Scholarships"
+    type: "government"
+    url: "https://www.uwtsd.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "UHI Business School Scholarships"
+    type: "government"
+    url: "https://www.uhi.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "RGU Business School Scholarships"
+    type: "government"
+    url: "https://www.rgu.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Abertay Business School Scholarships"
+    type: "government"
+    url: "https://www.abertay.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "QUB Business School Scholarships"
+    type: "government"
+    url: "https://www.qub.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "Ulster Business School Scholarships"
+    type: "government"
+    url: "https://www.ulster.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "St Marys Business School Scholarships"
+    type: "government"
+    url: "https://www.stmarys.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
+  - name: "St Georges Business School Scholarships"
+    type: "government"
+    url: "https://www.sgul.ac.uk/scholarships"
+    enabled: True
+    scraper: "government"
+
