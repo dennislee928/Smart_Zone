@@ -1,25 +1,33 @@
 use std::env;
 use anyhow::Result;
 
+/// Get non-empty environment variable value
+fn get_env_non_empty(key: &str) -> Option<String> {
+    env::var(key).ok().filter(|v| !v.is_empty())
+}
+
 pub fn send_notifications(msg: &str) -> Result<()> {
-    let telegram_token = env::var("TELEGRAM_BOT_TOKEN").ok();
-    let telegram_chat = env::var("TELEGRAM_CHAT_ID").ok();
-    let slack_webhook = env::var("SLACK_WEBHOOK_URL").ok();
-    let discord_webhook = env::var("DISCORD_WEBHOOK_URL").ok();
+    let telegram_token = get_env_non_empty("TELEGRAM_BOT_TOKEN");
+    let telegram_chat = get_env_non_empty("TELEGRAM_CHAT_ID");
+    let slack_webhook = get_env_non_empty("SLACK_WEBHOOK_URL");
+    let discord_webhook = get_env_non_empty("DISCORD_WEBHOOK_URL");
     
     let mut sent = false;
     
     if let (Some(token), Some(chat_id)) = (telegram_token, telegram_chat) {
+        println!("Sending Telegram notification...");
         send_telegram(&token, &chat_id, msg)?;
         sent = true;
     }
     
     if let Some(webhook) = slack_webhook {
+        println!("Sending Slack notification...");
         send_slack(&webhook, msg)?;
         sent = true;
     }
     
     if let Some(webhook) = discord_webhook {
+        println!("Sending Discord notification...");
         send_discord(&webhook, msg)?;
         sent = true;
     }
