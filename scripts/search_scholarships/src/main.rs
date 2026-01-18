@@ -11,7 +11,8 @@ use anyhow::Result;
 use std::fs;
 use std::path::PathBuf;
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
     let root = std::env::var("ROOT").unwrap_or_else(|_| ".".to_string());
     let now = chrono::Utc::now().format("%Y-%m-%d %H:%M UTC").to_string();
     
@@ -35,7 +36,7 @@ fn main() -> Result<()> {
     
     for source in &enabled_sources {
         println!("Scraping: {} ({})", source.name, source.url);
-        match scrapers::scrape_source(source) {
+        match scrapers::scrape_source(source).await {
             Ok(scraped) => {
                 for mut lead in scraped {
                     // Skip if already exists
