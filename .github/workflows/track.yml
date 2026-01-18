@@ -1,0 +1,47 @@
+name: ScholarshipOps - Track Progress
+
+on:
+  schedule:
+    - cron: "10 13 * * 5"   # Friday 21:10 Asia/Taipei (weekend review)
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: scholarshipops-track
+  cancel-in-progress: false
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('scripts/track_progress/go.sum') }}
+
+      - name: Build and run
+        working-directory: scripts/track_progress
+        env:
+          TZ: Asia/Taipei
+          ROOT: ${{ github.workspace }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          go mod tidy
+          go build -o track_progress
+          ./track_progress

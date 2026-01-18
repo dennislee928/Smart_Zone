@@ -6,6 +6,8 @@ mod types;
 
 pub use types::*;
 
+use anyhow::Result;
+
 fn main() -> Result<()> {
     let root = std::env::var("ROOT").unwrap_or_else(|_| ".".to_string());
     
