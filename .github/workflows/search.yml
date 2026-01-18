@@ -5,7 +5,7 @@ on:
     branches:
       - feature/ScholarshipOps
   schedule:
-    - cron: "0 2 * * *"   # Every day at 02:00 Asia/Taipei (UTC+8)
+    - cron: "10 13 * * 3"   # Wednesday 21:10 Asia/Taipei (UTC+8, Wednesday lead search)
   workflow_dispatch: {}
 
 permissions:
