@@ -86,9 +86,10 @@ jobs:
             git add "$REPORT_DIR" || true
             git diff --staged --quiet || git commit -m "Add search report: $(basename $REPORT_DIR)"
             # Fetch and merge remote changes before pushing
-            git fetch origin ${{ github.ref }} || true
-            git pull --rebase origin ${{ github.ref }} || git pull origin ${{ github.ref }} || true
-            git push origin ${{ github.ref }} || true
+            git fetch origin || true
+            BRANCH=$(git rev-parse --abbrev-ref HEAD)
+            git pull --rebase origin "$BRANCH" || git pull origin "$BRANCH" || true
+            git push origin "$BRANCH" || true
           else
             echo "No report directory found"
           fi
@@ -115,4 +116,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add tracking/leads.json || true
           git diff --staged --quiet || git commit -m "Update leads from automated search"
-          git push || true
+          # Fetch and merge remote changes before pushing
+          git fetch origin ${{ github.ref }} || true
+          git pull --rebase origin ${{ github.ref }} || git pull origin ${{ github.ref }} || true
+          git push origin ${{ github.ref }} || true
