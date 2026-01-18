@@ -9,6 +9,7 @@ pub use types::*;
 
 use anyhow::Result;
 use std::fs;
+use std::path::PathBuf;
 
 fn main() -> Result<()> {
     let root = std::env::var("ROOT").unwrap_or_else(|_| ".".to_string());
@@ -88,11 +89,26 @@ fn main() -> Result<()> {
     // Build summary report (for Discord, max 2000 chars)
     let summary_report = build_summary_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len());
     
-    // Save full report to file
-    fs::write("report.txt", &full_report)?;
-    println!("Report saved to report.txt");
+    // Build HTML and Markdown reports
+    let html_report = build_html_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
+    let markdown_report = build_markdown_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
     
-    // Save summary for Discord
+    // Create date-based folder in scripts/productions
+    let date_str = chrono::Utc::now().format("%Y-%m-%d_%H-%M").to_string();
+    let productions_dir = PathBuf::from(&root).join("scripts").join("productions");
+    let report_dir = productions_dir.join(&date_str);
+    
+    // Create directory if it doesn't exist
+    fs::create_dir_all(&report_dir)?;
+    println!("Created report directory: {:?}", report_dir);
+    
+    // Save all three formats
+    fs::write(report_dir.join("report.txt"), &full_report)?;
+    fs::write(report_dir.join("report.md"), &markdown_report)?;
+    fs::write(report_dir.join("report.html"), &html_report)?;
+    println!("Saved reports to: {:?}", report_dir);
+    
+    // Also save summary for Discord (in current directory for workflow)
     fs::write("summary.txt", &summary_report)?;
     println!("Summary saved to summary.txt");
     
