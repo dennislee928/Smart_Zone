@@ -52,25 +52,14 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: cargo run --release
-        
-      - name: Send Discord search report (if webhook set)
-        if: env.DISCORD_WEBHOOK_URL != ''
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: |
-          if [ -n "$DISCORD_WEBHOOK_URL" ]; then
-            if [ -f scripts/search_scholarships/report.txt ]; then
-              REPORT_CONTENT=$(cat scripts/search_scholarships/report.txt | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/"/\\"/g')
-              PAYLOAD="{\"content\": \"$REPORT_CONTENT\"}"
-            else
-              MESSAGE=":mag: ScholarshipOps Search complete for $(date -u +"%Y-%m-%d %H:%M UTC"), but no report found."
-              PAYLOAD="{\"content\": \"$MESSAGE\"}"
-            fi
-            curl -H "Content-Type: application/json" \
-                 -X POST \
-                 -d "$PAYLOAD" \
-                 "$DISCORD_WEBHOOK_URL"
-          fi
+      
+      - name: Upload search report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: search-report
+          path: scripts/search_scholarships/report.txt
+          retention-days: 30
 
       - name: Commit changes if any
         if: github.event_name == 'schedule'
