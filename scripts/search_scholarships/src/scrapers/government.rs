@@ -27,6 +27,8 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             notes: "UK government's global scholarship programme".to_string(),
             added_date: String::new(),
             url: "https://www.chevening.org/scholarships/".to_string(),
+            match_score: 0,
+            match_reasons: vec![],
         },
         Lead {
             name: "Commonwealth Scholarships (Taught Masters)".to_string(),
@@ -42,6 +44,8 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             notes: "For students from developing Commonwealth countries".to_string(),
             added_date: String::new(),
             url: "https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/".to_string(),
+            match_score: 0,
+            match_reasons: vec![],
         },
         Lead {
             name: "GREAT Scholarships".to_string(),
@@ -57,6 +61,8 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             notes: "Joint UK government and British Council programme".to_string(),
             added_date: String::new(),
             url: "https://study-uk.britishcouncil.org/scholarships/great-scholarships".to_string(),
+            match_score: 0,
+            match_reasons: vec![],
         },
         Lead {
             name: "Marshall Scholarships".to_string(),
@@ -72,6 +78,8 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             notes: "For outstanding American students".to_string(),
             added_date: String::new(),
             url: "https://www.marshallscholarship.org/".to_string(),
+            match_score: 0,
+            match_reasons: vec![],
         },
     ]
 }

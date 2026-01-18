@@ -71,6 +71,8 @@ fn parse_third_party_html(html: &str, base_url: &str) -> Vec<Lead> {
                             notes: String::new(),
                             added_date: String::new(),
                             url: base_url.to_string(),
+                            match_score: 0,
+                            match_reasons: vec![],
                         });
                     }
                 }
@@ -136,6 +138,8 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             notes: "One of the most prestigious scholarships".to_string(),
             added_date: String::new(),
             url: "https://www.gatescambridge.org/".to_string(),
+            match_score: 0,
+            match_reasons: vec![],
         },
         Lead {
             name: "Rhodes Scholarship (Oxford)".to_string(),
@@ -152,6 +156,8 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             notes: "World's oldest international scholarship".to_string(),
             added_date: String::new(),
             url: "https://www.rhodeshouse.ox.ac.uk/scholarships/".to_string(),
+            match_score: 0,
+            match_reasons: vec![],
         },
         Lead {
             name: "Clarendon Scholarship (Oxford)".to_string(),
@@ -167,6 +173,8 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             notes: "Automatic consideration with Oxford application".to_string(),
             added_date: String::new(),
             url: "https://www.ox.ac.uk/clarendon/".to_string(),
+            match_score: 0,
+            match_reasons: vec![],
         },
         Lead {
             name: "Wellcome Trust PhD Programmes".to_string(),
@@ -182,6 +190,8 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             notes: "Various programmes across UK universities".to_string(),
             added_date: String::new(),
             url: "https://wellcome.org/grant-funding".to_string(),
+            match_score: 0,
+            match_reasons: vec![],
         },
     ]
 }
