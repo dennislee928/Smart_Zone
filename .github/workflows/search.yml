@@ -1,6 +1,9 @@
 name: ScholarshipOps - Search
 
 on:
+  push:
+    branches:
+      - feature/ScholarshipOps
   schedule:
     - cron: "10 13 * * 3"   # Wednesday 21:10 Asia/Taipei (Wednesday lead search)
   workflow_dispatch: {}

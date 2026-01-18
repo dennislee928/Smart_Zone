@@ -1,6 +1,9 @@
 name: ScholarshipOps - Track Progress
 
 on:
+  push:
+    branches:
+      - feature/ScholarshipOps
   schedule:
     - cron: "10 13 * * 5"   # Friday 21:10 Asia/Taipei (weekend review)
   workflow_dispatch: {}
