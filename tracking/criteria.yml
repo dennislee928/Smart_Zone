@@ -1,0 +1,14 @@
+criteria:
+  required:
+    - "UK master eligible"
+    - "Open international"
+  preferred:
+    - "No nationality restriction"
+    - "Taiwanese eligible"
+    - "UK master eligible"
+    - "Open international"
+    - "Taiwan eligible"
+    - "Taiwan master eligible"
+  excluded_keywords:
+    - "undergraduate only"
+    - "PhD only"

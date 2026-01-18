@@ -103,6 +103,12 @@ def send_telegram(token: str, chat_id: str, text: str) -> None:
     r.raise_for_status()
 
 
+def send_discord(webhook_url: str, text: str) -> None:
+    # Discord Incoming Webhooks use JSON payload: {"content": "..."}
+    r = requests.post(webhook_url, json={"content": text}, timeout=15)
+    r.raise_for_status()
+
+
 def create_github_issue(repo: str, gh_token: str, title: str, body: str) -> None:
     api = f"https://api.github.com/repos/{repo}/issues"
     headers = {"Authorization": f"Bearer {gh_token}", "Accept": "application/vnd.github+json"}
@@ -120,6 +126,7 @@ def main() -> None:
     slack = os.getenv("SLACK_WEBHOOK_URL", "").strip()
     t_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
     t_chat = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    discord = os.getenv("DISCORD_WEBHOOK_URL", "").strip()
 
     sent = False
     if t_token and t_chat:
@@ -127,6 +134,9 @@ def main() -> None:
         sent = True
     if slack:
         send_slack(slack, msg)
+        sent = True
+    if discord:
+        send_discord(discord, msg)
         sent = True
 
     if os.getenv("CREATE_ISSUE", "false").lower() == "true":

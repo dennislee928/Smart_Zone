@@ -1,0 +1,18 @@
+[package]
+name = "search_scholarships"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "search_scholarships"
+path = "src/main.rs"
+
+[dependencies]
+reqwest = { version = "0.11", features = ["json", "rustls-tls", "blocking"] }
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+yaml-rust = "0.4"
+scraper = "0.19"
+anyhow = "1.0"
+chrono = "0.4"
