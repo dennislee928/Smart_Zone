@@ -60,6 +60,20 @@ jobs:
           name: search-report
           path: scripts/search_scholarships/report.txt
           retention-days: 30
+      - name: Send report.txt to Discord
+        if: always()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ -n "$DISCORD_WEBHOOK_URL" ] && [ -f scripts/search_scholarships/report.txt ]; then
+            REPORT_CONTENT=$(cat scripts/search_scholarships/report.txt)
+            # Escape double quotes and newlines for JSON payload
+            ESCAPED_CONTENT=$(printf "%s" "$REPORT_CONTENT" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
+            curl -H "Content-Type: application/json" \
+              -X POST \
+              -d "{\"content\": $ESCAPED_CONTENT}" \
+              "$DISCORD_WEBHOOK_URL"
+          fi
 
       - name: Commit changes if any
         if: github.event_name == 'schedule'
