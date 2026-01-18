@@ -3,6 +3,7 @@ mod filter;
 mod storage;
 mod notify;
 mod types;
+mod sorter;
 
 pub use types::*;
 
@@ -78,15 +79,22 @@ fn main() -> Result<()> {
         }
     }
     
-    // Sort by match score (highest first)
-    new_leads.sort_by(|a, b| b.match_score.cmp(&a.match_score));
+    // Sort using comprehensive multi-dimensional sorting
+    sorter::sort_leads(&mut new_leads);
     
-    // Build report with profile info
-    let report = build_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
+    // Build full report (for file)
+    let full_report = build_full_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
     
-    // Save report to file
-    fs::write("report.txt", &report)?;
+    // Build summary report (for Discord, max 2000 chars)
+    let summary_report = build_summary_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len());
+    
+    // Save full report to file
+    fs::write("report.txt", &full_report)?;
     println!("Report saved to report.txt");
+    
+    // Save summary for Discord
+    fs::write("summary.txt", &summary_report)?;
+    println!("Summary saved to summary.txt");
     
     // Add new leads and save
     if !new_leads.is_empty() {
@@ -95,13 +103,14 @@ fn main() -> Result<()> {
         storage::save_leads(&root, &leads_file)?;
     }
     
-    // Send notification with report
-    notify::send_notifications(&report)?;
+    // Send summary notification (fits Discord 2000 char limit)
+    notify::send_notifications(&summary_report)?;
     
     Ok(())
 }
 
-fn build_report(
+/// Build full detailed report (for file storage)
+fn build_full_report(
     timestamp: &str, 
     new_leads: &[Lead], 
     filtered_out: &[(String, Vec<String>)],
@@ -128,13 +137,37 @@ fn build_report(
         report.push_str("No new qualified scholarships found.\n\n");
     } else {
         report.push_str(&format!("✅ **Found {} qualified scholarships:**\n\n", new_leads.len()));
+        report.push_str("📊 **Sorting:** Comprehensive score (Match + ROI + Urgency + Source Reliability)\n\n");
         
-        for (i, lead) in new_leads.iter().take(10).enumerate() {
+        // Display ALL scholarships (no limit)
+        for (i, lead) in new_leads.iter().enumerate() {
+            let comprehensive_score = sorter::calculate_comprehensive_score(lead);
+            let roi_score = sorter::calculate_roi_score(lead);
+            let urgency_score = sorter::calculate_urgency_score(lead);
+            let source_score = sorter::calculate_source_reliability_score(lead);
+            let days_until = sorter::days_until_deadline(lead);
+            
             report.push_str(&format!(
-                "**{}. {}** (Score: {})\n",
-                i + 1, lead.name, lead.match_score
+                "**{}. {}**\n",
+                i + 1, lead.name
             ));
             report.push_str(&format!("💰 {} | ⏰ {}\n", lead.amount, lead.deadline));
+            
+            // Show sorting scores
+            report.push_str(&format!("📊 **Scores:** Comprehensive: {:.1} (Match: {} + ROI: £{:.0} + Urgency: {} + Source: {})\n", 
+                comprehensive_score, lead.match_score, roi_score, urgency_score, source_score));
+            
+            if let Some(days) = days_until {
+                if days < 0 {
+                    report.push_str(&format!("  ⚠️ Deadline passed ({} days ago)\n", -days));
+                } else if days <= 30 {
+                    report.push_str(&format!("  🚨 URGENT: D-{} days\n", days));
+                } else if days <= 60 {
+                    report.push_str(&format!("  ⚡ D-{} days (Apply soon)\n", days));
+                } else {
+                    report.push_str(&format!("  ⏰ D-{} days\n", days));
+                }
+            }
             
             // Show match reasons
             if !lead.match_reasons.is_empty() {
@@ -142,10 +175,6 @@ fn build_report(
             }
             
             report.push_str(&format!("🔗 {}\n\n", lead.url));
-        }
-        
-        if new_leads.len() > 10 {
-            report.push_str(&format!("... and {} more scholarships\n\n", new_leads.len() - 10));
         }
     }
     
@@ -170,6 +199,58 @@ fn build_report(
     }
     
     report.push_str(&format!("📊 **Total leads in database:** {}", total_leads + new_leads.len()));
+    
+    report
+}
+
+/// Build summary report for Discord (max ~1800 chars to be safe)
+fn build_summary_report(
+    timestamp: &str,
+    new_leads: &[Lead],
+    filtered_out: &[(String, Vec<String>)],
+    errors: &[String],
+    total_leads: usize,
+) -> String {
+    let mut report = format!("🔍 **ScholarshipOps Summary**\n📅 {}\n\n", timestamp);
+    
+    if new_leads.is_empty() {
+        report.push_str("No new qualified scholarships found.\n\n");
+    } else {
+        report.push_str(&format!("✅ **{} qualified scholarships:**\n\n", new_leads.len()));
+        
+        // Show top 5 scholarships with minimal info
+        for (i, lead) in new_leads.iter().take(5).enumerate() {
+            let days_until = sorter::days_until_deadline(lead);
+            let urgency = match days_until {
+                Some(d) if d < 0 => "⚠️PAST".to_string(),
+                Some(d) if d <= 30 => format!("🚨D-{}", d),
+                Some(d) if d <= 60 => format!("⚡D-{}", d),
+                Some(d) => format!("D-{}", d),
+                None => "TBD".to_string(),
+            };
+            
+            // Truncate name if too long
+            let name = if lead.name.len() > 40 {
+                format!("{}...", &lead.name[..37])
+            } else {
+                lead.name.clone()
+            };
+            
+            report.push_str(&format!(
+                "{}. **{}**\n   💰{} | ⏰{} | {}\n\n",
+                i + 1, name, lead.amount, lead.deadline, urgency
+            ));
+        }
+        
+        if new_leads.len() > 5 {
+            report.push_str(&format!("... +{} more (see full report)\n\n", new_leads.len() - 5));
+        }
+    }
+    
+    // Brief stats
+    report.push_str(&format!("📊 **Stats:** {} qualified | {} filtered | {} errors\n", 
+        new_leads.len(), filtered_out.len(), errors.len()));
+    report.push_str(&format!("📁 **Total in DB:** {}", total_leads + new_leads.len()));
     
     report
 }
