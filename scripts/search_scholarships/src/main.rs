@@ -27,7 +27,8 @@ fn main() -> Result<()> {
         .collect();
     
     // Scrape scholarships
-    let mut new_leads = Vec::new();
+    let mut new_leads: Vec<Lead> = Vec::new();
+    let mut filtered_out: Vec<(String, Vec<String>)> = Vec::new();
     let mut errors: Vec<String> = Vec::new();
     
     for source in &enabled_sources {
@@ -37,17 +38,35 @@ fn main() -> Result<()> {
                 for mut lead in scraped {
                     // Skip if already exists
                     if existing_names.contains(&lead.name) {
+                        println!("Skipping duplicate: {}", lead.name);
                         continue;
                     }
                     
-                    // Filter by criteria
-                    if filter::matches_criteria(&lead, &criteria) {
+                    // Step 1: Basic keyword filtering
+                    if !filter::matches_criteria(&lead, &criteria) {
+                        println!("Filtered out (keywords): {}", lead.name);
+                        filtered_out.push((lead.name.clone(), vec!["Keyword mismatch".to_string()]));
+                        continue;
+                    }
+                    
+                    // Step 2: Profile-based qualification filtering
+                    if let Some(ref profile) = criteria.profile {
+                        if filter::filter_by_profile(&mut lead, profile) {
+                            lead.status = "qualified".to_string();
+                            lead.source_type = source.source_type.clone();
+                            lead.added_date = chrono::Utc::now().format("%Y-%m-%d").to_string();
+                            println!("✅ Qualified: {} (score: {})", lead.name, lead.match_score);
+                            new_leads.push(lead);
+                        } else {
+                            println!("❌ Disqualified: {} - {:?}", lead.name, lead.match_reasons);
+                            filtered_out.push((lead.name.clone(), lead.match_reasons.clone()));
+                        }
+                    } else {
+                        // No profile, just use basic filtering
                         lead.status = "qualified".to_string();
                         lead.source_type = source.source_type.clone();
                         lead.added_date = chrono::Utc::now().format("%Y-%m-%d").to_string();
                         new_leads.push(lead);
-                    } else {
-                        println!("Filtered out: {}", lead.name);
                     }
                 }
             }
@@ -59,8 +78,11 @@ fn main() -> Result<()> {
         }
     }
     
-    // Build report
-    let report = build_report(&now, &new_leads, &errors, leads_file.leads.len());
+    // Sort by match score (highest first)
+    new_leads.sort_by(|a, b| b.match_score.cmp(&a.match_score));
+    
+    // Build report with profile info
+    let report = build_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
     
     // Save report to file
     fs::write("report.txt", &report)?;
@@ -79,33 +101,75 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn build_report(timestamp: &str, new_leads: &[Lead], errors: &[String], total_leads: usize) -> String {
+fn build_report(
+    timestamp: &str, 
+    new_leads: &[Lead], 
+    filtered_out: &[(String, Vec<String>)],
+    errors: &[String], 
+    total_leads: usize,
+    profile: &Option<Profile>,
+) -> String {
     let mut report = format!("🔍 **ScholarshipOps Search Report**\n📅 {}\n\n", timestamp);
     
-    if new_leads.is_empty() {
-        report.push_str("No new scholarships found.\n");
-    } else {
-        report.push_str(&format!("✅ Found **{}** new qualified scholarships:\n\n", new_leads.len()));
-        for lead in new_leads.iter().take(10) {
-            report.push_str(&format!(
-                "• **{}**\n  💰 {} | ⏰ {}\n  🔗 {}\n\n",
-                lead.name, lead.amount, lead.deadline, lead.url
-            ));
+    // Show profile summary
+    if let Some(p) = profile {
+        report.push_str("👤 **Your Profile:**\n");
+        report.push_str(&format!("• 🇹🇼 Nationality: {}\n", p.nationality));
+        report.push_str(&format!("• 🎓 Target: {} ({})\n", p.target_university, p.programme_start));
+        report.push_str(&format!("• 📚 Level: {}\n", p.programme_level));
+        if !p.education.is_empty() {
+            let best_gpa = p.education.iter().map(|e| e.gpa).fold(0.0, f64::max);
+            report.push_str(&format!("• 📊 Best GPA: {:.2}\n", best_gpa));
         }
+        report.push_str("\n");
+    }
+    
+    if new_leads.is_empty() {
+        report.push_str("No new qualified scholarships found.\n\n");
+    } else {
+        report.push_str(&format!("✅ **Found {} qualified scholarships:**\n\n", new_leads.len()));
+        
+        for (i, lead) in new_leads.iter().take(10).enumerate() {
+            report.push_str(&format!(
+                "**{}. {}** (Score: {})\n",
+                i + 1, lead.name, lead.match_score
+            ));
+            report.push_str(&format!("💰 {} | ⏰ {}\n", lead.amount, lead.deadline));
+            
+            // Show match reasons
+            if !lead.match_reasons.is_empty() {
+                report.push_str(&format!("📋 {}\n", lead.match_reasons.join(" | ")));
+            }
+            
+            report.push_str(&format!("🔗 {}\n\n", lead.url));
+        }
+        
         if new_leads.len() > 10 {
-            report.push_str(&format!("... and {} more\n\n", new_leads.len() - 10));
+            report.push_str(&format!("... and {} more scholarships\n\n", new_leads.len() - 10));
         }
     }
     
+    // Show filtered out summary
+    if !filtered_out.is_empty() {
+        report.push_str(&format!("⏭️ **Filtered out:** {} scholarships\n", filtered_out.len()));
+        for (name, reasons) in filtered_out.iter().take(5) {
+            report.push_str(&format!("• {} - {}\n", name, reasons.join(", ")));
+        }
+        if filtered_out.len() > 5 {
+            report.push_str(&format!("... and {} more\n", filtered_out.len() - 5));
+        }
+        report.push_str("\n");
+    }
+    
     if !errors.is_empty() {
-        report.push_str(&format!("⚠️ {} source(s) failed:\n", errors.len()));
+        report.push_str(&format!("⚠️ **{} source(s) had issues:**\n", errors.len()));
         for err in errors {
             report.push_str(&format!("• {}\n", err));
         }
         report.push_str("\n");
     }
     
-    report.push_str(&format!("📊 Total leads in database: {}", total_leads + new_leads.len()));
+    report.push_str(&format!("📊 **Total leads in database:** {}", total_leads + new_leads.len()));
     
     report
 }

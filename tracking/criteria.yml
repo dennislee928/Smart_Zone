@@ -22,3 +22,31 @@ criteria:
     - "PhD only"
     - "US citizens only"
     - "domestic students only"
+    - "UK citizens only"
+    - "EU citizens only"
+    - "domestic only"
+
+# Personal profile for qualification matching
+profile:
+  nationality: "Taiwan"
+  target_university: "University of Glasgow"
+  target_country: "UK"
+  programme_level: "master"
+  programme_start: "2026-09-14"
+  education:
+    - degree: "bachelor"
+      university: "National Chengchi University (NCCU)"
+      department: "Management Information Systems (MIS)"
+      gpa: 2.92
+      gpa_scale: 4.0
+      status: "graduated"
+    - degree: "master"
+      university: "National Chengchi University (NCCU)"
+      department: "Digital Content and Technologies (DCT)"
+      gpa: 3.96
+      gpa_scale: 4.0
+      status: "incomplete"
+  # Deadline must be after this date to be relevant
+  min_deadline: "2026-02-01"
+  # GPA requirements - will filter out if requirement exceeds this
+  max_gpa_requirement: 3.0
