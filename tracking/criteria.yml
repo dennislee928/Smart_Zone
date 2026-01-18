@@ -1,5 +1,11 @@
 criteria:
   required:
+    - "international"
+    - "master"
+    - "postgraduate"
+    - "all nationalities"
+    - "scholarship"
+    - "funding"
     - "UK master eligible"
     - "Open international"
   preferred:
@@ -9,6 +15,10 @@ criteria:
     - "Open international"
     - "Taiwan eligible"
     - "Taiwan master eligible"
+    - "full tuition"
+    - "fully funded"
   excluded_keywords:
     - "undergraduate only"
     - "PhD only"
+    - "US citizens only"
+    - "domestic students only"
