@@ -3389,3 +3389,3897 @@ sources:
     enabled: True
     scraper: "government"
 
+  - name: "Gates Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.gatesfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ford Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.fordfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rockefeller Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.rockefellerfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Soros Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.opensocietyfoundations.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mastercard Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.mastercardfdn.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Clinton Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.clintonfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bloomberg Philanthropies Scholarships"
+    type: "ngo"
+    url: "https://www.bloomberg.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bill and Melinda Gates Scholarships"
+    type: "ngo"
+    url: "https://www.gatesfoundation.org/education"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Hewlett Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.hewlett.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Packard Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.packard.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "MacArthur Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.macfound.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Knight Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.knightfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kresge Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.kresge.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lilly Endowment Scholarships"
+    type: "ngo"
+    url: "https://www.lillyendowment.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Robert Wood Johnson Scholarships"
+    type: "ngo"
+    url: "https://www.rwjf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Annenberg Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.annenberg.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Carnegie Corporation Scholarships"
+    type: "ngo"
+    url: "https://www.carnegie.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mellon Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.mellon.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Sloan Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.sloan.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kauffman Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.kauffman.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Casey Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.aecf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kaiser Family Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.kff.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Pew Charitable Trusts Scholarships"
+    type: "ngo"
+    url: "https://www.pewtrusts.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Joyce Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.joycefdn.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Surdna Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.surdna.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Barr Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.barrfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Boston Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.tbf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Chicago Community Trust Scholarships"
+    type: "ngo"
+    url: "https://www.cct.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "New York Community Trust Scholarships"
+    type: "ngo"
+    url: "https://www.nycommunitytrust.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "California Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.calfund.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Seattle Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.seattlefoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Denver Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.denverfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Minneapolis Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.minneapolisfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cleveland Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.clevelandfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Philadelphia Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.philafound.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Baltimore Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.bcf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Greater Kansas City Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.growyourgiving.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Community Foundation for Greater Atlanta Scholarships"
+    type: "ngo"
+    url: "https://www.cfgreateratlanta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Silicon Valley Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.siliconvalleycf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Houston Endowment Scholarships"
+    type: "ngo"
+    url: "https://www.houstonendowment.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Dallas Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.dallasfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "San Antonio Area Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.saafdn.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Arizona Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.azfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Oregon Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.oregoncf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Hawaii Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.hawaiicommunityfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alaska Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.alaskacf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Vermont Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.vermontcf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "New Hampshire Charitable Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.nhcf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Maine Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.mainecf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rhode Island Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.rifoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Connecticut Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.conncf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "New Jersey Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.njcf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Delaware Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.delcf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Maryland Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.mcf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Virginia Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.virginiacf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "North Carolina Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.nccommunityfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "South Carolina Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.yourfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Georgia Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.gacf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Florida Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.floridacommunity.com/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alabama Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.alabamacommunityfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mississippi Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.mscf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Louisiana Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.lacf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Arkansas Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.arcf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Oklahoma City Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.occf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kansas City Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.growyourgiving.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Nebraska Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.nebcommfound.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Iowa Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.iowacommunityfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Missouri Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.mocf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Illinois Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.illinoiscf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Indiana Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.indianacommunityfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Michigan Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.michiganfoundations.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Wisconsin Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.wisconsincf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Minnesota Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.minneapolisfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "North Dakota Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.ndcf.net/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "South Dakota Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.sdcommunityfoundation.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Montana Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.mtcf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Wyoming Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.wycf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Colorado Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.coloradocf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "New Mexico Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.nmcf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Utah Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.utahcf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Nevada Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.nevadacf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Idaho Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.idahocf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Washington Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.wacf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Oregon Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.oregoncf.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "California Community Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.calfund.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rotary Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.rotary.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lions Clubs International Scholarships"
+    type: "ngo"
+    url: "https://www.lionsclubs.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kiwanis International Scholarships"
+    type: "ngo"
+    url: "https://www.kiwanis.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Optimist International Scholarships"
+    type: "ngo"
+    url: "https://www.optimist.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Soroptimist International Scholarships"
+    type: "ngo"
+    url: "https://www.soroptimist.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Zonta International Scholarships"
+    type: "ngo"
+    url: "https://www.zonta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Altrusa International Scholarships"
+    type: "ngo"
+    url: "https://www.altrusa.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Quota International Scholarships"
+    type: "ngo"
+    url: "https://www.quota.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "International Inner Wheel Scholarships"
+    type: "ngo"
+    url: "https://www.innerwheel.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lions Clubs International Foundation Scholarships"
+    type: "ngo"
+    url: "https://www.lionsclubs.org/foundation"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rotary International Scholarships"
+    type: "ngo"
+    url: "https://www.rotary.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rotary District Scholarships"
+    type: "ngo"
+    url: "https://www.rotary.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rotary Club Scholarships"
+    type: "ngo"
+    url: "https://www.rotary.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lions Club Scholarships"
+    type: "ngo"
+    url: "https://www.lionsclubs.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kiwanis Club Scholarships"
+    type: "ngo"
+    url: "https://www.kiwanis.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Optimist Club Scholarships"
+    type: "ngo"
+    url: "https://www.optimist.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Soroptimist Club Scholarships"
+    type: "ngo"
+    url: "https://www.soroptimist.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Zonta Club Scholarships"
+    type: "ngo"
+    url: "https://www.zonta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Altrusa Club Scholarships"
+    type: "ngo"
+    url: "https://www.altrusa.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Quota Club Scholarships"
+    type: "ngo"
+    url: "https://www.quota.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Inner Wheel Club Scholarships"
+    type: "ngo"
+    url: "https://www.innerwheel.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "United Way Scholarships"
+    type: "ngo"
+    url: "https://www.unitedway.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Red Cross Scholarships"
+    type: "ngo"
+    url: "https://www.redcross.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "YMCA Scholarships"
+    type: "ngo"
+    url: "https://www.ymca.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "YWCA Scholarships"
+    type: "ngo"
+    url: "https://www.ywca.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Boys and Girls Clubs Scholarships"
+    type: "ngo"
+    url: "https://www.bgca.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Girl Scouts Scholarships"
+    type: "ngo"
+    url: "https://www.girlscouts.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Boy Scouts Scholarships"
+    type: "ngo"
+    url: "https://www.scouting.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "4-H Scholarships"
+    type: "ngo"
+    url: "https://www.4-h.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Future Farmers of America Scholarships"
+    type: "ngo"
+    url: "https://www.ffa.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "DECA Scholarships"
+    type: "ngo"
+    url: "https://www.deca.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "FBLA Scholarships"
+    type: "ngo"
+    url: "https://www.fbla.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "SkillsUSA Scholarships"
+    type: "ngo"
+    url: "https://www.skillsusa.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "HOSA Scholarships"
+    type: "ngo"
+    url: "https://www.hosa.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "TSA Scholarships"
+    type: "ngo"
+    url: "https://www.tsaweb.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "BPA Scholarships"
+    type: "ngo"
+    url: "https://www.bpa.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "FCCLA Scholarships"
+    type: "ngo"
+    url: "https://www.fcclainc.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Family Career and Community Leaders Scholarships"
+    type: "ngo"
+    url: "https://www.fcclainc.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "National FFA Organization Scholarships"
+    type: "ngo"
+    url: "https://www.ffa.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "National 4-H Council Scholarships"
+    type: "ngo"
+    url: "https://www.4-h.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "National Honor Society Scholarships"
+    type: "ngo"
+    url: "https://www.nhs.us/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "National Beta Club Scholarships"
+    type: "ngo"
+    url: "https://www.betaclub.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Key Club International Scholarships"
+    type: "ngo"
+    url: "https://www.keyclub.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Interact Club Scholarships"
+    type: "ngo"
+    url: "https://www.rotary.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Leo Club Scholarships"
+    type: "ngo"
+    url: "https://www.lionsclubs.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Builders Club Scholarships"
+    type: "ngo"
+    url: "https://www.kiwanis.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Aktion Club Scholarships"
+    type: "ngo"
+    url: "https://www.kiwanis.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Circle K International Scholarships"
+    type: "ngo"
+    url: "https://www.circlek.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Phi Omega Scholarships"
+    type: "ngo"
+    url: "https://www.apo.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Beta Kappa Scholarships"
+    type: "ngo"
+    url: "https://www.pbk.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Kappa Phi Scholarships"
+    type: "ngo"
+    url: "https://www.phikappaphi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Theta Kappa Scholarships"
+    type: "ngo"
+    url: "https://www.ptk.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Tau Beta Pi Scholarships"
+    type: "ngo"
+    url: "https://www.tbp.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Eta Kappa Nu Scholarships"
+    type: "ngo"
+    url: "https://www.hkn.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Sigma Xi Scholarships"
+    type: "ngo"
+    url: "https://www.sigmaxi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Omega Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.alphaomegaalpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Alpha Theta Scholarships"
+    type: "ngo"
+    url: "https://www.phialphatheta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Pi Sigma Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.pisigmaalpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Omicron Delta Epsilon Scholarships"
+    type: "ngo"
+    url: "https://www.omicrondeltaepsilon.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Beta Gamma Sigma Scholarships"
+    type: "ngo"
+    url: "https://www.betagammasigma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Iota Delta Scholarships"
+    type: "ngo"
+    url: "https://www.alphaiotadelta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Mu Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.alphamualpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Phi Sigma Scholarships"
+    type: "ngo"
+    url: "https://www.alphaphisigma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Chi Epsilon Scholarships"
+    type: "ngo"
+    url: "https://www.chiepsilon.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Tau Sigma Scholarships"
+    type: "ngo"
+    url: "https://www.tausigma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Golden Key Scholarships"
+    type: "ngo"
+    url: "https://www.goldenkey.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "National Society of Collegiate Scholars Scholarships"
+    type: "ngo"
+    url: "https://www.nscs.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Eta Sigma Scholarships"
+    type: "ngo"
+    url: "https://www.phietasigma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Lambda Delta Scholarships"
+    type: "ngo"
+    url: "https://www.alphalambdadelta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Omicron Delta Kappa Scholarships"
+    type: "ngo"
+    url: "https://www.odk.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mortar Board Scholarships"
+    type: "ngo"
+    url: "https://www.mortarboard.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Order of Omega Scholarships"
+    type: "ngo"
+    url: "https://www.orderofomega.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Gamma Sigma Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.gammasigmaalpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Kappa Psi Scholarships"
+    type: "ngo"
+    url: "https://www.akpsi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Delta Sigma Pi Scholarships"
+    type: "ngo"
+    url: "https://www.dsp.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Chi Theta Scholarships"
+    type: "ngo"
+    url: "https://www.phichitheta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Kappa Psi Scholarships"
+    type: "ngo"
+    url: "https://www.akpsi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Beta Alpha Psi Scholarships"
+    type: "ngo"
+    url: "https://www.bap.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Beta Gamma Sigma Scholarships"
+    type: "ngo"
+    url: "https://www.betagammasigma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Omicron Delta Epsilon Scholarships"
+    type: "ngo"
+    url: "https://www.omicrondeltaepsilon.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Iota Delta Scholarships"
+    type: "ngo"
+    url: "https://www.alphaiotadelta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Mu Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.alphamualpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Phi Sigma Scholarships"
+    type: "ngo"
+    url: "https://www.alphaphisigma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Chi Epsilon Scholarships"
+    type: "ngo"
+    url: "https://www.chiepsilon.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Tau Sigma Scholarships"
+    type: "ngo"
+    url: "https://www.tausigma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Golden Key Scholarships"
+    type: "ngo"
+    url: "https://www.goldenkey.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "National Society of Collegiate Scholars Scholarships"
+    type: "ngo"
+    url: "https://www.nscs.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Eta Sigma Scholarships"
+    type: "ngo"
+    url: "https://www.phietasigma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Lambda Delta Scholarships"
+    type: "ngo"
+    url: "https://www.alphalambdadelta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Omicron Delta Kappa Scholarships"
+    type: "ngo"
+    url: "https://www.odk.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mortar Board Scholarships"
+    type: "ngo"
+    url: "https://www.mortarboard.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Order of Omega Scholarships"
+    type: "ngo"
+    url: "https://www.orderofomega.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Gamma Sigma Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.gammasigmaalpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Kappa Psi Scholarships"
+    type: "ngo"
+    url: "https://www.akpsi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Delta Sigma Pi Scholarships"
+    type: "ngo"
+    url: "https://www.dsp.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Chi Theta Scholarships"
+    type: "ngo"
+    url: "https://www.phichitheta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kappa Alpha Psi Scholarships"
+    type: "ngo"
+    url: "https://www.kappaalphapsi1911.com/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Phi Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.apa1906.net/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Omega Psi Phi Scholarships"
+    type: "ngo"
+    url: "https://www.omegapsiphifraternity.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Beta Sigma Scholarships"
+    type: "ngo"
+    url: "https://www.phibetasigma1914.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Sigma Gamma Rho Scholarships"
+    type: "ngo"
+    url: "https://www.sgrho1922.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Zeta Phi Beta Scholarships"
+    type: "ngo"
+    url: "https://www.zphib1920.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Delta Sigma Theta Scholarships"
+    type: "ngo"
+    url: "https://www.dst1913.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Kappa Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.aka1908.com/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Iota Phi Theta Scholarships"
+    type: "ngo"
+    url: "https://www.iotaphitheta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Beta Chi Scholarships"
+    type: "ngo"
+    url: "https://www.phibetachi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Phi Scholarships"
+    type: "ngo"
+    url: "https://www.alphaphi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Chi Omega Scholarships"
+    type: "ngo"
+    url: "https://www.chiomega.com/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Delta Delta Delta Scholarships"
+    type: "ngo"
+    url: "https://www.tridelta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Delta Gamma Scholarships"
+    type: "ngo"
+    url: "https://www.deltagamma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Delta Zeta Scholarships"
+    type: "ngo"
+    url: "https://www.deltazeta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Gamma Phi Beta Scholarships"
+    type: "ngo"
+    url: "https://www.gammaphibeta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kappa Alpha Theta Scholarships"
+    type: "ngo"
+    url: "https://www.kappaalphatheta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kappa Delta Scholarships"
+    type: "ngo"
+    url: "https://www.kappadelta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kappa Kappa Gamma Scholarships"
+    type: "ngo"
+    url: "https://www.kappakappagamma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Mu Scholarships"
+    type: "ngo"
+    url: "https://www.phimu.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Pi Beta Phi Scholarships"
+    type: "ngo"
+    url: "https://www.pibetaphi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Sigma Kappa Scholarships"
+    type: "ngo"
+    url: "https://www.sigmakappa.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Theta Phi Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.thetaphialpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Zeta Tau Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.zetataualpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Chi Omega Scholarships"
+    type: "ngo"
+    url: "https://www.alphachiomega.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Delta Pi Scholarships"
+    type: "ngo"
+    url: "https://www.alphadeltapi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Epsilon Phi Scholarships"
+    type: "ngo"
+    url: "https://www.alphaepsilonphi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Gamma Delta Scholarships"
+    type: "ngo"
+    url: "https://www.alphagammadelta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Omicron Pi Scholarships"
+    type: "ngo"
+    url: "https://www.alphaomicronpi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Sigma Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.alphasigmaalpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Sigma Tau Scholarships"
+    type: "ngo"
+    url: "https://www.alphasigmatau.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alpha Xi Delta Scholarships"
+    type: "ngo"
+    url: "https://www.alphaxidelta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Chi Upsilon Sigma Scholarships"
+    type: "ngo"
+    url: "https://www.chiupsilonsigma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Delta Phi Epsilon Scholarships"
+    type: "ngo"
+    url: "https://www.dphie.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Delta Sigma Theta Scholarships"
+    type: "ngo"
+    url: "https://www.dst1913.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Gamma Phi Beta Scholarships"
+    type: "ngo"
+    url: "https://www.gammaphibeta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kappa Alpha Theta Scholarships"
+    type: "ngo"
+    url: "https://www.kappaalphatheta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kappa Delta Scholarships"
+    type: "ngo"
+    url: "https://www.kappadelta.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kappa Kappa Gamma Scholarships"
+    type: "ngo"
+    url: "https://www.kappakappagamma.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Phi Mu Scholarships"
+    type: "ngo"
+    url: "https://www.phimu.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Pi Beta Phi Scholarships"
+    type: "ngo"
+    url: "https://www.pibetaphi.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Sigma Kappa Scholarships"
+    type: "ngo"
+    url: "https://www.sigmakappa.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Theta Phi Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.thetaphialpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Zeta Tau Alpha Scholarships"
+    type: "ngo"
+    url: "https://www.zetataualpha.org/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Google Scholarships"
+    type: "enterprise"
+    url: "https://www.google.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Microsoft Scholarships"
+    type: "enterprise"
+    url: "https://www.microsoft.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Apple Scholarships"
+    type: "enterprise"
+    url: "https://www.apple.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Amazon Scholarships"
+    type: "enterprise"
+    url: "https://www.amazon.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Meta Scholarships"
+    type: "enterprise"
+    url: "https://www.meta.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Tesla Scholarships"
+    type: "enterprise"
+    url: "https://www.tesla.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Netflix Scholarships"
+    type: "enterprise"
+    url: "https://www.netflix.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Uber Scholarships"
+    type: "enterprise"
+    url: "https://www.uber.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Airbnb Scholarships"
+    type: "enterprise"
+    url: "https://www.airbnb.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Salesforce Scholarships"
+    type: "enterprise"
+    url: "https://www.salesforce.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Oracle Scholarships"
+    type: "enterprise"
+    url: "https://www.oracle.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "IBM Scholarships"
+    type: "enterprise"
+    url: "https://www.ibm.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Intel Scholarships"
+    type: "enterprise"
+    url: "https://www.intel.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "NVIDIA Scholarships"
+    type: "enterprise"
+    url: "https://www.nvidia.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "AMD Scholarships"
+    type: "enterprise"
+    url: "https://www.amd.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Qualcomm Scholarships"
+    type: "enterprise"
+    url: "https://www.qualcomm.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cisco Scholarships"
+    type: "enterprise"
+    url: "https://www.cisco.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "HP Scholarships"
+    type: "enterprise"
+    url: "https://www.hp.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Dell Scholarships"
+    type: "enterprise"
+    url: "https://www.dell.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lenovo Scholarships"
+    type: "enterprise"
+    url: "https://www.lenovo.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Samsung Scholarships"
+    type: "enterprise"
+    url: "https://www.samsung.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "LG Scholarships"
+    type: "enterprise"
+    url: "https://www.lg.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Sony Scholarships"
+    type: "enterprise"
+    url: "https://www.sony.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Panasonic Scholarships"
+    type: "enterprise"
+    url: "https://www.panasonic.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Toshiba Scholarships"
+    type: "enterprise"
+    url: "https://www.toshiba.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Hitachi Scholarships"
+    type: "enterprise"
+    url: "https://www.hitachi.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mitsubishi Scholarships"
+    type: "enterprise"
+    url: "https://www.mitsubishi.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Toyota Scholarships"
+    type: "enterprise"
+    url: "https://www.toyota.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Honda Scholarships"
+    type: "enterprise"
+    url: "https://www.honda.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Nissan Scholarships"
+    type: "enterprise"
+    url: "https://www.nissan.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "BMW Scholarships"
+    type: "enterprise"
+    url: "https://www.bmw.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mercedes-Benz Scholarships"
+    type: "enterprise"
+    url: "https://www.mercedes-benz.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Volkswagen Scholarships"
+    type: "enterprise"
+    url: "https://www.volkswagen.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Audi Scholarships"
+    type: "enterprise"
+    url: "https://www.audi.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Porsche Scholarships"
+    type: "enterprise"
+    url: "https://www.porsche.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ferrari Scholarships"
+    type: "enterprise"
+    url: "https://www.ferrari.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lamborghini Scholarships"
+    type: "enterprise"
+    url: "https://www.lamborghini.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rolls-Royce Scholarships"
+    type: "enterprise"
+    url: "https://www.rolls-royce.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bentley Scholarships"
+    type: "enterprise"
+    url: "https://www.bentleymotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Jaguar Scholarships"
+    type: "enterprise"
+    url: "https://www.jaguar.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Land Rover Scholarships"
+    type: "enterprise"
+    url: "https://www.landrover.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Aston Martin Scholarships"
+    type: "enterprise"
+    url: "https://www.astonmartin.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "McLaren Scholarships"
+    type: "enterprise"
+    url: "https://www.mclaren.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lotus Scholarships"
+    type: "enterprise"
+    url: "https://www.lotuscars.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Maserati Scholarships"
+    type: "enterprise"
+    url: "https://www.maserati.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Alfa Romeo Scholarships"
+    type: "enterprise"
+    url: "https://www.alfaromeo.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Fiat Scholarships"
+    type: "enterprise"
+    url: "https://www.fiat.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Peugeot Scholarships"
+    type: "enterprise"
+    url: "https://www.peugeot.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Renault Scholarships"
+    type: "enterprise"
+    url: "https://www.renault.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Citroen Scholarships"
+    type: "enterprise"
+    url: "https://www.citroen.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Volvo Scholarships"
+    type: "enterprise"
+    url: "https://www.volvocars.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Saab Scholarships"
+    type: "enterprise"
+    url: "https://www.saab.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Koenigsegg Scholarships"
+    type: "enterprise"
+    url: "https://www.koenigsegg.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "General Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.gm.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ford Scholarships"
+    type: "enterprise"
+    url: "https://www.ford.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Chrysler Scholarships"
+    type: "enterprise"
+    url: "https://www.chrysler.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Jeep Scholarships"
+    type: "enterprise"
+    url: "https://www.jeep.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Dodge Scholarships"
+    type: "enterprise"
+    url: "https://www.dodge.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ram Scholarships"
+    type: "enterprise"
+    url: "https://www.ramtrucks.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cadillac Scholarships"
+    type: "enterprise"
+    url: "https://www.cadillac.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Buick Scholarships"
+    type: "enterprise"
+    url: "https://www.buick.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Chevrolet Scholarships"
+    type: "enterprise"
+    url: "https://www.chevrolet.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "GMC Scholarships"
+    type: "enterprise"
+    url: "https://www.gmc.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lincoln Scholarships"
+    type: "enterprise"
+    url: "https://www.lincoln.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Acura Scholarships"
+    type: "enterprise"
+    url: "https://www.acura.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Infiniti Scholarships"
+    type: "enterprise"
+    url: "https://www.infiniti.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lexus Scholarships"
+    type: "enterprise"
+    url: "https://www.lexus.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Genesis Scholarships"
+    type: "enterprise"
+    url: "https://www.genesis.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Hyundai Scholarships"
+    type: "enterprise"
+    url: "https://www.hyundai.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kia Scholarships"
+    type: "enterprise"
+    url: "https://www.kia.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mazda Scholarships"
+    type: "enterprise"
+    url: "https://www.mazda.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Subaru Scholarships"
+    type: "enterprise"
+    url: "https://www.subaru.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mitsubishi Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.mitsubishicars.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Isuzu Scholarships"
+    type: "enterprise"
+    url: "https://www.isuzu.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Suzuki Scholarships"
+    type: "enterprise"
+    url: "https://www.suzuki.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Yamaha Scholarships"
+    type: "enterprise"
+    url: "https://www.yamaha.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kawasaki Scholarships"
+    type: "enterprise"
+    url: "https://www.kawasaki.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Honda Motorcycle Scholarships"
+    type: "enterprise"
+    url: "https://www.honda.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ducati Scholarships"
+    type: "enterprise"
+    url: "https://www.ducati.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Harley-Davidson Scholarships"
+    type: "enterprise"
+    url: "https://www.harley-davidson.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Triumph Scholarships"
+    type: "enterprise"
+    url: "https://www.triumphmotorcycles.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Royal Enfield Scholarships"
+    type: "enterprise"
+    url: "https://www.royalenfield.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bajaj Scholarships"
+    type: "enterprise"
+    url: "https://www.bajajauto.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "TVS Scholarships"
+    type: "enterprise"
+    url: "https://www.tvsmotor.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Hero Scholarships"
+    type: "enterprise"
+    url: "https://www.heromotocorp.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mahindra Scholarships"
+    type: "enterprise"
+    url: "https://www.mahindra.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Tata Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.tatamotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Maruti Suzuki Scholarships"
+    type: "enterprise"
+    url: "https://www.marutisuzuki.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "BYD Scholarships"
+    type: "enterprise"
+    url: "https://www.byd.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Geely Scholarships"
+    type: "enterprise"
+    url: "https://www.geely.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Great Wall Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.gwm.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Chery Scholarships"
+    type: "enterprise"
+    url: "https://www.chery.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Changan Scholarships"
+    type: "enterprise"
+    url: "https://www.changan.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "FAW Scholarships"
+    type: "enterprise"
+    url: "https://www.faw.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Dongfeng Scholarships"
+    type: "enterprise"
+    url: "https://www.dfmc.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "SAIC Scholarships"
+    type: "enterprise"
+    url: "https://www.saicmotor.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "BAIC Scholarships"
+    type: "enterprise"
+    url: "https://www.baicgroup.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "GAC Scholarships"
+    type: "enterprise"
+    url: "https://www.gac.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "JAC Scholarships"
+    type: "enterprise"
+    url: "https://www.jac.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Zotye Scholarships"
+    type: "enterprise"
+    url: "https://www.zotye.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lifan Scholarships"
+    type: "enterprise"
+    url: "https://www.lifan.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Haval Scholarships"
+    type: "enterprise"
+    url: "https://www.haval.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "WEY Scholarships"
+    type: "enterprise"
+    url: "https://www.wey.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lynk & Co Scholarships"
+    type: "enterprise"
+    url: "https://www.lynkco.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Polestar Scholarships"
+    type: "enterprise"
+    url: "https://www.polestar.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Nio Scholarships"
+    type: "enterprise"
+    url: "https://www.nio.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "XPeng Scholarships"
+    type: "enterprise"
+    url: "https://www.xpeng.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Li Auto Scholarships"
+    type: "enterprise"
+    url: "https://www.lixiang.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "WM Motor Scholarships"
+    type: "enterprise"
+    url: "https://www.wm-motor.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Byton Scholarships"
+    type: "enterprise"
+    url: "https://www.byton.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Faraday Future Scholarships"
+    type: "enterprise"
+    url: "https://www.faradayfuture.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lucid Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.lucidmotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rivian Scholarships"
+    type: "enterprise"
+    url: "https://www.rivian.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Fisker Scholarships"
+    type: "enterprise"
+    url: "https://www.fisker.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lordstown Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.lordstownmotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Canoo Scholarships"
+    type: "enterprise"
+    url: "https://www.canoo.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Arrival Scholarships"
+    type: "enterprise"
+    url: "https://www.arrival.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bollinger Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.bollingermotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Nikola Scholarships"
+    type: "enterprise"
+    url: "https://www.nikolamotor.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Hyundai Motor Group Scholarships"
+    type: "enterprise"
+    url: "https://www.hyundai.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Kia Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.kia.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Genesis Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.genesis.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "SsangYong Scholarships"
+    type: "enterprise"
+    url: "https://www.ssangyong.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Daewoo Scholarships"
+    type: "enterprise"
+    url: "https://www.daewoo.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Proton Scholarships"
+    type: "enterprise"
+    url: "https://www.proton.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Perodua Scholarships"
+    type: "enterprise"
+    url: "https://www.perodua.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Tata Scholarships"
+    type: "enterprise"
+    url: "https://www.tata.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mahindra Scholarships"
+    type: "enterprise"
+    url: "https://www.mahindra.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Maruti Scholarships"
+    type: "enterprise"
+    url: "https://www.marutisuzuki.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Hero Scholarships"
+    type: "enterprise"
+    url: "https://www.heromotocorp.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bajaj Scholarships"
+    type: "enterprise"
+    url: "https://www.bajajauto.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "TVS Scholarships"
+    type: "enterprise"
+    url: "https://www.tvsmotor.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ashok Leyland Scholarships"
+    type: "enterprise"
+    url: "https://www.ashokleyland.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Eicher Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.eicher.in/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Force Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.forcemotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "SML Isuzu Scholarships"
+    type: "enterprise"
+    url: "https://www.smlisuzu.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Hindustan Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.hindustanmotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Premier Scholarships"
+    type: "enterprise"
+    url: "https://www.premier.co.in/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Reva Scholarships"
+    type: "enterprise"
+    url: "https://www.revaindia.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Mahindra Electric Scholarships"
+    type: "enterprise"
+    url: "https://www.mahindra.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Tata Motors Electric Scholarships"
+    type: "enterprise"
+    url: "https://www.tatamotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "MG Motor Scholarships"
+    type: "enterprise"
+    url: "https://www.mg.co.uk/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Jaguar Land Rover Scholarships"
+    type: "enterprise"
+    url: "https://www.jaguarlandrover.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Volvo Cars Scholarships"
+    type: "enterprise"
+    url: "https://www.volvocars.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Geely Scholarships"
+    type: "enterprise"
+    url: "https://www.geely.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lynk & Co Scholarships"
+    type: "enterprise"
+    url: "https://www.lynkco.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Polestar Scholarships"
+    type: "enterprise"
+    url: "https://www.polestar.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Nio Scholarships"
+    type: "enterprise"
+    url: "https://www.nio.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "XPeng Scholarships"
+    type: "enterprise"
+    url: "https://www.xpeng.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Li Auto Scholarships"
+    type: "enterprise"
+    url: "https://www.lixiang.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "WM Motor Scholarships"
+    type: "enterprise"
+    url: "https://www.wm-motor.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Byton Scholarships"
+    type: "enterprise"
+    url: "https://www.byton.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Faraday Future Scholarships"
+    type: "enterprise"
+    url: "https://www.faradayfuture.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lucid Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.lucidmotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rivian Scholarships"
+    type: "enterprise"
+    url: "https://www.rivian.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Fisker Scholarships"
+    type: "enterprise"
+    url: "https://www.fisker.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Lordstown Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.lordstownmotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Canoo Scholarships"
+    type: "enterprise"
+    url: "https://www.canoo.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Arrival Scholarships"
+    type: "enterprise"
+    url: "https://www.arrival.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bollinger Motors Scholarships"
+    type: "enterprise"
+    url: "https://www.bollingermotors.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Nikola Scholarships"
+    type: "enterprise"
+    url: "https://www.nikolamotor.com/careers/scholarships"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ethereum Foundation Scholarships"
+    type: "web3"
+    url: "https://www.ethereum.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Polkadot Scholarships"
+    type: "web3"
+    url: "https://www.polkadot.network/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Solana Foundation Scholarships"
+    type: "web3"
+    url: "https://www.solana.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cardano Foundation Scholarships"
+    type: "web3"
+    url: "https://www.cardano.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Tezos Foundation Scholarships"
+    type: "web3"
+    url: "https://www.tezos.foundation/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cosmos Scholarships"
+    type: "web3"
+    url: "https://www.cosmos.network/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Polygon Scholarships"
+    type: "web3"
+    url: "https://www.polygon.technology/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Avalanche Scholarships"
+    type: "web3"
+    url: "https://www.avax.network/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Near Protocol Scholarships"
+    type: "web3"
+    url: "https://www.near.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Algorand Foundation Scholarships"
+    type: "web3"
+    url: "https://www.algorand.foundation/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Stellar Development Foundation Scholarships"
+    type: "web3"
+    url: "https://www.stellar.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ripple Scholarships"
+    type: "web3"
+    url: "https://www.ripple.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Chainlink Scholarships"
+    type: "web3"
+    url: "https://www.chain.link/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Filecoin Foundation Scholarships"
+    type: "web3"
+    url: "https://www.filecoin.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "IPFS Scholarships"
+    type: "web3"
+    url: "https://www.ipfs.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Protocol Labs Scholarships"
+    type: "web3"
+    url: "https://www.protocol.ai/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Web3 Foundation Scholarships"
+    type: "web3"
+    url: "https://www.web3.foundation/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Uniswap Foundation Scholarships"
+    type: "web3"
+    url: "https://www.uniswap.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Aave Scholarships"
+    type: "web3"
+    url: "https://www.aave.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Compound Scholarships"
+    type: "web3"
+    url: "https://www.compound.finance/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "MakerDAO Scholarships"
+    type: "web3"
+    url: "https://www.makerdao.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Curve Scholarships"
+    type: "web3"
+    url: "https://www.curve.fi/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Yearn Finance Scholarships"
+    type: "web3"
+    url: "https://www.yearn.finance/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "SushiSwap Scholarships"
+    type: "web3"
+    url: "https://www.sushi.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Balancer Scholarships"
+    type: "web3"
+    url: "https://www.balancer.fi/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "1inch Scholarships"
+    type: "web3"
+    url: "https://www.1inch.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "0x Scholarships"
+    type: "web3"
+    url: "https://www.0x.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "OpenSea Scholarships"
+    type: "web3"
+    url: "https://www.opensea.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rarible Scholarships"
+    type: "web3"
+    url: "https://www.rarible.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "SuperRare Scholarships"
+    type: "web3"
+    url: "https://www.superrare.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Foundation Scholarships"
+    type: "web3"
+    url: "https://www.foundation.app/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Nifty Gateway Scholarships"
+    type: "web3"
+    url: "https://www.niftygateway.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "MakersPlace Scholarships"
+    type: "web3"
+    url: "https://www.makersplace.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Async Art Scholarships"
+    type: "web3"
+    url: "https://www.async.art/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "KnownOrigin Scholarships"
+    type: "web3"
+    url: "https://www.knownorigin.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Art Blocks Scholarships"
+    type: "web3"
+    url: "https://www.artblocks.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "CryptoPunks Scholarships"
+    type: "web3"
+    url: "https://www.larvalabs.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bored Ape Yacht Club Scholarships"
+    type: "web3"
+    url: "https://www.boredapeyachtclub.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Doodles Scholarships"
+    type: "web3"
+    url: "https://www.doodles.app/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cool Cats Scholarships"
+    type: "web3"
+    url: "https://www.coolcatsnft.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Azuki Scholarships"
+    type: "web3"
+    url: "https://www.azuki.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Moonbirds Scholarships"
+    type: "web3"
+    url: "https://www.moonbirds.xyz/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "World of Women Scholarships"
+    type: "web3"
+    url: "https://www.worldofwomen.art/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "CryptoKitties Scholarships"
+    type: "web3"
+    url: "https://www.cryptokitties.co/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Decentraland Scholarships"
+    type: "web3"
+    url: "https://www.decentraland.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "The Sandbox Scholarships"
+    type: "web3"
+    url: "https://www.sandbox.game/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Axie Infinity Scholarships"
+    type: "web3"
+    url: "https://www.axieinfinity.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Enjin Scholarships"
+    type: "web3"
+    url: "https://www.enjin.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Immutable X Scholarships"
+    type: "web3"
+    url: "https://www.immutable.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Flow Scholarships"
+    type: "web3"
+    url: "https://www.flow.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Wax Scholarships"
+    type: "web3"
+    url: "https://www.wax.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ronin Scholarships"
+    type: "web3"
+    url: "https://www.roninchain.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Polygon Studios Scholarships"
+    type: "web3"
+    url: "https://www.polygonstudios.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Animoca Brands Scholarships"
+    type: "web3"
+    url: "https://www.animocabrands.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Sky Mavis Scholarships"
+    type: "web3"
+    url: "https://www.skymavis.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Dapper Labs Scholarships"
+    type: "web3"
+    url: "https://www.dapperlabs.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Sorare Scholarships"
+    type: "web3"
+    url: "https://www.sorare.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "NBA Top Shot Scholarships"
+    type: "web3"
+    url: "https://www.nbatopshot.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "NFL All Day Scholarships"
+    type: "web3"
+    url: "https://www.nflallday.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "UFC Strike Scholarships"
+    type: "web3"
+    url: "https://www.ufcstrike.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "LaLiga Scholarships"
+    type: "web3"
+    url: "https://www.laliga.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "MLB Scholarships"
+    type: "web3"
+    url: "https://www.mlb.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "NHL Scholarships"
+    type: "web3"
+    url: "https://www.nhl.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "NASCAR Scholarships"
+    type: "web3"
+    url: "https://www.nascar.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Formula 1 Scholarships"
+    type: "web3"
+    url: "https://www.formula1.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "MotoGP Scholarships"
+    type: "web3"
+    url: "https://www.motogp.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "WWE Scholarships"
+    type: "web3"
+    url: "https://www.wwe.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "AEW Scholarships"
+    type: "web3"
+    url: "https://www.allelitewrestling.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "UFC Scholarships"
+    type: "web3"
+    url: "https://www.ufc.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bellator Scholarships"
+    type: "web3"
+    url: "https://www.bellator.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "ONE Championship Scholarships"
+    type: "web3"
+    url: "https://www.onefc.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "PFL Scholarships"
+    type: "web3"
+    url: "https://www.pflmma.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "GLORY Scholarships"
+    type: "web3"
+    url: "https://www.glorykickboxing.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "K-1 Scholarships"
+    type: "web3"
+    url: "https://www.k-1.co.jp/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rizin Scholarships"
+    type: "web3"
+    url: "https://www.rizinff.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Scholarships"
+    type: "web3"
+    url: "https://www.shooto-mma.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "DEEP Scholarships"
+    type: "web3"
+    url: "https://www.deep2001.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Pancrase Scholarships"
+    type: "web3"
+    url: "https://www.pancrase.co.jp/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "ZST Scholarships"
+    type: "web3"
+    url: "https://www.zst.jp/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "VTJ Scholarships"
+    type: "web3"
+    url: "https://www.vtj.co.jp/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "ROAD FC Scholarships"
+    type: "web3"
+    url: "https://www.roadfc.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "M-1 Global Scholarships"
+    type: "web3"
+    url: "https://www.m1global.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "ACA Scholarships"
+    type: "web3"
+    url: "https://www.aca-mma.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Fight Nights Global Scholarships"
+    type: "web3"
+    url: "https://www.fightnights.ru/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "KSW Scholarships"
+    type: "web3"
+    url: "https://www.kswmma.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cage Warriors Scholarships"
+    type: "web3"
+    url: "https://www.cagewarriors.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "BAMMA Scholarships"
+    type: "web3"
+    url: "https://www.bamma.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bellator Europe Scholarships"
+    type: "web3"
+    url: "https://www.bellator.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cage Rage Scholarships"
+    type: "web3"
+    url: "https://www.cagerage.tv/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Brazil Scholarships"
+    type: "web3"
+    url: "https://www.shooto.com.br/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Mexico Scholarships"
+    type: "web3"
+    url: "https://www.shooto.com.mx/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto USA Scholarships"
+    type: "web3"
+    url: "https://www.shootousa.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Canada Scholarships"
+    type: "web3"
+    url: "https://www.shootocanada.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Australia Scholarships"
+    type: "web3"
+    url: "https://www.shootoaustralia.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto New Zealand Scholarships"
+    type: "web3"
+    url: "https://www.shootonewzealand.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto South Africa Scholarships"
+    type: "web3"
+    url: "https://www.shootosouthafrica.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto UK Scholarships"
+    type: "web3"
+    url: "https://www.shootouk.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Ireland Scholarships"
+    type: "web3"
+    url: "https://www.shootoireland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Scotland Scholarships"
+    type: "web3"
+    url: "https://www.shootoscotland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Wales Scholarships"
+    type: "web3"
+    url: "https://www.shootowales.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Northern Ireland Scholarships"
+    type: "web3"
+    url: "https://www.shootonorthernireland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Isle of Man Scholarships"
+    type: "web3"
+    url: "https://www.shootoisleofman.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Channel Islands Scholarships"
+    type: "web3"
+    url: "https://www.shootochannelislands.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Gibraltar Scholarships"
+    type: "web3"
+    url: "https://www.shootogibraltar.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Malta Scholarships"
+    type: "web3"
+    url: "https://www.shootomalta.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Cyprus Scholarships"
+    type: "web3"
+    url: "https://www.shootocyprus.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Greece Scholarships"
+    type: "web3"
+    url: "https://www.shootogreece.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Turkey Scholarships"
+    type: "web3"
+    url: "https://www.shoototurkey.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Bulgaria Scholarships"
+    type: "web3"
+    url: "https://www.shootobulgaria.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Romania Scholarships"
+    type: "web3"
+    url: "https://www.shootoromania.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Hungary Scholarships"
+    type: "web3"
+    url: "https://www.shootohungary.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Czech Republic Scholarships"
+    type: "web3"
+    url: "https://www.shootoczechrepublic.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Slovakia Scholarships"
+    type: "web3"
+    url: "https://www.shootoslovakia.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Poland Scholarships"
+    type: "web3"
+    url: "https://www.shootopoland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Lithuania Scholarships"
+    type: "web3"
+    url: "https://www.shootolithuania.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Latvia Scholarships"
+    type: "web3"
+    url: "https://www.shootolatvia.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Estonia Scholarships"
+    type: "web3"
+    url: "https://www.shootoestonia.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Finland Scholarships"
+    type: "web3"
+    url: "https://www.shootofinland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Sweden Scholarships"
+    type: "web3"
+    url: "https://www.shootosweden.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Norway Scholarships"
+    type: "web3"
+    url: "https://www.shootonorway.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Denmark Scholarships"
+    type: "web3"
+    url: "https://www.shootodenmark.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Iceland Scholarships"
+    type: "web3"
+    url: "https://www.shootoiceland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Faroe Islands Scholarships"
+    type: "web3"
+    url: "https://www.shootofaroeislands.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Greenland Scholarships"
+    type: "web3"
+    url: "https://www.shootogreenland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Svalbard Scholarships"
+    type: "web3"
+    url: "https://www.shootosvalbard.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Jan Mayen Scholarships"
+    type: "web3"
+    url: "https://www.shootojanmayen.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Bear Island Scholarships"
+    type: "web3"
+    url: "https://www.shootobearisland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Hopen Scholarships"
+    type: "web3"
+    url: "https://www.shootohopen.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Bjornoya Scholarships"
+    type: "web3"
+    url: "https://www.shootobjornoya.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Edgeoya Scholarships"
+    type: "web3"
+    url: "https://www.shootoedgeoya.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Barentsoya Scholarships"
+    type: "web3"
+    url: "https://www.shootobarentsoya.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Spitsbergen Scholarships"
+    type: "web3"
+    url: "https://www.shootospitsbergen.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Nordaustlandet Scholarships"
+    type: "web3"
+    url: "https://www.shootonordaustlandet.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Kvitoya Scholarships"
+    type: "web3"
+    url: "https://www.shootokvitoya.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Kong Karls Land Scholarships"
+    type: "web3"
+    url: "https://www.shootokongkarlsland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Hopen Scholarships"
+    type: "web3"
+    url: "https://www.shootohopen.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Bear Island Scholarships"
+    type: "web3"
+    url: "https://www.shootobearisland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Jan Mayen Scholarships"
+    type: "web3"
+    url: "https://www.shootojanmayen.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Svalbard Scholarships"
+    type: "web3"
+    url: "https://www.shootosvalbard.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Greenland Scholarships"
+    type: "web3"
+    url: "https://www.shootogreenland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Faroe Islands Scholarships"
+    type: "web3"
+    url: "https://www.shootofaroeislands.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Iceland Scholarships"
+    type: "web3"
+    url: "https://www.shootoiceland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Denmark Scholarships"
+    type: "web3"
+    url: "https://www.shootodenmark.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Norway Scholarships"
+    type: "web3"
+    url: "https://www.shootonorway.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Sweden Scholarships"
+    type: "web3"
+    url: "https://www.shootosweden.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Finland Scholarships"
+    type: "web3"
+    url: "https://www.shootofinland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Estonia Scholarships"
+    type: "web3"
+    url: "https://www.shootoestonia.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Latvia Scholarships"
+    type: "web3"
+    url: "https://www.shootolatvia.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Lithuania Scholarships"
+    type: "web3"
+    url: "https://www.shootolithuania.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Poland Scholarships"
+    type: "web3"
+    url: "https://www.shootopoland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Slovakia Scholarships"
+    type: "web3"
+    url: "https://www.shootoslovakia.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Czech Republic Scholarships"
+    type: "web3"
+    url: "https://www.shootoczechrepublic.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Hungary Scholarships"
+    type: "web3"
+    url: "https://www.shootohungary.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Romania Scholarships"
+    type: "web3"
+    url: "https://www.shootoromania.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Bulgaria Scholarships"
+    type: "web3"
+    url: "https://www.shootobulgaria.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Turkey Scholarships"
+    type: "web3"
+    url: "https://www.shoototurkey.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Greece Scholarships"
+    type: "web3"
+    url: "https://www.shootogreece.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Cyprus Scholarships"
+    type: "web3"
+    url: "https://www.shootocyprus.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Malta Scholarships"
+    type: "web3"
+    url: "https://www.shootomalta.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Gibraltar Scholarships"
+    type: "web3"
+    url: "https://www.shootogibraltar.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Channel Islands Scholarships"
+    type: "web3"
+    url: "https://www.shootochannelislands.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Isle of Man Scholarships"
+    type: "web3"
+    url: "https://www.shootoisleofman.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Northern Ireland Scholarships"
+    type: "web3"
+    url: "https://www.shootonorthernireland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Wales Scholarships"
+    type: "web3"
+    url: "https://www.shootowales.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Scotland Scholarships"
+    type: "web3"
+    url: "https://www.shootoscotland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Ireland Scholarships"
+    type: "web3"
+    url: "https://www.shootoireland.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto UK Scholarships"
+    type: "web3"
+    url: "https://www.shootouk.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto South Africa Scholarships"
+    type: "web3"
+    url: "https://www.shootosouthafrica.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto New Zealand Scholarships"
+    type: "web3"
+    url: "https://www.shootonewzealand.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Australia Scholarships"
+    type: "web3"
+    url: "https://www.shootoaustralia.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Canada Scholarships"
+    type: "web3"
+    url: "https://www.shootocanada.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto USA Scholarships"
+    type: "web3"
+    url: "https://www.shootousa.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Mexico Scholarships"
+    type: "web3"
+    url: "https://www.shooto.com.mx/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Brazil Scholarships"
+    type: "web3"
+    url: "https://www.shooto.com.br/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cage Rage Scholarships"
+    type: "web3"
+    url: "https://www.cagerage.tv/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bellator Europe Scholarships"
+    type: "web3"
+    url: "https://www.bellator.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "BAMMA Scholarships"
+    type: "web3"
+    url: "https://www.bamma.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cage Warriors Scholarships"
+    type: "web3"
+    url: "https://www.cagewarriors.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "KSW Scholarships"
+    type: "web3"
+    url: "https://www.kswmma.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Fight Nights Global Scholarships"
+    type: "web3"
+    url: "https://www.fightnights.ru/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "ACA Scholarships"
+    type: "web3"
+    url: "https://www.aca-mma.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "M-1 Global Scholarships"
+    type: "web3"
+    url: "https://www.m1global.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "ROAD FC Scholarships"
+    type: "web3"
+    url: "https://www.roadfc.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "VTJ Scholarships"
+    type: "web3"
+    url: "https://www.vtj.co.jp/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "ZST Scholarships"
+    type: "web3"
+    url: "https://www.zst.jp/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Pancrase Scholarships"
+    type: "web3"
+    url: "https://www.pancrase.co.jp/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "DEEP Scholarships"
+    type: "web3"
+    url: "https://www.deep2001.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Shooto Scholarships"
+    type: "web3"
+    url: "https://www.shooto-mma.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rizin Scholarships"
+    type: "web3"
+    url: "https://www.rizinff.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "K-1 Scholarships"
+    type: "web3"
+    url: "https://www.k-1.co.jp/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "GLORY Scholarships"
+    type: "web3"
+    url: "https://www.glorykickboxing.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "PFL Scholarships"
+    type: "web3"
+    url: "https://www.pflmma.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "ONE Championship Scholarships"
+    type: "web3"
+    url: "https://www.onefc.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bellator Scholarships"
+    type: "web3"
+    url: "https://www.bellator.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "UFC Scholarships"
+    type: "web3"
+    url: "https://www.ufc.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "AEW Scholarships"
+    type: "web3"
+    url: "https://www.allelitewrestling.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "WWE Scholarships"
+    type: "web3"
+    url: "https://www.wwe.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "MotoGP Scholarships"
+    type: "web3"
+    url: "https://www.motogp.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Formula 1 Scholarships"
+    type: "web3"
+    url: "https://www.formula1.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "NASCAR Scholarships"
+    type: "web3"
+    url: "https://www.nascar.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "NHL Scholarships"
+    type: "web3"
+    url: "https://www.nhl.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "MLB Scholarships"
+    type: "web3"
+    url: "https://www.mlb.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "LaLiga Scholarships"
+    type: "web3"
+    url: "https://www.laliga.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "UFC Strike Scholarships"
+    type: "web3"
+    url: "https://www.ufcstrike.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "NFL All Day Scholarships"
+    type: "web3"
+    url: "https://www.nflallday.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "NBA Top Shot Scholarships"
+    type: "web3"
+    url: "https://www.nbatopshot.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Sorare Scholarships"
+    type: "web3"
+    url: "https://www.sorare.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Dapper Labs Scholarships"
+    type: "web3"
+    url: "https://www.dapperlabs.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Sky Mavis Scholarships"
+    type: "web3"
+    url: "https://www.skymavis.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Animoca Brands Scholarships"
+    type: "web3"
+    url: "https://www.animocabrands.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Polygon Studios Scholarships"
+    type: "web3"
+    url: "https://www.polygonstudios.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ronin Scholarships"
+    type: "web3"
+    url: "https://www.roninchain.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Wax Scholarships"
+    type: "web3"
+    url: "https://www.wax.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Flow Scholarships"
+    type: "web3"
+    url: "https://www.flow.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Immutable X Scholarships"
+    type: "web3"
+    url: "https://www.immutable.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Enjin Scholarships"
+    type: "web3"
+    url: "https://www.enjin.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Axie Infinity Scholarships"
+    type: "web3"
+    url: "https://www.axieinfinity.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "The Sandbox Scholarships"
+    type: "web3"
+    url: "https://www.sandbox.game/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Decentraland Scholarships"
+    type: "web3"
+    url: "https://www.decentraland.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "CryptoKitties Scholarships"
+    type: "web3"
+    url: "https://www.cryptokitties.co/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "World of Women Scholarships"
+    type: "web3"
+    url: "https://www.worldofwomen.art/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Moonbirds Scholarships"
+    type: "web3"
+    url: "https://www.moonbirds.xyz/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Azuki Scholarships"
+    type: "web3"
+    url: "https://www.azuki.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cool Cats Scholarships"
+    type: "web3"
+    url: "https://www.coolcatsnft.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Doodles Scholarships"
+    type: "web3"
+    url: "https://www.doodles.app/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Bored Ape Yacht Club Scholarships"
+    type: "web3"
+    url: "https://www.boredapeyachtclub.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "CryptoPunks Scholarships"
+    type: "web3"
+    url: "https://www.larvalabs.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Art Blocks Scholarships"
+    type: "web3"
+    url: "https://www.artblocks.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "KnownOrigin Scholarships"
+    type: "web3"
+    url: "https://www.knownorigin.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Async Art Scholarships"
+    type: "web3"
+    url: "https://www.async.art/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "MakersPlace Scholarships"
+    type: "web3"
+    url: "https://www.makersplace.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Nifty Gateway Scholarships"
+    type: "web3"
+    url: "https://www.niftygateway.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Foundation Scholarships"
+    type: "web3"
+    url: "https://www.foundation.app/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "SuperRare Scholarships"
+    type: "web3"
+    url: "https://www.superrare.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Rarible Scholarships"
+    type: "web3"
+    url: "https://www.rarible.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "OpenSea Scholarships"
+    type: "web3"
+    url: "https://www.opensea.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "0x Scholarships"
+    type: "web3"
+    url: "https://www.0x.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "1inch Scholarships"
+    type: "web3"
+    url: "https://www.1inch.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Balancer Scholarships"
+    type: "web3"
+    url: "https://www.balancer.fi/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "SushiSwap Scholarships"
+    type: "web3"
+    url: "https://www.sushi.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Yearn Finance Scholarships"
+    type: "web3"
+    url: "https://www.yearn.finance/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Curve Scholarships"
+    type: "web3"
+    url: "https://www.curve.fi/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "MakerDAO Scholarships"
+    type: "web3"
+    url: "https://www.makerdao.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Compound Scholarships"
+    type: "web3"
+    url: "https://www.compound.finance/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Aave Scholarships"
+    type: "web3"
+    url: "https://www.aave.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Uniswap Foundation Scholarships"
+    type: "web3"
+    url: "https://www.uniswap.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Web3 Foundation Scholarships"
+    type: "web3"
+    url: "https://www.web3.foundation/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Protocol Labs Scholarships"
+    type: "web3"
+    url: "https://www.protocol.ai/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "IPFS Scholarships"
+    type: "web3"
+    url: "https://www.ipfs.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Filecoin Foundation Scholarships"
+    type: "web3"
+    url: "https://www.filecoin.io/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Chainlink Scholarships"
+    type: "web3"
+    url: "https://www.chain.link/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ripple Scholarships"
+    type: "web3"
+    url: "https://www.ripple.com/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Stellar Development Foundation Scholarships"
+    type: "web3"
+    url: "https://www.stellar.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Algorand Foundation Scholarships"
+    type: "web3"
+    url: "https://www.algorand.foundation/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Near Protocol Scholarships"
+    type: "web3"
+    url: "https://www.near.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Avalanche Scholarships"
+    type: "web3"
+    url: "https://www.avax.network/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Polygon Scholarships"
+    type: "web3"
+    url: "https://www.polygon.technology/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cosmos Scholarships"
+    type: "web3"
+    url: "https://www.cosmos.network/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Tezos Foundation Scholarships"
+    type: "web3"
+    url: "https://www.tezos.foundation/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Cardano Foundation Scholarships"
+    type: "web3"
+    url: "https://www.cardano.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Solana Foundation Scholarships"
+    type: "web3"
+    url: "https://www.solana.org/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Polkadot Scholarships"
+    type: "web3"
+    url: "https://www.polkadot.network/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ethereum Foundation Scholarships"
+    type: "web3"
+    url: "https://www.ethereum.org/grants"
+    enabled: True
+    scraper: "third_party"
+
