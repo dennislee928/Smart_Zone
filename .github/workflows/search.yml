@@ -1,0 +1,63 @@
+name: ScholarshipOps - Search
+
+on:
+  push:
+    branches:
+      - feature/ScholarshipOps
+  schedule:
+    - cron: "10 13 * * 3"   # Wednesday 21:10 Asia/Taipei (Wednesday lead search)
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: scholarshipops-search
+  cancel-in-progress: false
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            scripts/search_scholarships/target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build Rust project
+        working-directory: scripts/search_scholarships
+        run: cargo build --release
+
+      - name: Run search
+        working-directory: scripts/search_scholarships
+        env:
+          TZ: Asia/Taipei
+          ROOT: ${{ github.workspace }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: cargo run --release
+
+      - name: Commit changes if any
+        if: github.event_name == 'schedule'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add tracking/leads.json || true
+          git diff --staged --quiet || git commit -m "Update leads from automated search"
+          git push || true

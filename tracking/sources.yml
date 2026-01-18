@@ -1,0 +1,18 @@
+sources:
+  - name: "University of Glasgow Scholarships"
+    type: "university"
+    url: "https://www.gla.ac.uk/scholarships/"
+    enabled: true
+    scraper: "university"
+    
+  - name: "UK Government Scholarships"
+    type: "government"
+    url: "https://www.gov.uk/browse/education/student-finance"
+    enabled: true
+    scraper: "government"
+    
+  - name: "FindAPhD Scholarships"
+    type: "third_party"
+    url: "https://www.findaphd.com/funding/"
+    enabled: true
+    scraper: "third_party"

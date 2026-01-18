@@ -1,0 +1,161 @@
+days:
+  "2026-01-18":
+    weekend:
+      title: "建立 Scholarship Data Room"
+      todo:
+        - "整理：Offer letter、成績單、CV、證照、作品集連結、護照/身分證掃描"
+        - "英文姓名一致性檢查（護照/offer/成績單/各平台）"
+      deliverable: "資料夾完成 + 檔名規則統一"
+  "2026-01-19":
+    lunch:
+      title: "Inbox/Deadline/待辦更新"
+      todo: ["更新 tracker 狀態欄位、清空 1 個阻塞點"]
+      deliverable: "tracker 更新"
+    evening:
+      title: "獎學金管線表 Tracker v1"
+      todo:
+        - "建欄位：名稱/金額/用途限制/資格/材料/截止/狀態/下一步"
+      deliverable: "Tracker v1"
+  "2026-01-20":
+    evening:
+      title: "Studyportals motivation letter 定稿"
+      todo:
+        - "400–600 words"
+        - "對齊：Ambition/Personality/Originality/Clarity/Length"
+      deliverable: "Studyportals ML vFinal"
+  "2026-01-21":
+    evening:
+      title: "Studyportals upload-ready"
+      todo:
+        - "acceptance letter PDF + ML PDF"
+        - "做一次提交演練"
+      deliverable: "upload-ready"
+  "2026-01-22":
+    evening:
+      title: "ASQ Freund checklist"
+      todo:
+        - "確認 eligibility + 建資料夾 + 缺口清單"
+      deliverable: "ASQ checklist"
+  "2026-01-23":
+    evening:
+      title: "ASQ essay v1"
+      todo: ["先完成 60%，不追求完美"]
+      deliverable: "ASQ essay v1"
+  "2026-01-24":
+    weekend:
+      title: "週末衝刺 #1（ASQ pack 70%）"
+      todo:
+        - "ASQ essay v2"
+        - "推薦人清單 2 位 + 請託信草稿"
+      deliverable: "ASQ pack 70%"
+  "2026-01-25":
+    weekend:
+      title: "Studyportals 正式提交 + 備份"
+      todo:
+        - "正式提交（若 offer 已到手）"
+        - "備份所有提交檔 + tracker 更新"
+      deliverable: "Studyportals submitted + log"
+  "2026-01-26":
+    evening:
+      title: "ISACA essays set v1"
+      todo:
+        - "通用母文拆 3 組短文：Why you/Why need/Goals"
+      deliverable: "ISACA essays set v1"
+  "2026-01-27":
+    evening:
+      title: "Evidence bullets v1"
+      todo:
+        - "整理 3–5 個量化戰績 + 作品連結（digital trust 對齊）"
+      deliverable: "Evidence bullets v1"
+  "2026-01-28":
+    evening:
+      title: "Rotary alignment 1頁"
+      todo: ["對齊 Areas of Focus（Supporting education / Peace 等）"]
+      deliverable: "Rotary alignment 1頁"
+  "2026-01-29":
+    evening:
+      title: "Sponsor list + 1-pager"
+      todo:
+        - "列 10 個 sponsor clubs（台灣 + UK/Scotland）"
+        - "做可寄版 1 頁摘要"
+      deliverable: "Sponsor list + 1-pager"
+  "2026-01-30":
+    evening:
+      title: "GSoC target list"
+      todo:
+        - "鎖定 2–3 個 org/專案（2 週內能出 PR）"
+        - "建立 onboarding 待辦"
+      deliverable: "GSoC target list"
+  "2026-01-31":
+    weekend:
+      title: "週末衝刺 #2（第一個可被接受的貢獻）"
+      todo:
+        - "做 doc/test/小 bug"
+        - "社群打招呼、確認 issue"
+      deliverable: "1st contribution ready"
+  "2026-02-01":
+    weekend:
+      title: "Recommender kit"
+      todo:
+        - "推薦信請託信完成"
+        - "essay 變成 1 頁 summary（給推薦人參考）"
+      deliverable: "Recommender kit"
+  "2026-02-02":
+    evening:
+      title: "ASQ gaps 50% closed"
+      todo:
+        - "把缺口清單清空一半（transcript/CV/作品集補強等）"
+      deliverable: "ASQ gaps 50% closed"
+  "2026-02-03":
+    evening:
+      title: "GSoC log v1"
+      todo:
+        - "備份 org 名單與貢獻紀錄"
+      deliverable: "GSoC log v1"
+  "2026-02-04":
+    evening:
+      title: "ISACA essays v2"
+      todo:
+        - "精簡、對題、可複用"
+        - "整理學費/生活費缺口敘事"
+      deliverable: "ISACA essays v2"
+  "2026-02-05":
+    evening:
+      title: "第三方獎學金搜尋 sprint（+5 leads）"
+      todo:
+        - "只收：可用於 UK master / open international / 不綁國籍"
+        - "新增 5 個合格 lead 到 tracker"
+      deliverable: "+5 leads"
+  "2026-02-06":
+    evening:
+      title: "Rotary outreach"
+      todo: ["寄出 3 封 sponsor outreach（或完成 3 封可寄草稿）"]
+      deliverable: "3 outreach sent/drafted"
+  "2026-02-07":
+    weekend:
+      title: "週末衝刺 #3（ASQ pack 95%）"
+      todo:
+        - "essay 最終版"
+        - "推薦人確認"
+        - "附件整理"
+      deliverable: "ASQ pack 95%"
+  "2026-02-08":
+    weekend:
+      title: "ISACA ready-to-submit"
+      todo:
+        - "建立 3 月開放後 48 小時內可送件的一鍵包"
+      deliverable: "ISACA ready-to-submit"
+  "2026-02-09":
+    evening:
+      title: "Tracker 清潔"
+      todo:
+        - "再新增 5 leads"
+        - "前 10 leads 快速淘汰（不符就刪）"
+      deliverable: "Tracker cleaned"
+  "2026-02-10":
+    evening:
+      title: "Q1 plan v1"
+      todo:
+        - "排 2/10 後到 4/1、3 月（ISACA 開放）週計畫"
+        - "設定提醒"
+      deliverable: "Q1 plan v1"
