@@ -1,0 +1,62 @@
+phases:
+  - name: "Phase A: 申請材料穩定化 + 管線擴張"
+    start: "2026-02-11"
+    end: "2026-03-15"
+    weekday:
+      title: "Weekday cadence（60–75m）"
+      todo:
+        - "Mon：tracker/截止/阻塞點清空（10m + 50m）"
+        - "Tue：essay/ML 通用母文迭代（60m）"
+        - "Wed：第三方獎學金 lead 搜尋 + eligibility 淘汰（60m）"
+        - "Thu：outreach / follow-up（推薦人、sponsor、基金會窗口）（60m）"
+        - "Fri：附件與 Data Room 維護（命名、版本、PDF 合併）（60m）"
+      deliverable: "每週新增 ≥10 leads、提交/可提交件數 ≥1"
+    weekend:
+      title: "Weekend deep work（2.5–4h）"
+      todo:
+        - "完成 1 份完整申請（或把一份申請推進到 90%）"
+        - "作品集/成就量化 bullets 更新（含連結）"
+      deliverable: "每週至少 1 個『可送件』包"
+
+  - name: "Phase B: GSoC 提案窗口（若你要把 GSoC 當資金/履歷槓桿）"
+    start: "2026-03-16"
+    end: "2026-03-31"
+    weekday:
+      title: "GSoC sprint（晚間深工）"
+      todo:
+        - "Mon/Tue：proposal 版本迭代 + 對 org mentor 校稿"
+        - "Wed：補 1–2 個高品質 PR（可被 merge）"
+        - "Thu：proposal 最終化 + 風險清單/里程碑"
+        - "Fri：提交前 QA（格式、字數、連結、可驗證成果）"
+      deliverable: "proposal ready + 至少 2 個可驗證貢獻"
+    weekend:
+      title: "GSoC weekend deep work"
+      todo:
+        - "整合提案、做 demo/測試、補文件"
+      deliverable: "proposal submitted"
+
+  - name: "Phase C: 4 月（ASQ/其他第三方主戰場 + follow-up）"
+    start: "2026-04-01"
+    end: "2026-04-30"
+    weekday:
+      title: "Submission + Follow-up month"
+      todo:
+        - "Mon：回顧/補缺件"
+        - "Tue：送件/補件"
+        - "Wed：lead 搜尋（只收高勝率）"
+        - "Thu：follow-up（所有已投）"
+        - "Fri：財務缺口敘事與預算表更新（可重用）"
+      deliverable: "每週至少 1 件送出 or 2 件推進到可送"
+
+  - name: "Phase D: 5 月–6/01（維持投遞節奏 + 等結果/補件）"
+    start: "2026-05-01"
+    end: "2026-06-01"
+    weekday:
+      title: "Maintain & respond"
+      todo:
+        - "Mon：截止盤點 + 本週優先序"
+        - "Tue：材料包維護（CV/ML/Portfolio/證明）"
+        - "Wed：新增 leads（≥5）"
+        - "Thu：follow-up + 面談/補件準備"
+        - "Fri：備援資金方案文件化（可被審查的資金證明路徑）"
+      deliverable: "保持每週 ≥1 推進交付物"
