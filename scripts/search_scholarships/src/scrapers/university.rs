@@ -71,6 +71,12 @@ fn parse_university_html(html: &str, base_url: &str) -> Vec<Lead> {
                         url: base_url.to_string(),
                         match_score: 0,
                         match_reasons: vec![],
+                        bucket: None,
+                        http_status: None,
+                        effort_score: None,
+                        trust_tier: Some("S".to_string()), // University = Tier S
+                        risk_flags: vec![],
+                        matched_rule_ids: vec![],
                     });
                 }
             }
@@ -159,6 +165,12 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             url: format!("{}/scholarships/excellence", base_domain),
             match_score: 0,
             match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: Some(20), // Low effort - merit based
+            trust_tier: Some("S".to_string()),
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
         },
         Lead {
             name: "Global Talent Scholarship".to_string(),
@@ -176,6 +188,12 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             url: format!("{}/scholarships/global-talent", base_domain),
             match_score: 0,
             match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: Some(0), // Auto-considered
+            trust_tier: Some("S".to_string()),
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
         },
     ]
 }

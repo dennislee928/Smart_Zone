@@ -1,0 +1,351 @@
+# ScholarshipOps Triage Rules Configuration
+# YAML 驅動的規則引擎配置
+
+# ============================================
+# 硬淘汰規則 (Hard Reject Rules)
+# ============================================
+
+hard_reject_rules:
+  # === Fee Status Gate ===
+  - id: "E-FEE-001"
+    name: "Home Fee Status Only"
+    stage: "eligibility"
+    description: "Requires Home/UK fee status"
+    when:
+      any_regex:
+        - "(?i)home\\s*fee\\s*status"
+        - "(?i)UK\\s*fee\\s*status"
+        - "(?i)\\bRUK\\b"
+        - "(?i)home\\s*students?\\s*only"
+        - "(?i)UK\\s*residents?\\s*only"
+        - "(?i)ordinarily\\s*resident\\s*in\\s*(the\\s*)?UK"
+        - "(?i)settled\\s*status"
+        - "(?i)domiciled\\s*in\\s*(the\\s*)?UK"
+    action:
+      bucket: "C"
+      reason: "Requires Home/UK fee status; not applicable to international/Taiwan applicants."
+
+  # === Degree Level Gate ===
+  - id: "E-LEVEL-UG-001"
+    name: "Undergraduate Only"
+    stage: "eligibility"
+    description: "Undergraduate-only scholarship"
+    when:
+      any_regex:
+        - "(?i)undergraduate\\s*(only|students?)"
+        - "(?i)bachelor'?s?\\s*(only|students?|degree)"
+        - "(?i)\\bUG\\s*only\\b"
+        - "(?i)foundation\\s*year\\s*only"
+        - "(?i)pre-sessional\\s*only"
+    action:
+      bucket: "C"
+      reason: "Undergraduate-only scholarship."
+
+  - id: "E-LEVEL-PHD-001"
+    name: "PhD Only"
+    stage: "eligibility"
+    description: "PhD/Doctoral-only scholarship"
+    when:
+      any_regex:
+        - "(?i)\\bPhD\\s*(only|students?|candidates?)"
+        - "(?i)doctoral\\s*(only|students?|candidates?)"
+        - "(?i)postdoc(toral)?\\s*(only|fellowship)"
+        - "(?i)research\\s*degree\\s*only"
+        - "(?i)\\bMPhil\\s*only\\b"
+    action:
+      bucket: "C"
+      reason: "PhD/Doctoral-only scholarship."
+
+  # === Special Identity Gate ===
+  - id: "E-IDENTITY-001"
+    name: "Care Leaver"
+    stage: "eligibility"
+    description: "Care leaver only"
+    when:
+      any_regex:
+        - "(?i)care\\s*leaver"
+        - "(?i)looked\\s*after\\s*child"
+        - "(?i)foster\\s*care"
+    action:
+      bucket: "C"
+      reason: "Care leaver only scholarship."
+
+  - id: "E-IDENTITY-002"
+    name: "Refugee/Asylum"
+    stage: "eligibility"
+    description: "Refugee or asylum seeker only"
+    when:
+      any_regex:
+        - "(?i)\\brefugee\\b"
+        - "(?i)asylum\\s*seeker"
+        - "(?i)sanctuary\\s*scholarship"
+        - "(?i)displaced\\s*persons?"
+    action:
+      bucket: "C"
+      reason: "Refugee/Asylum seeker only scholarship."
+
+  - id: "E-IDENTITY-003"
+    name: "Armed Forces"
+    stage: "eligibility"
+    description: "Armed forces/veteran only"
+    when:
+      any_regex:
+        - "(?i)armed\\s*forces"
+        - "(?i)\\bveteran\\b"
+        - "(?i)service\\s*leaver"
+        - "(?i)military\\s*personnel"
+    action:
+      bucket: "C"
+      reason: "Armed forces/veteran only scholarship."
+
+  - id: "E-IDENTITY-004"
+    name: "Local Council"
+    stage: "eligibility"
+    description: "Local council residents only"
+    when:
+      any_regex:
+        - "(?i)local\\s*council\\s*residents?"
+        - "(?i)local\\s*authority\\s*residents?"
+        - "(?i)\\bScottish\\s*domicile\\b"
+        - "(?i)\\bWelsh\\s*domicile\\b"
+    action:
+      bucket: "C"
+      reason: "Local council/authority residents only."
+
+  # === Timeline Gate ===
+  - id: "T-DEAD-PAST-001"
+    name: "Deadline Passed"
+    stage: "timeline"
+    description: "Deadline has passed"
+    when:
+      deadline:
+        lt_today: true
+    action:
+      bucket: "C"
+      reason: "Deadline passed."
+
+  # === Scam Detection ===
+  - id: "S-SCAM-001"
+    name: "Payment Required"
+    stage: "trust"
+    description: "Requires payment or bank details"
+    when:
+      any_regex:
+        - "(?i)credit\\s*card"
+        - "(?i)bank\\s*account"
+        - "(?i)processing\\s*fee"
+        - "(?i)application\\s*fee\\s*\\$"
+        - "(?i)pay\\s*to\\s*apply"
+    action:
+      bucket: "C"
+      reason: "Scam-like language: payment or bank details requested."
+
+  - id: "S-SCAM-002"
+    name: "Guaranteed/Money Back"
+    stage: "trust"
+    description: "Suspicious marketing language"
+    when:
+      any_regex:
+        - "(?i)\\bguaranteed\\b"
+        - "(?i)money\\s*back"
+        - "(?i)exclusive\\s*list"
+        - "(?i)act\\s*now"
+        - "(?i)limited\\s*time\\s*offer"
+    action:
+      bucket: "C"
+      reason: "Scam-like marketing language detected."
+
+# ============================================
+# 軟降權規則 (Soft Downgrade Rules)
+# ============================================
+
+soft_downgrade_rules:
+  - id: "B-LINK-001"
+    name: "Rate Limited"
+    stage: "link_health"
+    description: "URL returned 403/429"
+    when:
+      http_status:
+        any_of: [403, 429]
+    action:
+      bucket: "B"
+      reason: "Rate limited or blocked; needs retry."
+
+  - id: "B-DEADLINE-001"
+    name: "Deadline Missing"
+    stage: "timeline"
+    description: "No deadline specified"
+    when:
+      deadline:
+        is_null: true
+    action:
+      bucket: "B"
+      add_to_watchlist: true
+      reason: "Deadline missing; added to watchlist."
+
+  - id: "B-ELIGIBILITY-001"
+    name: "Eligibility Unclear"
+    stage: "eligibility"
+    description: "Eligibility criteria unclear"
+    when:
+      any_regex:
+        - "(?i)eligible\\s*countries\\s*vary"
+        - "(?i)check\\s*eligibility"
+        - "(?i)subject\\s*to\\s*change"
+    action:
+      bucket: "B"
+      reason: "Eligibility unclear; needs verification."
+
+  - id: "B-EFFORT-001"
+    name: "High Effort"
+    stage: "effort"
+    description: "High application effort"
+    when:
+      effort_score:
+        gt: 60
+    action:
+      bucket: "B"
+      reason: "High application effort; consider if award justifies cost."
+
+# ============================================
+# 加分規則 (Positive Scoring Rules)
+# ============================================
+
+positive_scoring_rules:
+  - id: "P-TARGET-001"
+    name: "Target University"
+    stage: "scoring"
+    description: "Target university match"
+    when:
+      any_regex:
+        - "(?i)University\\s*of\\s*Glasgow"
+        - "(?i)\\bGlasgow\\b"
+    action:
+      score_add: 50
+      reason: "Target university (Glasgow)."
+
+  - id: "P-INTL-001"
+    name: "International Students"
+    stage: "scoring"
+    description: "Open to international students"
+    when:
+      any_regex:
+        - "(?i)international\\s*students?"
+        - "(?i)overseas\\s*students?"
+        - "(?i)all\\s*nationalities"
+        - "(?i)open\\s*to\\s*all"
+    action:
+      score_add: 30
+      reason: "Open to international students."
+
+  - id: "P-TAIWAN-001"
+    name: "Taiwan Eligible"
+    stage: "scoring"
+    description: "Taiwan explicitly eligible"
+    when:
+      any_regex:
+        - "(?i)\\bTaiwan\\b"
+        - "(?i)Taiwanese"
+        - "(?i)Republic\\s*of\\s*China"
+    action:
+      score_add: 40
+      reason: "Taiwan explicitly eligible."
+
+  - id: "P-LEVEL-001"
+    name: "Postgraduate Taught"
+    stage: "scoring"
+    description: "Postgraduate taught level match"
+    when:
+      any_regex:
+        - "(?i)postgraduate\\s*taught"
+        - "(?i)\\bPGT\\b"
+        - "(?i)taught\\s*master'?s?"
+        - "(?i)\\bMSc\\b"
+        - "(?i)\\bMA\\b"
+    action:
+      score_add: 25
+      reason: "Postgraduate taught level."
+
+  - id: "P-FULL-001"
+    name: "Full Funding"
+    stage: "scoring"
+    description: "Full tuition or fully funded"
+    when:
+      any_regex:
+        - "(?i)full\\s*tuition"
+        - "(?i)fully\\s*funded"
+        - "(?i)full\\s*cost"
+        - "(?i)covers?\\s*all\\s*fees?"
+        - "(?i)100%\\s*tuition"
+    action:
+      score_add: 35
+      reason: "Full funding available."
+
+  - id: "P-MERIT-001"
+    name: "Merit Based"
+    stage: "scoring"
+    description: "Merit-based scholarship"
+    when:
+      any_regex:
+        - "(?i)\\bmerit\\b"
+        - "(?i)academic\\s*excellence"
+        - "(?i)outstanding\\s*academic"
+        - "(?i)high\\s*achiever"
+    action:
+      score_add: 20
+      reason: "Merit-based (good for high GPA)."
+
+  - id: "P-AUTO-001"
+    name: "Auto Considered"
+    stage: "scoring"
+    description: "Automatically considered"
+    when:
+      any_regex:
+        - "(?i)auto(matically)?\\s*consider"
+        - "(?i)no\\s*separate\\s*application"
+        - "(?i)considered\\s*automatically"
+    action:
+      score_add: 25
+      effort_reduce: 30
+      reason: "Automatically considered; no extra application needed."
+
+  - id: "P-COMPUTING-001"
+    name: "Computing/Software"
+    stage: "scoring"
+    description: "Computing or software related"
+    when:
+      any_regex:
+        - "(?i)computer\\s*science"
+        - "(?i)computing"
+        - "(?i)software"
+        - "(?i)\\bIT\\b"
+        - "(?i)information\\s*technology"
+        - "(?i)data\\s*science"
+    action:
+      score_add: 15
+      reason: "Computing/Software field match."
+
+# ============================================
+# 期望值計算權重
+# ============================================
+
+scoring_weights:
+  award_value: 0.35
+  probability: 0.35
+  timeline: 0.20
+  effort_penalty: 0.20
+  risk_penalty: 0.40
+
+# ============================================
+# 分桶閾值
+# ============================================
+
+bucket_thresholds:
+  A:
+    min_final_score: 100
+    min_trust_tier: "B"
+    max_effort_score: 60
+  B:
+    min_final_score: 50
+    min_trust_tier: "C"
+  # C: 所有其他或被硬淘汰的

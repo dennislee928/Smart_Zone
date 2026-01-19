@@ -73,6 +73,12 @@ fn parse_third_party_html(html: &str, base_url: &str) -> Vec<Lead> {
                             url: base_url.to_string(),
                             match_score: 0,
                             match_reasons: vec![],
+                            bucket: None,
+                            http_status: None,
+                            effort_score: None,
+                            trust_tier: Some("B".to_string()), // Third party = Tier B
+                            risk_flags: vec![],
+                            matched_rule_ids: vec![],
                         });
                     }
                 }
@@ -140,6 +146,12 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             url: "https://www.gatescambridge.org/".to_string(),
             match_score: 0,
             match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: Some(70), // High effort - essays, interview
+            trust_tier: Some("A".to_string()), // Major foundation = Tier A
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
         },
         Lead {
             name: "Rhodes Scholarship (Oxford)".to_string(),
@@ -158,6 +170,12 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             url: "https://www.rhodeshouse.ox.ac.uk/scholarships/".to_string(),
             match_score: 0,
             match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: Some(80), // Very high effort
+            trust_tier: Some("A".to_string()),
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
         },
         Lead {
             name: "Clarendon Scholarship (Oxford)".to_string(),
@@ -175,6 +193,12 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             url: "https://www.ox.ac.uk/clarendon/".to_string(),
             match_score: 0,
             match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: Some(10), // Auto-considered
+            trust_tier: Some("S".to_string()), // University official
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
         },
         Lead {
             name: "Wellcome Trust PhD Programmes".to_string(),
@@ -192,6 +216,12 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             url: "https://wellcome.org/grant-funding".to_string(),
             match_score: 0,
             match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: Some(60),
+            trust_tier: Some("A".to_string()),
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
         },
     ]
 }

@@ -1,135 +1,287 @@
+//! ScholarshipOps Search & Triage System
+//! 
+//! Complete pipeline for scholarship discovery and qualification
+
 mod scrapers;
 mod filter;
 mod storage;
 mod notify;
 mod types;
 mod sorter;
+mod rules;
+mod link_health;
+mod triage;
+mod effort;
 
 pub use types::*;
 
 use anyhow::Result;
 use std::fs;
 use std::path::PathBuf;
+use std::collections::HashSet;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let root = std::env::var("ROOT").unwrap_or_else(|_| ".".to_string());
     let now = chrono::Utc::now().format("%Y-%m-%d %H:%M UTC").to_string();
     
-    // Load criteria
-    let criteria = storage::load_criteria(&root)?;
+    println!("=== ScholarshipOps Search & Triage ===");
+    println!("Timestamp: {}", now);
+    println!();
     
-    // Load sources
+    // ==========================================
+    // Stage 0: Load Configuration
+    // ==========================================
+    println!("Stage 0: Loading configuration...");
+    
+    let criteria = storage::load_criteria(&root)?;
     let sources = storage::load_sources(&root)?;
     let enabled_sources: Vec<_> = sources.sources.iter().filter(|s| s.enabled).collect();
     
+    // Load rules (optional - continue without if missing)
+    let rules_config = match rules::load_rules(&root) {
+        Ok(r) => {
+            println!("  Loaded {} hard reject, {} soft downgrade, {} positive rules",
+                r.hard_reject_rules.len(),
+                r.soft_downgrade_rules.len(),
+                r.positive_scoring_rules.len()
+            );
+            Some(r)
+        }
+        Err(e) => {
+            println!("  Warning: Could not load rules.yaml: {}", e);
+            None
+        }
+    };
+    
     // Load existing leads
     let mut leads_file = storage::load_leads(&root)?;
-    let existing_names: std::collections::HashSet<String> = leads_file.leads.iter()
-        .map(|l| l.name.clone())
+    println!("  Existing leads in database: {}", leads_file.leads.len());
+    
+    // Use name + url as unique key to prevent duplicates
+    let existing_keys: HashSet<String> = leads_file.leads.iter()
+        .map(|l| format!("{}|{}", l.name.to_lowercase().trim(), l.url.to_lowercase().trim()))
         .collect();
     
-    // Scrape scholarships
-    let mut new_leads: Vec<Lead> = Vec::new();
+    // Track seen leads in this run
+    let mut seen_keys: HashSet<String> = HashSet::new();
+    
+    println!();
+    
+    // ==========================================
+    // Stage 1: Scrape Sources
+    // ==========================================
+    println!("Stage 1: Scraping {} enabled sources...", enabled_sources.len());
+    
+    let mut all_leads: Vec<Lead> = Vec::new();
     let mut filtered_out: Vec<(String, Vec<String>)> = Vec::new();
     let mut errors: Vec<String> = Vec::new();
     
     for source in &enabled_sources {
-        println!("Scraping: {} ({})", source.name, source.url);
+        println!("  Scraping: {} ({})", source.name, source.url);
         match scrapers::scrape_source(source).await {
             Ok(scraped) => {
+                println!("    Found {} raw leads", scraped.len());
+                let mut added = 0;
+                
                 for mut lead in scraped {
-                    // Skip if already exists
-                    if existing_names.contains(&lead.name) {
-                        println!("Skipping duplicate: {}", lead.name);
+                    // Create unique key
+                    let key = format!("{}|{}", lead.name.to_lowercase().trim(), lead.url.to_lowercase().trim());
+                    
+                    // Skip duplicates
+                    if existing_keys.contains(&key) || seen_keys.contains(&key) {
                         continue;
                     }
+                    seen_keys.insert(key);
                     
-                    // Step 1: Basic keyword filtering
+                    // Basic keyword filtering
                     if !filter::matches_criteria(&lead, &criteria) {
-                        println!("Filtered out (keywords): {}", lead.name);
                         filtered_out.push((lead.name.clone(), vec!["Keyword mismatch".to_string()]));
                         continue;
                     }
                     
-                    // Step 2: Profile-based qualification filtering
+                    // Profile-based filtering
                     if let Some(ref profile) = criteria.profile {
                         if filter::filter_by_profile(&mut lead, profile) {
                             lead.status = "qualified".to_string();
                             lead.source_type = source.source_type.clone();
                             lead.added_date = chrono::Utc::now().format("%Y-%m-%d").to_string();
-                            println!("✅ Qualified: {} (score: {})", lead.name, lead.match_score);
-                            new_leads.push(lead);
+                            all_leads.push(lead);
+                            added += 1;
                         } else {
-                            println!("❌ Disqualified: {} - {:?}", lead.name, lead.match_reasons);
                             filtered_out.push((lead.name.clone(), lead.match_reasons.clone()));
                         }
                     } else {
-                        // No profile, just use basic filtering
                         lead.status = "qualified".to_string();
                         lead.source_type = source.source_type.clone();
                         lead.added_date = chrono::Utc::now().format("%Y-%m-%d").to_string();
-                        new_leads.push(lead);
+                        all_leads.push(lead);
+                        added += 1;
                     }
                 }
+                println!("    Added {} qualified leads", added);
             }
             Err(e) => {
                 let err_msg = format!("Failed to scrape {}: {}", source.name, e);
-                println!("{}", err_msg);
+                println!("    Error: {}", err_msg);
                 errors.push(err_msg);
             }
         }
     }
     
-    // Sort using comprehensive multi-dimensional sorting
-    sorter::sort_leads(&mut new_leads);
+    println!("  Total qualified leads: {}", all_leads.len());
+    println!();
     
-    // Build full report (for file)
-    let full_report = build_full_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
+    // ==========================================
+    // Stage 2: Link Health Check (optional, skip if too many)
+    // ==========================================
+    let mut dead_links = Vec::new();
+    if all_leads.len() <= 50 {
+        println!("Stage 2: Checking link health...");
+        dead_links = link_health::check_links(&mut all_leads, 5).await;
+        let dead_count = dead_links.iter()
+            .filter(|r| matches!(r.status, LinkHealthStatus::NotFound | LinkHealthStatus::ServerError))
+            .count();
+        println!("  Checked {} URLs, {} dead/error links", dead_links.len(), dead_count);
+        println!();
+    } else {
+        println!("Stage 2: Skipping link health check ({} leads, max 50)", all_leads.len());
+        println!();
+    }
     
-    // Build summary report (for Discord, max 2000 chars)
-    let summary_report = build_summary_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len());
+    // ==========================================
+    // Stage 3: Effort Scoring
+    // ==========================================
+    println!("Stage 3: Calculating effort scores...");
+    effort::update_effort_scores(&mut all_leads);
+    println!("  Updated effort scores for {} leads", all_leads.len());
+    println!();
     
-    // Build HTML and Markdown reports
-    let html_report = build_html_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
-    let markdown_report = build_markdown_report(&now, &new_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
+    // ==========================================
+    // Stage 4: Apply Rules & Triage
+    // ==========================================
+    let triage_stats;
+    if let Some(ref rules) = rules_config {
+        println!("Stage 4: Applying rules and triage...");
+        triage_stats = triage::triage_leads(&mut all_leads, rules);
+        println!("  Bucket A: {} | Bucket B: {} | Bucket C: {}",
+            triage_stats.bucket_a, triage_stats.bucket_b, triage_stats.bucket_c);
+    } else {
+        println!("Stage 4: Skipping rules (no rules.yaml)");
+        // Default triage based on score
+        for lead in all_leads.iter_mut() {
+            lead.bucket = Some(if lead.match_score >= 100 {
+                Bucket::A
+            } else if lead.match_score >= 50 {
+                Bucket::B
+            } else {
+                Bucket::C
+            });
+        }
+        triage_stats = triage::TriageStats {
+            total: all_leads.len(),
+            bucket_a: all_leads.iter().filter(|l| l.bucket == Some(Bucket::A)).count(),
+            bucket_b: all_leads.iter().filter(|l| l.bucket == Some(Bucket::B)).count(),
+            bucket_c: all_leads.iter().filter(|l| l.bucket == Some(Bucket::C)).count(),
+            ..Default::default()
+        };
+    }
+    println!();
     
-    // Create date-based folder in scripts/productions
+    // ==========================================
+    // Stage 5: Sort & Finalize
+    // ==========================================
+    println!("Stage 5: Sorting leads...");
+    sorter::sort_leads(&mut all_leads);
+    
+    // Split into buckets
+    let (bucket_a, bucket_b, bucket_c) = triage::split_by_bucket(all_leads.clone());
+    let watchlist: Vec<Lead> = all_leads.iter()
+        .filter(|l| l.deadline.to_lowercase().contains("check") || l.deadline.to_lowercase().contains("tbd"))
+        .cloned()
+        .collect();
+    
+    println!("  Final: A={}, B={}, C={}, Watchlist={}",
+        bucket_a.len(), bucket_b.len(), bucket_c.len(), watchlist.len());
+    println!();
+    
+    // ==========================================
+    // Stage 6: Generate Reports
+    // ==========================================
+    println!("Stage 6: Generating reports...");
+    
+    // Create output directory
     let date_str = chrono::Utc::now().format("%Y-%m-%d_%H-%M").to_string();
     let productions_dir = PathBuf::from(&root).join("scripts").join("productions");
     let report_dir = productions_dir.join(&date_str);
-    
-    // Create directory if it doesn't exist
     fs::create_dir_all(&report_dir)?;
-    println!("Created report directory: {:?}", report_dir);
     
-    // Save all three formats
+    // Generate all reports
+    let triage_md = triage::generate_triage_md(&bucket_a, &bucket_b, &bucket_c, &watchlist);
+    let triage_csv = triage::generate_triage_csv(&bucket_a, &bucket_b, &bucket_c);
+    let deadlinks_md = link_health::generate_deadlinks_report(&dead_links);
+    
+    let full_report = build_full_report(&now, &all_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
+    let summary_report = build_summary_report(&now, &bucket_a, &bucket_b, &bucket_c, &filtered_out, &errors, leads_file.leads.len());
+    let markdown_report = build_markdown_report(&now, &all_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
+    let html_report = build_html_report(&now, &all_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
+    
+    // Save reports
+    fs::write(report_dir.join("triage.md"), &triage_md)?;
+    fs::write(report_dir.join("triage.csv"), &triage_csv)?;
+    fs::write(report_dir.join("deadlinks.md"), &deadlinks_md)?;
     fs::write(report_dir.join("report.txt"), &full_report)?;
     fs::write(report_dir.join("report.md"), &markdown_report)?;
     fs::write(report_dir.join("report.html"), &html_report)?;
-    println!("Saved reports to: {:?}", report_dir);
     
-    // Also save summary for Discord (in current directory for workflow)
-    fs::write("summary.txt", &summary_report)?;
-    println!("Summary saved to summary.txt");
-    
-    // Add new leads and save
-    if !new_leads.is_empty() {
-        let mut new_leads_clone = new_leads.clone();
-        leads_file.leads.append(&mut new_leads_clone);
-        storage::save_leads(&root, &leads_file)?;
+    // Generate rules audit if rules were loaded
+    if let Some(ref rules) = rules_config {
+        let audit = triage::generate_rules_audit(rules, &triage_stats);
+        let audit_json = serde_json::to_string_pretty(&audit)?;
+        fs::write(report_dir.join("rules.audit.json"), &audit_json)?;
     }
     
-    // Send summary notification (fits Discord 2000 char limit)
+    println!("  Saved reports to: {:?}", report_dir);
+    
+    // Save summary for Discord
+    fs::write("summary.txt", &summary_report)?;
+    
+    // ==========================================
+    // Stage 7: Update Database & Notify
+    // ==========================================
+    println!();
+    println!("Stage 7: Updating database...");
+    
+    // Only save A and B bucket leads to database
+    let leads_to_save: Vec<Lead> = all_leads.iter()
+        .filter(|l| matches!(l.bucket, Some(Bucket::A) | Some(Bucket::B)))
+        .cloned()
+        .collect();
+    
+    if !leads_to_save.is_empty() {
+        let mut new_leads = leads_to_save;
+        leads_file.leads.append(&mut new_leads);
+        storage::save_leads(&root, &leads_file)?;
+        println!("  Added {} leads to database", leads_to_save.len());
+    }
+    
+    // Send notification
+    println!("  Sending notification...");
     notify::send_notifications(&summary_report)?;
+    
+    println!();
+    println!("=== Complete ===");
     
     Ok(())
 }
 
-/// Build full detailed report (for file storage)
+// ==========================================
+// Report Generation Functions
+// ==========================================
+
 fn build_full_report(
     timestamp: &str, 
-    new_leads: &[Lead], 
+    leads: &[Lead], 
     filtered_out: &[(String, Vec<String>)],
     errors: &[String], 
     total_leads: usize,
@@ -137,145 +289,95 @@ fn build_full_report(
 ) -> String {
     let mut report = format!("🔍 **ScholarshipOps Search Report**\n📅 {}\n\n", timestamp);
     
-    // Show profile summary
     if let Some(p) = profile {
         report.push_str("👤 **Your Profile:**\n");
-        report.push_str(&format!("• 🇹🇼 Nationality: {}\n", p.nationality));
-        report.push_str(&format!("• 🎓 Target: {} ({})\n", p.target_university, p.programme_start));
-        report.push_str(&format!("• 📚 Level: {}\n", p.programme_level));
-        if !p.education.is_empty() {
-            let best_gpa = p.education.iter().map(|e| e.gpa).fold(0.0, f64::max);
-            report.push_str(&format!("• 📊 Best GPA: {:.2}\n", best_gpa));
+        report.push_str(&format!("• Nationality: {}\n", p.nationality));
+        report.push_str(&format!("• Target: {} ({})\n", p.target_university, p.programme_start));
+        report.push_str(&format!("• Level: {}\n", p.programme_level));
+        report.push_str("\n");
+    }
+    
+    // Group by bucket
+    let bucket_a: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::A)).collect();
+    let bucket_b: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::B)).collect();
+    let bucket_c: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::C) || l.bucket.is_none()).collect();
+    
+    report.push_str(&format!("📊 **Results:** A={} | B={} | C={}\n\n", bucket_a.len(), bucket_b.len(), bucket_c.len()));
+    
+    if !bucket_a.is_empty() {
+        report.push_str("## 🎯 Bucket A (主攻)\n\n");
+        for (i, lead) in bucket_a.iter().enumerate() {
+            report.push_str(&format!("{}. **{}**\n", i + 1, lead.name));
+            report.push_str(&format!("   💰 {} | ⏰ {} | Score: {}\n", lead.amount, lead.deadline, lead.match_score));
+            report.push_str(&format!("   🔗 {}\n\n", lead.url));
+        }
+    }
+    
+    if !bucket_b.is_empty() {
+        report.push_str("## 📋 Bucket B (備援)\n\n");
+        for (i, lead) in bucket_b.iter().take(10).enumerate() {
+            report.push_str(&format!("{}. {} - {} (Score: {})\n", i + 1, lead.name, lead.amount, lead.match_score));
+        }
+        if bucket_b.len() > 10 {
+            report.push_str(&format!("... and {} more\n", bucket_b.len() - 10));
         }
         report.push_str("\n");
     }
     
-    if new_leads.is_empty() {
-        report.push_str("No new qualified scholarships found.\n\n");
-    } else {
-        report.push_str(&format!("✅ **Found {} qualified scholarships:**\n\n", new_leads.len()));
-        report.push_str("📊 **Sorting:** Comprehensive score (Match + ROI + Urgency + Source Reliability)\n\n");
-        
-        // Display ALL scholarships (no limit)
-        for (i, lead) in new_leads.iter().enumerate() {
-            let comprehensive_score = sorter::calculate_comprehensive_score(lead);
-            let roi_score = sorter::calculate_roi_score(lead);
-            let urgency_score = sorter::calculate_urgency_score(lead);
-            let source_score = sorter::calculate_source_reliability_score(lead);
-            let days_until = sorter::days_until_deadline(lead);
-            
-            report.push_str(&format!(
-                "**{}. {}**\n",
-                i + 1, lead.name
-            ));
-            report.push_str(&format!("💰 {} | ⏰ {}\n", lead.amount, lead.deadline));
-            
-            // Show sorting scores
-            report.push_str(&format!("📊 **Scores:** Comprehensive: {:.1} (Match: {} + ROI: £{:.0} + Urgency: {} + Source: {})\n", 
-                comprehensive_score, lead.match_score, roi_score, urgency_score, source_score));
-            
-            if let Some(days) = days_until {
-                if days < 0 {
-                    report.push_str(&format!("  ⚠️ Deadline passed ({} days ago)\n", -days));
-                } else if days <= 30 {
-                    report.push_str(&format!("  🚨 URGENT: D-{} days\n", days));
-                } else if days <= 60 {
-                    report.push_str(&format!("  ⚡ D-{} days (Apply soon)\n", days));
-                } else {
-                    report.push_str(&format!("  ⏰ D-{} days\n", days));
-                }
-            }
-            
-            // Show match reasons
-            if !lead.match_reasons.is_empty() {
-                report.push_str(&format!("📋 {}\n", lead.match_reasons.join(" | ")));
-            }
-            
-            report.push_str(&format!("🔗 {}\n\n", lead.url));
-        }
-    }
-    
-    // Show filtered out summary
     if !filtered_out.is_empty() {
-        report.push_str(&format!("⏭️ **Filtered out:** {} scholarships\n", filtered_out.len()));
-        for (name, reasons) in filtered_out.iter().take(5) {
-            report.push_str(&format!("• {} - {}\n", name, reasons.join(", ")));
-        }
-        if filtered_out.len() > 5 {
-            report.push_str(&format!("... and {} more\n", filtered_out.len() - 5));
-        }
-        report.push_str("\n");
+        report.push_str(&format!("⏭️ **Filtered out:** {} scholarships\n\n", filtered_out.len()));
     }
     
     if !errors.is_empty() {
-        report.push_str(&format!("⚠️ **{} source(s) had issues:**\n", errors.len()));
-        for err in errors {
-            report.push_str(&format!("• {}\n", err));
-        }
-        report.push_str("\n");
+        report.push_str(&format!("⚠️ **Errors:** {}\n\n", errors.len()));
     }
     
-    report.push_str(&format!("📊 **Total leads in database:** {}", total_leads + new_leads.len()));
+    report.push_str(&format!("📁 **Total in database:** {}", total_leads + bucket_a.len() + bucket_b.len()));
     
     report
 }
 
-/// Build summary report for Discord (max ~1800 chars to be safe)
 fn build_summary_report(
     timestamp: &str,
-    new_leads: &[Lead],
+    bucket_a: &[Lead],
+    bucket_b: &[Lead],
+    bucket_c: &[Lead],
     filtered_out: &[(String, Vec<String>)],
     errors: &[String],
     total_leads: usize,
 ) -> String {
-    let mut report = format!("🔍 **ScholarshipOps Summary**\n📅 {}\n\n", timestamp);
+    let mut report = format!("🔍 **ScholarshipOps Triage**\n📅 {}\n\n", timestamp);
     
-    if new_leads.is_empty() {
-        report.push_str("No new qualified scholarships found.\n\n");
-    } else {
-        report.push_str(&format!("✅ **{} qualified scholarships:**\n\n", new_leads.len()));
-        
-        // Show top 5 scholarships with minimal info
-        for (i, lead) in new_leads.iter().take(5).enumerate() {
-            let days_until = sorter::days_until_deadline(lead);
-            let urgency = match days_until {
-                Some(d) if d < 0 => "⚠️PAST".to_string(),
-                Some(d) if d <= 30 => format!("🚨D-{}", d),
-                Some(d) if d <= 60 => format!("⚡D-{}", d),
-                Some(d) => format!("D-{}", d),
-                None => "TBD".to_string(),
-            };
-            
-            // Truncate name if too long
-            let name = if lead.name.len() > 40 {
-                format!("{}...", &lead.name[..37])
+    report.push_str(&format!("📊 A={} | B={} | C={}\n\n", bucket_a.len(), bucket_b.len(), bucket_c.len()));
+    
+    if !bucket_a.is_empty() {
+        report.push_str("🎯 **Top Picks:**\n");
+        for (i, lead) in bucket_a.iter().take(3).enumerate() {
+            let name = if lead.name.len() > 35 {
+                format!("{}...", &lead.name[..32])
             } else {
                 lead.name.clone()
             };
-            
-            report.push_str(&format!(
-                "{}. **{}**\n   💰{} | ⏰{} | {}\n\n",
-                i + 1, name, lead.amount, lead.deadline, urgency
-            ));
+            report.push_str(&format!("{}. {} | {}\n", i + 1, name, lead.amount));
         }
-        
-        if new_leads.len() > 5 {
-            report.push_str(&format!("... +{} more (see full report)\n\n", new_leads.len() - 5));
+        if bucket_a.len() > 3 {
+            report.push_str(&format!("   +{} more in A\n", bucket_a.len() - 3));
         }
+        report.push_str("\n");
     }
     
-    // Brief stats
-    report.push_str(&format!("📊 **Stats:** {} qualified | {} filtered | {} errors\n", 
-        new_leads.len(), filtered_out.len(), errors.len()));
-    report.push_str(&format!("📁 **Total in DB:** {}", total_leads + new_leads.len()));
+    report.push_str(&format!("📁 DB: {} | ⏭️ Filtered: {} | ⚠️ Errors: {}", 
+        total_leads + bucket_a.len() + bucket_b.len(), 
+        filtered_out.len(), 
+        errors.len()
+    ));
     
     report
 }
 
-/// Build Markdown format report (full version)
 fn build_markdown_report(
     timestamp: &str,
-    new_leads: &[Lead],
+    leads: &[Lead],
     filtered_out: &[(String, Vec<String>)],
     errors: &[String],
     total_leads: usize,
@@ -283,291 +385,164 @@ fn build_markdown_report(
 ) -> String {
     let mut report = format!("# ScholarshipOps Search Report\n\n**Date:** {}\n\n", timestamp);
     
-    // Show profile summary
     if let Some(p) = profile {
         report.push_str("## Your Profile\n\n");
         report.push_str(&format!("- **Nationality:** {}\n", p.nationality));
         report.push_str(&format!("- **Target:** {} ({})\n", p.target_university, p.programme_start));
         report.push_str(&format!("- **Level:** {}\n", p.programme_level));
-        if !p.education.is_empty() {
-            let best_gpa = p.education.iter().map(|e| e.gpa).fold(0.0, f64::max);
-            report.push_str(&format!("- **Best GPA:** {:.2}\n", best_gpa));
+        report.push_str("\n");
+    }
+    
+    // Group by bucket
+    let bucket_a: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::A)).collect();
+    let bucket_b: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::B)).collect();
+    
+    report.push_str("## Results\n\n");
+    report.push_str(&format!("- **Bucket A (主攻):** {} scholarships\n", bucket_a.len()));
+    report.push_str(&format!("- **Bucket B (備援):** {} scholarships\n", bucket_b.len()));
+    report.push_str(&format!("- **Filtered out:** {} scholarships\n", filtered_out.len()));
+    report.push_str("\n");
+    
+    if !bucket_a.is_empty() {
+        report.push_str("### Bucket A - High Priority\n\n");
+        report.push_str("| # | Name | Amount | Deadline | Score | Effort |\n");
+        report.push_str("|---|------|--------|----------|-------|--------|\n");
+        
+        for (i, lead) in bucket_a.iter().enumerate() {
+            let effort = lead.effort_score.map(|e| format!("{}/100", e)).unwrap_or("-".to_string());
+            report.push_str(&format!(
+                "| {} | {} | {} | {} | {} | {} |\n",
+                i + 1, lead.name, lead.amount, lead.deadline, lead.match_score, effort
+            ));
         }
         report.push_str("\n");
     }
     
-    if new_leads.is_empty() {
-        report.push_str("## Results\n\nNo new qualified scholarships found.\n\n");
-    } else {
-        report.push_str(&format!("## Results\n\n**Found {} qualified scholarships**\n\n", new_leads.len()));
-        report.push_str("**Sorting:** Comprehensive score (Match + ROI + Urgency + Source Reliability)\n\n");
+    if !bucket_b.is_empty() {
+        report.push_str("### Bucket B - Medium Priority\n\n");
+        report.push_str("| # | Name | Amount | Deadline | Score |\n");
+        report.push_str("|---|------|--------|----------|-------|\n");
         
-        // Create table header
-        report.push_str("| # | Name | Amount | Deadline | Comprehensive Score | Match | ROI | Urgency | Source | Days Until |\n");
-        report.push_str("|---|------|--------|---------|-------------------|-------|-----|---------|--------|------------|\n");
-        
-        // Display ALL scholarships (no limit)
-        for (i, lead) in new_leads.iter().enumerate() {
-            let comprehensive_score = sorter::calculate_comprehensive_score(lead);
-            let roi_score = sorter::calculate_roi_score(lead);
-            let urgency_score = sorter::calculate_urgency_score(lead);
-            let source_score = sorter::calculate_source_reliability_score(lead);
-            let days_until = sorter::days_until_deadline(lead);
-            
-            let days_str = match days_until {
-                Some(d) if d < 0 => format!("⚠️ {} days ago", -d),
-                Some(d) if d <= 30 => format!("🚨 D-{}", d),
-                Some(d) if d <= 60 => format!("⚡ D-{}", d),
-                Some(d) => format!("D-{}", d),
-                None => "TBD".to_string(),
-            };
-            
-            // Escape pipe characters in name
-            let name_escaped = lead.name.replace("|", "\\|");
-            
+        for (i, lead) in bucket_b.iter().take(20).enumerate() {
             report.push_str(&format!(
-                "| {} | {} | {} | {} | {:.1} | {} | £{:.0} | {} | {} | {} |\n",
-                i + 1, name_escaped, lead.amount, lead.deadline,
-                comprehensive_score, lead.match_score, roi_score, urgency_score, source_score, days_str
+                "| {} | {} | {} | {} | {} |\n",
+                i + 1, lead.name, lead.amount, lead.deadline, lead.match_score
             ));
         }
-        
-        report.push_str("\n### Detailed Information\n\n");
-        
-        // Add detailed information for each scholarship
-        for (i, lead) in new_leads.iter().enumerate() {
-            let comprehensive_score = sorter::calculate_comprehensive_score(lead);
-            let roi_score = sorter::calculate_roi_score(lead);
-            let urgency_score = sorter::calculate_urgency_score(lead);
-            let source_score = sorter::calculate_source_reliability_score(lead);
-            let days_until = sorter::days_until_deadline(lead);
-            
-            report.push_str(&format!("#### {}. {}\n\n", i + 1, lead.name));
-            report.push_str(&format!("- **Amount:** {}\n", lead.amount));
-            report.push_str(&format!("- **Deadline:** {}\n", lead.deadline));
-            
-            if let Some(days) = days_until {
-                if days < 0 {
-                    report.push_str(&format!("- **Status:** ⚠️ Deadline passed ({} days ago)\n", -days));
-                } else if days <= 30 {
-                    report.push_str(&format!("- **Status:** 🚨 URGENT: D-{} days\n", days));
-                } else if days <= 60 {
-                    report.push_str(&format!("- **Status:** ⚡ D-{} days (Apply soon)\n", days));
-                } else {
-                    report.push_str(&format!("- **Status:** ⏰ D-{} days\n", days));
-                }
-            }
-            
-            report.push_str(&format!("- **Scores:** Comprehensive: {:.1} (Match: {} + ROI: £{:.0} + Urgency: {} + Source: {})\n",
-                comprehensive_score, lead.match_score, roi_score, urgency_score, source_score));
-            
-            if !lead.match_reasons.is_empty() {
-                report.push_str(&format!("- **Match Reasons:** {}\n", lead.match_reasons.join(" | ")));
-            }
-            
-            report.push_str(&format!("- **URL:** {}\n", lead.url));
-            report.push_str("\n");
-        }
-    }
-    
-    // Show filtered out summary
-    if !filtered_out.is_empty() {
-        report.push_str(&format!("## Filtered Out\n\n{} scholarships were filtered out.\n\n", filtered_out.len()));
-        for (name, reasons) in filtered_out.iter().take(10) {
-            report.push_str(&format!("- **{}:** {}\n", name, reasons.join(", ")));
-        }
-        if filtered_out.len() > 10 {
-            report.push_str(&format!("... and {} more\n", filtered_out.len() - 10));
+        if bucket_b.len() > 20 {
+            report.push_str(&format!("\n*... and {} more*\n", bucket_b.len() - 20));
         }
         report.push_str("\n");
     }
     
     if !errors.is_empty() {
-        report.push_str(&format!("## Errors\n\n{} source(s) had issues:\n\n", errors.len()));
+        report.push_str("## Errors\n\n");
         for err in errors {
             report.push_str(&format!("- {}\n", err));
         }
         report.push_str("\n");
     }
     
-    report.push_str(&format!("## Statistics\n\n**Total leads in database:** {}\n", total_leads + new_leads.len()));
+    report.push_str(&format!("## Statistics\n\n**Total leads in database:** {}\n", 
+        total_leads + bucket_a.len() + bucket_b.len()));
     
     report
 }
 
-/// Build HTML format report (full version with styling)
 fn build_html_report(
     timestamp: &str,
-    new_leads: &[Lead],
+    leads: &[Lead],
     filtered_out: &[(String, Vec<String>)],
     errors: &[String],
     total_leads: usize,
     profile: &Option<Profile>,
 ) -> String {
-    let mut html = String::from("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n");
-    html.push_str("<meta charset=\"UTF-8\">\n");
-    html.push_str("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n");
-    html.push_str("<title>ScholarshipOps Search Report</title>\n");
-    html.push_str("<style>\n");
-    html.push_str(r#"
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
-               line-height: 1.6; color: #333; background: #f5f5f5; padding: 20px; }
-        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; margin-bottom: 10px; }
-        h2 { color: #34495e; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
-        .timestamp { color: #7f8c8d; font-size: 0.9em; margin-bottom: 20px; }
-        .profile-section, .results-section, .filtered-section, .errors-section, .stats-section { margin-bottom: 30px; }
-        ul { margin-left: 20px; }
-        li { margin: 5px 0; }
-        .table-container { overflow-x: auto; margin: 20px 0; }
-        .scholarship-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
-        .scholarship-table th { background: #3498db; color: white; padding: 12px; text-align: left; font-weight: 600; position: sticky; top: 0; }
-        .scholarship-table td { padding: 10px; border-bottom: 1px solid #ddd; }
-        .scholarship-table tr:hover { background: #f8f9fa; }
-        .scholarship-table tr.urgent { background: #fff3cd; }
-        .scholarship-table tr.soon { background: #d1ecf1; }
-        .scholarship-table tr.past { background: #f8d7da; opacity: 0.6; }
-        .scholarship-table tr.normal { }
-        a { color: #3498db; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        @media (max-width: 768px) {
-            .container { padding: 15px; }
-            .scholarship-table { font-size: 0.8em; }
-            .scholarship-table th, .scholarship-table td { padding: 6px; }
-        }
-    "#);
-    html.push_str("</style>\n");
-    html.push_str("</head>\n<body>\n");
+    let bucket_a: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::A)).collect();
+    let bucket_b: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::B)).collect();
     
-    html.push_str(&format!("<div class=\"container\">\n"));
-    html.push_str(&format!("<h1>🔍 ScholarshipOps Search Report</h1>\n"));
-    html.push_str(&format!("<p class=\"timestamp\">📅 {}</p>\n\n", timestamp));
+    let mut html = String::from(r#"<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScholarshipOps Triage Report</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+       line-height: 1.6; color: #333; background: #f5f5f5; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+h1 { color: #2c3e50; margin-bottom: 10px; }
+h2 { color: #34495e; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+.timestamp { color: #7f8c8d; font-size: 0.9em; margin-bottom: 20px; }
+.stats { display: flex; gap: 20px; margin: 20px 0; }
+.stat-box { background: #ecf0f1; padding: 15px 25px; border-radius: 8px; text-align: center; }
+.stat-box.a { background: #d5f5e3; border-left: 4px solid #27ae60; }
+.stat-box.b { background: #fdebd0; border-left: 4px solid #f39c12; }
+.stat-box.c { background: #fadbd8; border-left: 4px solid #e74c3c; }
+.stat-number { font-size: 2em; font-weight: bold; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+th { background: #3498db; color: white; padding: 12px; text-align: left; }
+td { padding: 10px; border-bottom: 1px solid #ddd; }
+tr:hover { background: #f8f9fa; }
+a { color: #3498db; }
+.bucket-a { background: #d5f5e3; }
+.bucket-b { background: #fdebd0; }
+</style>
+</head>
+<body>
+<div class="container">
+"#);
     
-    // Show profile summary
+    html.push_str(&format!("<h1>🔍 ScholarshipOps Triage Report</h1>\n"));
+    html.push_str(&format!("<p class=\"timestamp\">📅 {}</p>\n", timestamp));
+    
     if let Some(p) = profile {
-        html.push_str("<div class=\"profile-section\">\n");
-        html.push_str("<h2>👤 Your Profile</h2>\n");
-        html.push_str("<ul>\n");
+        html.push_str("<h2>👤 Your Profile</h2>\n<ul>\n");
         html.push_str(&format!("<li><strong>Nationality:</strong> {}</li>\n", p.nationality));
         html.push_str(&format!("<li><strong>Target:</strong> {} ({})</li>\n", p.target_university, p.programme_start));
         html.push_str(&format!("<li><strong>Level:</strong> {}</li>\n", p.programme_level));
-        if !p.education.is_empty() {
-            let best_gpa = p.education.iter().map(|e| e.gpa).fold(0.0, f64::max);
-            html.push_str(&format!("<li><strong>Best GPA:</strong> {:.2}</li>\n", best_gpa));
-        }
         html.push_str("</ul>\n");
-        html.push_str("</div>\n\n");
     }
     
-    if new_leads.is_empty() {
-        html.push_str("<div class=\"results-section\">\n");
-        html.push_str("<h2>Results</h2>\n");
-        html.push_str("<p>No new qualified scholarships found.</p>\n");
-        html.push_str("</div>\n");
-    } else {
-        html.push_str("<div class=\"results-section\">\n");
-        html.push_str(&format!("<h2>✅ Found {} qualified scholarships</h2>\n", new_leads.len()));
-        html.push_str("<p><strong>Sorting:</strong> Comprehensive score (Match + ROI + Urgency + Source Reliability)</p>\n");
-        
-        // Create table
-        html.push_str("<div class=\"table-container\">\n");
-        html.push_str("<table class=\"scholarship-table\">\n");
-        html.push_str("<thead>\n<tr>\n");
-        html.push_str("<th>#</th>\n");
-        html.push_str("<th>Name</th>\n");
-        html.push_str("<th>Amount</th>\n");
-        html.push_str("<th>Deadline</th>\n");
-        html.push_str("<th>Comprehensive Score</th>\n");
-        html.push_str("<th>Match</th>\n");
-        html.push_str("<th>ROI</th>\n");
-        html.push_str("<th>Urgency</th>\n");
-        html.push_str("<th>Source</th>\n");
-        html.push_str("<th>Days Until</th>\n");
-        html.push_str("<th>URL</th>\n");
-        html.push_str("</tr>\n</thead>\n<tbody>\n");
-        
-        // Display ALL scholarships (no limit)
-        for (i, lead) in new_leads.iter().enumerate() {
-            let comprehensive_score = sorter::calculate_comprehensive_score(lead);
-            let roi_score = sorter::calculate_roi_score(lead);
-            let urgency_score = sorter::calculate_urgency_score(lead);
-            let source_score = sorter::calculate_source_reliability_score(lead);
-            let days_until = sorter::days_until_deadline(lead);
-            
-            let urgency_class = match days_until {
-                Some(d) if d < 0 => "past",
-                Some(d) if d <= 30 => "urgent",
-                Some(d) if d <= 60 => "soon",
-                _ => "normal",
-            };
-            
-            let days_str = match days_until {
-                Some(d) if d < 0 => format!("⚠️ {} days ago", -d),
-                Some(d) if d <= 30 => format!("🚨 D-{}", d),
-                Some(d) if d <= 60 => format!("⚡ D-{}", d),
-                Some(d) => format!("D-{}", d),
-                None => "TBD".to_string(),
-            };
-            
-            // Escape HTML entities
-            let name_escaped = lead.name.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-            let amount_escaped = lead.amount.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-            
-            html.push_str(&format!("<tr class=\"{}\">\n", urgency_class));
-            html.push_str(&format!("<td>{}</td>\n", i + 1));
-            html.push_str(&format!("<td>{}</td>\n", name_escaped));
-            html.push_str(&format!("<td>{}</td>\n", amount_escaped));
-            html.push_str(&format!("<td>{}</td>\n", lead.deadline));
-            html.push_str(&format!("<td>{:.1}</td>\n", comprehensive_score));
-            html.push_str(&format!("<td>{}</td>\n", lead.match_score));
-            html.push_str(&format!("<td>£{:.0}</td>\n", roi_score));
-            html.push_str(&format!("<td>{}</td>\n", urgency_score));
-            html.push_str(&format!("<td>{}</td>\n", source_score));
-            html.push_str(&format!("<td>{}</td>\n", days_str));
-            html.push_str(&format!("<td><a href=\"{}\" target=\"_blank\">Link</a></td>\n", lead.url));
-            html.push_str("</tr>\n");
-        }
-        
-        html.push_str("</tbody>\n</table>\n");
-        html.push_str("</div>\n");
-        html.push_str("</div>\n");
-    }
-    
-    // Show filtered out summary
-    if !filtered_out.is_empty() {
-        html.push_str("<div class=\"filtered-section\">\n");
-        html.push_str(&format!("<h2>⏭️ Filtered Out</h2>\n"));
-        html.push_str(&format!("<p>{} scholarships were filtered out.</p>\n", filtered_out.len()));
-        html.push_str("<ul>\n");
-        for (name, reasons) in filtered_out.iter().take(10) {
-            let name_escaped = name.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-            html.push_str(&format!("<li><strong>{}:</strong> {}</li>\n", name_escaped, reasons.join(", ")));
-        }
-        if filtered_out.len() > 10 {
-            html.push_str(&format!("<li>... and {} more</li>\n", filtered_out.len() - 10));
-        }
-        html.push_str("</ul>\n");
-        html.push_str("</div>\n");
-    }
-    
-    if !errors.is_empty() {
-        html.push_str("<div class=\"errors-section\">\n");
-        html.push_str(&format!("<h2>⚠️ Errors</h2>\n"));
-        html.push_str(&format!("<p>{} source(s) had issues:</p>\n", errors.len()));
-        html.push_str("<ul>\n");
-        for err in errors {
-            let err_escaped = err.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-            html.push_str(&format!("<li>{}</li>\n", err_escaped));
-        }
-        html.push_str("</ul>\n");
-        html.push_str("</div>\n");
-    }
-    
-    html.push_str("<div class=\"stats-section\">\n");
-    html.push_str(&format!("<h2>📊 Statistics</h2>\n"));
-    html.push_str(&format!("<p><strong>Total leads in database:</strong> {}</p>\n", total_leads + new_leads.len()));
+    html.push_str("<div class=\"stats\">\n");
+    html.push_str(&format!("<div class=\"stat-box a\"><div class=\"stat-number\">{}</div>Bucket A</div>\n", bucket_a.len()));
+    html.push_str(&format!("<div class=\"stat-box b\"><div class=\"stat-number\">{}</div>Bucket B</div>\n", bucket_b.len()));
+    html.push_str(&format!("<div class=\"stat-box c\"><div class=\"stat-number\">{}</div>Filtered</div>\n", filtered_out.len()));
     html.push_str("</div>\n");
+    
+    if !bucket_a.is_empty() {
+        html.push_str("<h2>🎯 Bucket A - High Priority</h2>\n");
+        html.push_str("<table><thead><tr><th>#</th><th>Name</th><th>Amount</th><th>Deadline</th><th>Score</th><th>Effort</th><th>Link</th></tr></thead><tbody>\n");
+        
+        for (i, lead) in bucket_a.iter().enumerate() {
+            let effort = lead.effort_score.map(|e| format!("{}/100", e)).unwrap_or("-".to_string());
+            html.push_str(&format!(
+                "<tr class=\"bucket-a\"><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td><a href=\"{}\" target=\"_blank\">Link</a></td></tr>\n",
+                i + 1, lead.name, lead.amount, lead.deadline, lead.match_score, effort, lead.url
+            ));
+        }
+        html.push_str("</tbody></table>\n");
+    }
+    
+    if !bucket_b.is_empty() {
+        html.push_str("<h2>📋 Bucket B - Medium Priority</h2>\n");
+        html.push_str("<table><thead><tr><th>#</th><th>Name</th><th>Amount</th><th>Deadline</th><th>Score</th><th>Link</th></tr></thead><tbody>\n");
+        
+        for (i, lead) in bucket_b.iter().take(30).enumerate() {
+            html.push_str(&format!(
+                "<tr class=\"bucket-b\"><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td><a href=\"{}\" target=\"_blank\">Link</a></td></tr>\n",
+                i + 1, lead.name, lead.amount, lead.deadline, lead.match_score, lead.url
+            ));
+        }
+        html.push_str("</tbody></table>\n");
+        
+        if bucket_b.len() > 30 {
+            html.push_str(&format!("<p><em>... and {} more</em></p>\n", bucket_b.len() - 30));
+        }
+    }
+    
+    html.push_str(&format!("<h2>📊 Statistics</h2>\n<p><strong>Total leads in database:</strong> {}</p>\n", 
+        total_leads + bucket_a.len() + bucket_b.len()));
     
     html.push_str("</div>\n</body>\n</html>");
     

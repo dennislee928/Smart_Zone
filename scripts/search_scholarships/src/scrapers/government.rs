@@ -29,6 +29,12 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             url: "https://www.chevening.org/scholarships/".to_string(),
             match_score: 0,
             match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: Some(60), // High effort - essays, references, interview
+            trust_tier: Some("S".to_string()), // Government = Tier S
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
         },
         Lead {
             name: "Commonwealth Scholarships (Taught Masters)".to_string(),
@@ -46,6 +52,12 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             url: "https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/".to_string(),
             match_score: 0,
             match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: Some(50),
+            trust_tier: Some("S".to_string()),
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
         },
         Lead {
             name: "GREAT Scholarships".to_string(),
@@ -63,6 +75,12 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             url: "https://study-uk.britishcouncil.org/scholarships/great-scholarships".to_string(),
             match_score: 0,
             match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: Some(40),
+            trust_tier: Some("S".to_string()),
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
         },
         Lead {
             name: "Marshall Scholarships".to_string(),
@@ -80,6 +98,12 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             url: "https://www.marshallscholarship.org/".to_string(),
             match_score: 0,
             match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: Some(70),
+            trust_tier: Some("S".to_string()),
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
         },
     ]
 }
