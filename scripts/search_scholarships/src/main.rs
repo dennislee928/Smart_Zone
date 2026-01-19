@@ -258,11 +258,12 @@ async fn main() -> Result<()> {
         .cloned()
         .collect();
     
+    let saved_count = leads_to_save.len();
     if !leads_to_save.is_empty() {
         let mut new_leads = leads_to_save;
         leads_file.leads.append(&mut new_leads);
         storage::save_leads(&root, &leads_file)?;
-        println!("  Added {} leads to database", leads_to_save.len());
+        println!("  Added {} leads to database", saved_count);
     }
     
     // Send notification
@@ -453,7 +454,7 @@ fn build_html_report(
     timestamp: &str,
     leads: &[Lead],
     filtered_out: &[(String, Vec<String>)],
-    errors: &[String],
+    _errors: &[String],
     total_leads: usize,
     profile: &Option<Profile>,
 ) -> String {

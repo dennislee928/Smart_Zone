@@ -2,9 +2,8 @@
 //! 
 //! Implements A/B/C bucket classification and generates triage reports
 
-use crate::types::{Lead, Bucket, TriageResult, LinkHealthResult, RulesConfig, RulesAudit, BucketCounts, RuleHitCount};
-use crate::rules::{apply_rules, RuleApplicationResult};
-use crate::sorter;
+use crate::types::{Lead, Bucket, RulesConfig, RulesAudit, BucketCounts, RuleHitCount};
+use crate::rules::apply_rules;
 use chrono::Utc;
 use std::collections::HashMap;
 

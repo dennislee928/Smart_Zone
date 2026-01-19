@@ -2,7 +2,7 @@
 //! 
 //! Loads and executes rules from Config/rules.yaml
 
-use crate::types::{Lead, RuleMatch, Bucket, RulesConfig, Rule, RuleAction, RuleCondition};
+use crate::types::{Lead, RuleMatch, Bucket, RulesConfig, RuleCondition};
 use anyhow::{Result, Context};
 use chrono::{NaiveDate, Utc};
 use regex::Regex;

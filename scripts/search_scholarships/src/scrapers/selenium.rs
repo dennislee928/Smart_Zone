@@ -128,6 +128,12 @@ fn parse_dynamic_html(html: &str, base_url: &str) -> Vec<Lead> {
                         url,
                         match_score: 0,
                         match_reasons: vec![],
+                        bucket: None,
+                        http_status: None,
+                        effort_score: None,
+                        trust_tier: Some("B".to_string()),
+                        risk_flags: vec![],
+                        matched_rule_ids: vec![],
                     });
                 }
             }
