@@ -359,6 +359,9 @@ mod tests {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: None,
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
         }
     }
     
