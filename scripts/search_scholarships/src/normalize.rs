@@ -8,6 +8,11 @@
 use crate::types::Lead;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
+use lazy_static::lazy_static;
+
+lazy_static! {
+    static ref WHITESPACE_RE: Regex = Regex::new(r"\s+").unwrap();
+}
 
 /// Tracking parameters to remove from URLs
 const TRACKING_PARAMS: &[&str] = &[
@@ -155,8 +160,7 @@ pub fn generate_dedup_key(lead: &Lead) -> String {
 
 /// Normalize text for comparison (lowercase, remove extra whitespace)
 fn normalize_text(text: &str) -> String {
-    let re = Regex::new(r"\s+").unwrap();
-    re.replace_all(text.trim().to_lowercase().as_str(), " ").to_string()
+    WHITESPACE_RE.replace_all(text.trim().to_lowercase().as_str(), " ").to_string()
 }
 
 /// Deduplicate leads and return unique leads with best quality
