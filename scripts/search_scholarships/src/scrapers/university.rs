@@ -225,7 +225,7 @@ fn extract_deadline(text: &str) -> Option<String> {
 /// Known university scholarships as fallback
 /// These are manually curated Glasgow scholarships for 2026/27 intake
 fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
-    let base_domain = url.split('/').take(3).collect::<Vec<_>>().join("/");
+    let _base_domain = url.split('/').take(3).collect::<Vec<_>>().join("/");
     
     // Only return Glasgow scholarships if URL matches Glasgow
     if !url.contains("gla.ac.uk") {
