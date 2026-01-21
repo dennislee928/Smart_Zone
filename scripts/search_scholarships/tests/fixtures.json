@@ -210,6 +210,125 @@
         "bucket": "C",
         "reason_contains": "US citizens"
       }
+    },
+    {
+      "id": "TC-009",
+      "name": "US State Residency Required -> C",
+      "description": "Scholarship requiring US state residency should be rejected",
+      "input": {
+        "name": "Washington State Community Foundation Scholarship",
+        "amount": "$10,000",
+        "deadline": "2026-04-01",
+        "eligibility": ["Must be a resident of Washington State", "High school seniors"],
+        "notes": "Seattle Foundation scholarship for local students",
+        "url": "https://www.seattlefoundation.org/scholarships"
+      },
+      "expected": {
+        "bucket": "C",
+        "matched_rules": ["E-RESIDENCY-001"],
+        "reason_contains": "US state"
+      }
+    },
+    {
+      "id": "TC-010",
+      "name": "Deadline passed -> X",
+      "description": "Scholarship with past deadline should go to X bucket for next cycle",
+      "input": {
+        "name": "Past Deadline Scholarship",
+        "amount": "£5,000",
+        "deadline": "2025-12-31",
+        "deadline_date": "2025-12-31",
+        "eligibility": ["International students"],
+        "notes": "Good scholarship but deadline passed",
+        "url": "https://example.ac.uk/past"
+      },
+      "expected": {
+        "bucket": "X",
+        "matched_rules": ["T-DEAD-PAST-001"],
+        "reason_contains": "passed"
+      }
+    },
+    {
+      "id": "TC-011",
+      "name": "AND semantics test - regex matches but deadline fails",
+      "description": "Rule with multiple conditions should require ALL to pass",
+      "input": {
+        "name": "Test Scholarship",
+        "amount": "£5,000",
+        "deadline": "2027-12-31",
+        "deadline_date": "2027-12-31",
+        "eligibility": ["Undergraduate only"],
+        "notes": "For bachelor students",
+        "url": "https://example.ac.uk/ug"
+      },
+      "expected": {
+        "bucket": "C",
+        "matched_rules": ["E-LEVEL-UG-001"],
+        "reason_contains": "Undergraduate"
+      }
+    },
+    {
+      "id": "TC-012",
+      "name": "High confidence + near deadline -> A",
+      "description": "High quality lead with near deadline should be bucket A",
+      "input": {
+        "name": "High Quality Scholarship",
+        "amount": "£15,000",
+        "deadline": "2026-02-01",
+        "deadline_date": "2026-02-01",
+        "eligibility": ["International students", "MSc programmes", "All nationalities"],
+        "notes": "Fully funded scholarship at University of Glasgow",
+        "url": "https://www.gla.ac.uk/scholarships/example/",
+        "trust_tier": "S",
+        "http_status": 200,
+        "is_taiwan_eligible": true
+      },
+      "expected": {
+        "bucket": "A",
+        "confidence_min": 0.8,
+        "score_min": 100
+      }
+    },
+    {
+      "id": "TC-013",
+      "name": "Low confidence + no deadline -> Watchlist",
+      "description": "Low quality lead with unknown deadline should go to watchlist",
+      "input": {
+        "name": "Unknown Scholarship",
+        "amount": "See website",
+        "deadline": "TBD",
+        "eligibility": [],
+        "notes": "",
+        "url": "https://unknown-site.com/scholarship",
+        "trust_tier": null,
+        "http_status": null
+      },
+      "expected": {
+        "bucket_in": ["B", "C"],
+        "add_to_watchlist": true,
+        "confidence_max": 0.5
+      }
+    },
+    {
+      "id": "TC-014",
+      "name": "Portable scholarship (Chevening) -> High score",
+      "description": "Major portable UK scholarship should score high",
+      "input": {
+        "name": "Chevening Scholarship",
+        "amount": "Full tuition + living costs",
+        "deadline": "2026-11-03",
+        "deadline_date": "2026-11-03",
+        "eligibility": ["All nationalities", "Return to home country", "Leadership potential"],
+        "notes": "UK Government flagship scholarship. Chevening is the UK government's international scholarships programme.",
+        "url": "https://www.chevening.org/scholarships/",
+        "trust_tier": "A",
+        "http_status": 200
+      },
+      "expected": {
+        "bucket_in": ["A", "B"],
+        "matched_rules": ["P-INTL-001", "P-FULL-001"],
+        "score_min": 50
+      }
     }
   ],
   "profile": {
@@ -217,6 +336,7 @@
     "target_university": "University of Glasgow",
     "target_country": "UK",
     "programme_level": "master",
-    "programme_start": "2026-09-14"
+    "programme_start": "2026-09-14",
+    "target_programme_keywords": ["Software Development", "Computing Science", "Computer Science"]
   }
 }
