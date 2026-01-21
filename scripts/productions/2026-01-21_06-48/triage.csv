@@ -1,0 +1,5 @@
+bucket,name,amount,deadline,score,effort,trust_tier,reason,url
+B,"Each year the foundation provides more than  $50,000  in scholarships.","$50,000",Check website,10,30,C,✅ No GPA requirement stated,https://www.akpsi.org/scholarships
+B,Current Scholarship Opportunities,"$3,000",Check website,10,30,C,✅ No GPA requirement stated,https://www.seattlefoundation.org/scholarships
+C,GREAT Scholarships,"£10,000 minimum",2026-05-15,60,40,B,🇬🇧 UK scholarship,https://study-uk.britishcouncil.org/scholarships/great-scholarships
+C,Commonwealth Scholarships (Taught Masters),Full tuition + stipend + travel,2026-10-18,50,50,S,🇬🇧 UK scholarship,https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/

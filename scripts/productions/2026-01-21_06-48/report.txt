@@ -1,0 +1,20 @@
+🔍 **ScholarshipOps Search Report**
+📅 2026-01-21 06:25 UTC
+
+👤 **Your Profile:**
+• Nationality: Taiwan
+• Target: University of Glasgow (2026-09-14)
+• Level: master
+
+📊 **Results:** A=0 | B=2 | C=2
+
+## 📋 Bucket B (備援)
+
+1. Each year the foundation provides more than  $50,000  in scholarships. - $50,000 (Score: 10)
+2. Current Scholarship Opportunities - $3,000 (Score: 10)
+
+⏭️ **Filtered out:** 6 scholarships
+
+⚠️ **Errors:** 522
+
+📁 **Total in database:** 2
