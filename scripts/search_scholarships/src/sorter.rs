@@ -108,12 +108,13 @@ fn parse_amount(amount_str: &str) -> f64 {
     let cleaned = amount_str.replace(" ", "").replace(",", "").to_lowercase();
     
     // Try to extract number ranges (e.g., "£5,000-£10,000" or "5000-10000")
+    // Note: cleaned string is ASCII after replace operations, but use safe method
     if let Some(dash_pos) = cleaned.find('-') {
-        let left = &cleaned[..dash_pos];
-        let right = &cleaned[dash_pos + 1..];
+        let left: String = cleaned.chars().take(dash_pos).collect();
+        let right: String = cleaned.chars().skip(dash_pos + 1).collect();
         
-        let left_val = extract_number(left);
-        let right_val = extract_number(right);
+        let left_val = extract_number(&left);
+        let right_val = extract_number(&right);
         
         if left_val > 0.0 && right_val > 0.0 {
             // Return average for ranges

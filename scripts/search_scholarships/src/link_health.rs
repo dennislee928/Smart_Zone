@@ -154,9 +154,9 @@ pub fn generate_deadlinks_report(results: &[LinkHealthResult]) -> String {
         for link in &dead_links {
             let http_code = link.http_code.map(|c| c.to_string()).unwrap_or_else(|| "-".to_string());
             let error = link.error_message.as_deref().unwrap_or("-");
-            // Truncate URL for readability
-            let url_display = if link.url.len() > 60 {
-                format!("{}...", &link.url[..57])
+            // Truncate URL for readability (URLs are ASCII, but use safe method anyway)
+            let url_display = if link.url.chars().count() > 60 {
+                format!("{}...", link.url.chars().take(57).collect::<String>())
             } else {
                 link.url.clone()
             };

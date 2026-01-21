@@ -176,9 +176,17 @@ pub fn generate_health_report(health_file: &SourceHealthFile) -> String {
         report.push_str("|--------|------|----------|------------|\n");
         
         for h in health_file.sources.iter().filter(|h| h.auto_disabled) {
-            let name = if h.name.len() > 30 { format!("{}...", &h.name[..27]) } else { h.name.clone() };
+            let name = if h.name.chars().count() > 30 { 
+                format!("{}...", h.name.chars().take(27).collect::<String>()) 
+            } else { 
+                h.name.clone() 
+            };
             let error = h.last_error.as_deref().unwrap_or("-");
-            let error_short = if error.len() > 40 { format!("{}...", &error[..37]) } else { error.to_string() };
+            let error_short = if error.chars().count() > 40 { 
+                format!("{}...", error.chars().take(37).collect::<String>()) 
+            } else { 
+                error.to_string() 
+            };
             report.push_str(&format!("| {} | {} | {} | {} |\n", 
                 name, h.source_type, h.consecutive_failures, error_short));
         }
@@ -192,7 +200,11 @@ pub fn generate_health_report(health_file: &SourceHealthFile) -> String {
         report.push_str("|--------|------|----------|-------------|\n");
         
         for h in health_file.sources.iter().filter(|h| h.consecutive_failures > 0 && !h.auto_disabled) {
-            let name = if h.name.len() > 30 { format!("{}...", &h.name[..27]) } else { h.name.clone() };
+            let name = if h.name.chars().count() > 30 { 
+                format!("{}...", h.name.chars().take(27).collect::<String>()) 
+            } else { 
+                h.name.clone() 
+            };
             report.push_str(&format!("| {} | {} | {} | {} |\n", 
                 name, h.source_type, h.consecutive_failures, h.last_status));
         }

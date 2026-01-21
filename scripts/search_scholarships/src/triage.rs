@@ -295,10 +295,12 @@ pub fn generate_rules_audit(
     }
 }
 
-/// Helper to truncate strings for table display
-fn truncate_str(s: &str, max_len: usize) -> String {
-    if s.len() > max_len {
-        format!("{}...", &s[..max_len.saturating_sub(3)])
+/// Helper to truncate strings for table display (Unicode-safe)
+fn truncate_str(s: &str, max_chars: usize) -> String {
+    let char_count = s.chars().count();
+    if char_count > max_chars {
+        let truncated: String = s.chars().take(max_chars.saturating_sub(3)).collect();
+        format!("{}...", truncated)
     } else {
         s.to_string()
     }

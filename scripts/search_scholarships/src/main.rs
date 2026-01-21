@@ -467,8 +467,8 @@ fn build_summary_report(
     if !bucket_a.is_empty() {
         report.push_str("🎯 **Top Picks:**\n");
         for (i, lead) in bucket_a.iter().take(3).enumerate() {
-            let name = if lead.name.len() > 35 {
-                format!("{}...", &lead.name[..32])
+            let name = if lead.name.chars().count() > 35 {
+                format!("{}...", lead.name.chars().take(32).collect::<String>())
             } else {
                 lead.name.clone()
             };

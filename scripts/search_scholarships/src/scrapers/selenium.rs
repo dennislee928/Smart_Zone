@@ -242,10 +242,11 @@ fn extract_url(element: &scraper::ElementRef, base_url: &str) -> String {
                 }
                 // 處理相對 URL（簡化版本）
                 else if href.starts_with('/') {
-                    // 從 base_url 提取協議和域名
+                    // 從 base_url 提取協議和域名 (URLs are ASCII-safe)
                     if let Some(scheme_end) = base_url.find("://") {
-                        if let Some(host_start) = base_url[scheme_end + 3..].find('/') {
-                            let host = &base_url[..scheme_end + 3 + host_start];
+                        let after_scheme = &base_url[scheme_end + 3..];
+                        if let Some(host_end) = after_scheme.find('/') {
+                            let host: String = base_url.chars().take(scheme_end + 3 + host_end).collect();
                             return format!("{}{}", host, href);
                         }
                     }
