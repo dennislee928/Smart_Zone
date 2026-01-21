@@ -2,7 +2,7 @@
 //! 
 //! Loads and executes rules from Config/rules.yaml
 
-use crate::types::{Lead, RuleMatch, Bucket, RulesConfig, RuleCondition};
+use crate::types::{Lead, RuleMatch, Bucket, RulesConfig, RuleCondition, TrustTier};
 use anyhow::{Result, Context};
 use chrono::{NaiveDate, Utc};
 use regex::Regex;
@@ -38,22 +38,6 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
     // Build searchable text from lead
     let search_text = build_search_text(lead);
     
-    // #region agent log
-    // Debug: Log lead being processed
-    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(
-        std::env::var("DEBUG_LOG_PATH").unwrap_or_else(|_| "/tmp/debug.log".to_string())
-    ) {
-        use std::io::Write;
-        let _ = writeln!(f, r#"{{"location":"rules.rs:apply_rules","message":"Processing lead","data":{{"name":"{}","is_taiwan_eligible":{:?},"deadline_date":{:?},"study_start":{:?}}},"timestamp":{},"hypothesisId":"H1"}}"#,
-            lead.name.replace('"', "'"),
-            lead.is_taiwan_eligible,
-            lead.deadline_date,
-            lead.study_start,
-            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis()
-        );
-    }
-    // #endregion
-    
     // Stage 1: Apply hard reject rules (C or X bucket)
     for rule in &rules.hard_reject_rules {
         if check_rule_condition(&rule.when, lead, &search_text) {
@@ -62,22 +46,6 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
                 Some("X") => Bucket::X,
                 Some("C") | _ => Bucket::C,
             };
-            
-            // #region agent log
-            // Debug: Log which rule matched
-            if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(
-                std::env::var("DEBUG_LOG_PATH").unwrap_or_else(|_| "/tmp/debug.log".to_string())
-            ) {
-                use std::io::Write;
-                let _ = writeln!(f, r#"{{"location":"rules.rs:hard_reject","message":"Rule matched","data":{{"lead":"{}","rule_id":"{}","rule_name":"{}","reason":"{}"}},"timestamp":{},"hypothesisId":"H2"}}"#,
-                    lead.name.replace('"', "'"),
-                    rule.id,
-                    rule.name.replace('"', "'"),
-                    rule.action.reason.replace('"', "'"),
-                    std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis()
-                );
-            }
-            // #endregion
             
             result.matched_rules.push(RuleMatch {
                 rule_id: rule.id.clone(),
@@ -145,17 +113,51 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
     // Determine final bucket based on thresholds if not already set
     if result.bucket.is_none() {
         let final_score = lead.match_score + result.total_score_add;
+        let lead_effort = lead.effort_score.unwrap_or(0);
+        let lead_trust_tier = lead.trust_tier.as_ref()
+            .map(|s| TrustTier::from_str(s))
+            .unwrap_or(TrustTier::C);
         
         if let Some(ref thresholds) = rules.bucket_thresholds {
+            // Check Bucket A requirements: score + trust tier + effort constraints
             if let Some(ref a_threshold) = thresholds.a {
-                if final_score >= a_threshold.min_final_score {
+                let score_ok = final_score >= a_threshold.min_final_score;
+                
+                // Check trust tier (higher is better: S > A > B > C)
+                let trust_ok = a_threshold.min_trust_tier.as_ref()
+                    .map(|min_tier| {
+                        let min = TrustTier::from_str(min_tier);
+                        trust_tier_meets_minimum(lead_trust_tier, min)
+                    })
+                    .unwrap_or(true);
+                
+                // Check effort score (lower is better)
+                let effort_ok = a_threshold.max_effort_score
+                    .map(|max| lead_effort <= max)
+                    .unwrap_or(true);
+                
+                if score_ok && trust_ok && effort_ok {
                     result.bucket = Some(Bucket::A);
                 }
             }
             
+            // Check Bucket B requirements if not already assigned to A
             if result.bucket.is_none() {
                 if let Some(ref b_threshold) = thresholds.b {
-                    if final_score >= b_threshold.min_final_score {
+                    let score_ok = final_score >= b_threshold.min_final_score;
+                    
+                    let trust_ok = b_threshold.min_trust_tier.as_ref()
+                        .map(|min_tier| {
+                            let min = TrustTier::from_str(min_tier);
+                            trust_tier_meets_minimum(lead_trust_tier, min)
+                        })
+                        .unwrap_or(true);
+                    
+                    let effort_ok = b_threshold.max_effort_score
+                        .map(|max| lead_effort <= max)
+                        .unwrap_or(true);
+                    
+                    if score_ok && trust_ok && effort_ok {
                         result.bucket = Some(Bucket::B);
                     }
                 }
@@ -174,6 +176,20 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
     }
     
     result
+}
+
+/// Check if actual trust tier meets or exceeds minimum required tier
+/// Order: S > A > B > C (S is highest, C is lowest)
+fn trust_tier_meets_minimum(actual: TrustTier, minimum: TrustTier) -> bool {
+    let tier_rank = |t: TrustTier| -> u8 {
+        match t {
+            TrustTier::S => 4,
+            TrustTier::A => 3,
+            TrustTier::B => 2,
+            TrustTier::C => 1,
+        }
+    };
+    tier_rank(actual) >= tier_rank(minimum)
 }
 
 /// Build searchable text from lead fields
@@ -294,34 +310,38 @@ fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &st
         }
     }
     
-    // Check country eligibility condition
+    // Check country eligibility condition (tri-state logic)
+    // - expected=true  => require explicit Some(true) to pass
+    // - expected=false => only trigger rejection if eligible_countries list exists AND is_taiwan_eligible == Some(false)
     if let Some(expected_eligible) = condition.is_taiwan_eligible {
         has_any_condition = true;
-        if let Some(actual_eligible) = lead.is_taiwan_eligible {
-            if actual_eligible != expected_eligible {
-                all_passed = false;
+
+        match expected_eligible {
+            true => {
+                // Must be explicitly confirmed eligible
+                if lead.is_taiwan_eligible != Some(true) {
+                    all_passed = false;
+                }
             }
-        } else {
-            // No eligibility info available, condition not met for false check
-            // For true check, we can't confirm so fail
-            all_passed = false;
+            false => {
+                // Only reject when the page explicitly lists eligible countries AND Taiwan is not included
+                let has_explicit_country_list = !lead.eligible_countries.is_empty();
+                if !has_explicit_country_list || lead.is_taiwan_eligible != Some(false) {
+                    // Condition not met: either no explicit list, or Taiwan is eligible/unknown
+                    all_passed = false;
+                }
+            }
         }
     }
     
-    // #region agent log
-    // Debug: Log condition evaluation result
-    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(
-        std::env::var("DEBUG_LOG_PATH").unwrap_or_else(|_| "/tmp/debug.log".to_string())
-    ) {
-        use std::io::Write;
-        let _ = writeln!(f, r#"{{"location":"rules.rs:check_rule_condition","message":"Condition eval","data":{{"has_any_condition":{},"all_passed":{},"result":{}}},"timestamp":{},"hypothesisId":"H3"}}"#,
-            has_any_condition,
-            all_passed,
-            has_any_condition && all_passed,
-            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis()
-        );
+    // Check directory page gate
+    // Used to skip certain rules (like E-NONTARGET-001) on discovery/index pages
+    if let Some(expected) = condition.is_directory_page {
+        has_any_condition = true;
+        if lead.is_directory_page != expected {
+            all_passed = false;
+        }
     }
-    // #endregion
     
     // Rule triggers only if there's at least one condition AND all conditions pass
     has_any_condition && all_passed
@@ -523,5 +543,174 @@ mod tests {
         // Invalid
         assert_eq!(parse_deadline("check website"), None);
         assert_eq!(parse_deadline(""), None);
+    }
+    
+    // =============================================
+    // Tests for tri-state Taiwan eligibility logic
+    // =============================================
+    
+    #[test]
+    fn test_taiwan_eligibility_tristate_expected_true() {
+        let mut lead = create_test_lead();
+        let search_text = build_search_text(&lead);
+        
+        // Condition: is_taiwan_eligible: true (require explicit confirmation)
+        let condition = RuleCondition {
+            is_taiwan_eligible: Some(true),
+            ..Default::default()
+        };
+        
+        // Case 1: Lead has explicit Some(true) -> should PASS
+        lead.is_taiwan_eligible = Some(true);
+        assert!(check_rule_condition(&condition, &lead, &search_text));
+        
+        // Case 2: Lead has explicit Some(false) -> should FAIL
+        lead.is_taiwan_eligible = Some(false);
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+        
+        // Case 3: Lead has None (unknown) -> should FAIL (can't confirm eligibility)
+        lead.is_taiwan_eligible = None;
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+    }
+    
+    #[test]
+    fn test_taiwan_eligibility_tristate_expected_false() {
+        let mut lead = create_test_lead();
+        let search_text = build_search_text(&lead);
+        
+        // Condition: is_taiwan_eligible: false (trigger rejection only when explicit)
+        let condition = RuleCondition {
+            is_taiwan_eligible: Some(false),
+            ..Default::default()
+        };
+        
+        // Case 1: No eligible countries list + is_taiwan_eligible = Some(false)
+        // -> should NOT trigger rejection (no explicit list exists)
+        lead.eligible_countries = vec![];
+        lead.is_taiwan_eligible = Some(false);
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+        
+        // Case 2: Has eligible countries list + is_taiwan_eligible = Some(false)
+        // -> SHOULD trigger rejection (explicit list exists and Taiwan not included)
+        lead.eligible_countries = vec!["UK".to_string(), "India".to_string()];
+        lead.is_taiwan_eligible = Some(false);
+        assert!(check_rule_condition(&condition, &lead, &search_text));
+        
+        // Case 3: Has eligible countries list + is_taiwan_eligible = Some(true)
+        // -> should NOT trigger rejection (Taiwan is eligible)
+        lead.eligible_countries = vec!["UK".to_string(), "Taiwan".to_string()];
+        lead.is_taiwan_eligible = Some(true);
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+        
+        // Case 4: Has eligible countries list + is_taiwan_eligible = None
+        // -> should NOT trigger rejection (unknown eligibility)
+        lead.eligible_countries = vec!["UK".to_string()];
+        lead.is_taiwan_eligible = None;
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+        
+        // Case 5: No eligible countries list + is_taiwan_eligible = None
+        // -> should NOT trigger rejection (no explicit data)
+        lead.eligible_countries = vec![];
+        lead.is_taiwan_eligible = None;
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+    }
+    
+    // =============================================
+    // Tests for is_directory_page condition
+    // =============================================
+    
+    #[test]
+    fn test_directory_page_condition() {
+        let mut lead = create_test_lead();
+        let search_text = build_search_text(&lead);
+        
+        // Condition: is_directory_page: false (only apply to detail pages)
+        let condition = RuleCondition {
+            is_directory_page: Some(false),
+            ..Default::default()
+        };
+        
+        // Case 1: Lead is NOT a directory page -> condition should PASS
+        lead.is_directory_page = false;
+        assert!(check_rule_condition(&condition, &lead, &search_text));
+        
+        // Case 2: Lead IS a directory page -> condition should FAIL (skip this rule)
+        lead.is_directory_page = true;
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+        
+        // Test the opposite condition
+        let condition_for_directory = RuleCondition {
+            is_directory_page: Some(true),
+            ..Default::default()
+        };
+        
+        // Case 3: Lead IS a directory page, condition wants directory -> should PASS
+        lead.is_directory_page = true;
+        assert!(check_rule_condition(&condition_for_directory, &lead, &search_text));
+        
+        // Case 4: Lead is NOT a directory page, condition wants directory -> should FAIL
+        lead.is_directory_page = false;
+        assert!(!check_rule_condition(&condition_for_directory, &lead, &search_text));
+    }
+    
+    #[test]
+    fn test_directory_page_combined_with_regex() {
+        let mut lead = create_test_lead();
+        lead.url = "https://random-site.com".to_string();
+        let search_text = build_search_text(&lead);
+        
+        // Simulating E-NONTARGET-001: not_any_regex + is_directory_page: false
+        let condition = RuleCondition {
+            is_directory_page: Some(false),
+            not_any_regex: Some(vec!["(?i)gla\\.ac\\.uk".to_string(), "(?i)glasgow".to_string()]),
+            ..Default::default()
+        };
+        
+        // Case 1: Detail page + not matching Glasgow -> rule SHOULD trigger (reject)
+        lead.is_directory_page = false;
+        assert!(check_rule_condition(&condition, &lead, &search_text));
+        
+        // Case 2: Directory page + not matching Glasgow -> rule should NOT trigger (skip)
+        lead.is_directory_page = true;
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+        
+        // Case 3: Detail page + matching Glasgow -> rule should NOT trigger (allowlist match)
+        lead.is_directory_page = false;
+        lead.url = "https://gla.ac.uk/scholarships".to_string();
+        let search_text = build_search_text(&lead);
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+    }
+    
+    // =============================================
+    // Tests for trust tier comparison
+    // =============================================
+    
+    #[test]
+    fn test_trust_tier_meets_minimum() {
+        // S is highest, C is lowest: S > A > B > C
+        
+        // S meets all minimums
+        assert!(trust_tier_meets_minimum(TrustTier::S, TrustTier::S));
+        assert!(trust_tier_meets_minimum(TrustTier::S, TrustTier::A));
+        assert!(trust_tier_meets_minimum(TrustTier::S, TrustTier::B));
+        assert!(trust_tier_meets_minimum(TrustTier::S, TrustTier::C));
+        
+        // A meets A, B, C but not S
+        assert!(!trust_tier_meets_minimum(TrustTier::A, TrustTier::S));
+        assert!(trust_tier_meets_minimum(TrustTier::A, TrustTier::A));
+        assert!(trust_tier_meets_minimum(TrustTier::A, TrustTier::B));
+        assert!(trust_tier_meets_minimum(TrustTier::A, TrustTier::C));
+        
+        // B meets B, C but not S, A
+        assert!(!trust_tier_meets_minimum(TrustTier::B, TrustTier::S));
+        assert!(!trust_tier_meets_minimum(TrustTier::B, TrustTier::A));
+        assert!(trust_tier_meets_minimum(TrustTier::B, TrustTier::B));
+        assert!(trust_tier_meets_minimum(TrustTier::B, TrustTier::C));
+        
+        // C only meets C
+        assert!(!trust_tier_meets_minimum(TrustTier::C, TrustTier::S));
+        assert!(!trust_tier_meets_minimum(TrustTier::C, TrustTier::A));
+        assert!(!trust_tier_meets_minimum(TrustTier::C, TrustTier::B));
+        assert!(trust_tier_meets_minimum(TrustTier::C, TrustTier::C));
     }
 }

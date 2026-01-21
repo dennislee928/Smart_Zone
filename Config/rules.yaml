@@ -138,6 +138,7 @@ hard_reject_rules:
     stage: "eligibility"
     description: "Not from Glasgow and not explicitly portable to UK universities"
     when:
+      is_directory_page: false  # Only apply to scholarship detail pages, not discovery/index pages
       not_any_regex:
         - "(?i)gla\\.ac\\.uk"
         - "(?i)glasgow\\.ac\\.uk"

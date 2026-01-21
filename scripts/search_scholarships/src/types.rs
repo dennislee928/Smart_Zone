@@ -240,6 +240,8 @@ pub struct RuleCondition {
     pub effort_score: Option<EffortScoreCondition>,
     #[serde(default)]
     pub is_taiwan_eligible: Option<bool>,  // Country eligibility gate
+    #[serde(default)]
+    pub is_directory_page: Option<bool>,   // Directory/index page gate - skip rules for discovery pages
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]

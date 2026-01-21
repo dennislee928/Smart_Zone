@@ -473,20 +473,6 @@ pub fn is_directory_page(url: &str, name: &str) -> bool {
     let url_lower = url.to_lowercase();
     let name_lower = name.to_lowercase();
     
-    // #region agent log
-    // Debug: Log directory page check
-    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(
-        std::env::var("DEBUG_LOG_PATH").unwrap_or_else(|_| "/tmp/debug.log".to_string())
-    ) {
-        use std::io::Write;
-        let _ = writeln!(f, r#"{{"location":"filter.rs:is_directory_page","message":"Checking directory page","data":{{"url":"{}","name":"{}"}},"timestamp":{},"hypothesisId":"H4"}}"#,
-            url.replace('"', "'"),
-            name.replace('"', "'"),
-            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis()
-        );
-    }
-    // #endregion
-    
     // EXCEPTION: Known official scholarship programme websites should NOT be marked as directory pages
     // These URLs end with /scholarships/ but are landing pages for specific programmes
     const KNOWN_SCHOLARSHIP_PROGRAMMES: &[&str] = &[
@@ -501,18 +487,6 @@ pub fn is_directory_page(url: &str, name: &str) -> bool {
     
     for known_programme in KNOWN_SCHOLARSHIP_PROGRAMMES {
         if url_lower.contains(known_programme) {
-            // #region agent log
-            if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(
-                std::env::var("DEBUG_LOG_PATH").unwrap_or_else(|_| "/tmp/debug.log".to_string())
-            ) {
-                use std::io::Write;
-                let _ = writeln!(f, r#"{{"location":"filter.rs:is_directory_page","message":"Matched known programme - NOT directory","data":{{"url":"{}","matched":"{}","result":false}},"timestamp":{},"hypothesisId":"H4"}}"#,
-                    url.replace('"', "'"),
-                    known_programme,
-                    std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis()
-                );
-            }
-            // #endregion
             return false;
         }
     }
