@@ -201,6 +201,19 @@ mod tests {
             trust_tier: None,
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: None,
+            deadline_date: None,
+            deadline_label: None,
+            intake_year: None,
+            study_start: None,
+            deadline_confidence: None,
+            canonical_url: None,
+            is_directory_page: false,
+            official_source_url: None,
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
         }
     }
     
