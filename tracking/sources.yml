@@ -7035,132 +7035,134 @@ sources:
   # - name: "SushiSwap Scholarships" (DUPLICATE - disabled)
   # - name: "Yearn Finance Scholarships" (DUPLICATE - disabled)
   # - name: "Curve Scholarships" (DUPLICATE - disabled)
-    enabled: True
-    scraper: "third_party"
+
+  # ============================================
+  # More Web3 sources - disabled (unverified URLs)
+  # ============================================
 
   - name: "MakerDAO Scholarships"
     type: "web3"
     url: "https://www.makerdao.com/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Compound Scholarships"
     type: "web3"
     url: "https://www.compound.finance/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Aave Scholarships"
     type: "web3"
     url: "https://www.aave.com/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Uniswap Foundation Scholarships"
     type: "web3"
     url: "https://www.uniswap.org/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Web3 Foundation Scholarships"
     type: "web3"
     url: "https://www.web3.foundation/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Protocol Labs Scholarships"
     type: "web3"
     url: "https://www.protocol.ai/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "IPFS Scholarships"
     type: "web3"
     url: "https://www.ipfs.io/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Filecoin Foundation Scholarships"
     type: "web3"
     url: "https://www.filecoin.io/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Chainlink Scholarships"
     type: "web3"
     url: "https://www.chain.link/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Ripple Scholarships"
     type: "web3"
     url: "https://www.ripple.com/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Stellar Development Foundation Scholarships"
     type: "web3"
     url: "https://www.stellar.org/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Algorand Foundation Scholarships"
     type: "web3"
     url: "https://www.algorand.foundation/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Near Protocol Scholarships"
     type: "web3"
     url: "https://www.near.org/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Avalanche Scholarships"
     type: "web3"
     url: "https://www.avax.network/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Polygon Scholarships"
     type: "web3"
     url: "https://www.polygon.technology/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Cosmos Scholarships"
     type: "web3"
     url: "https://www.cosmos.network/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Tezos Foundation Scholarships"
     type: "web3"
     url: "https://www.tezos.foundation/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Cardano Foundation Scholarships"
     type: "web3"
     url: "https://www.cardano.org/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Solana Foundation Scholarships"
     type: "web3"
     url: "https://www.solana.org/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Polkadot Scholarships"
     type: "web3"
     url: "https://www.polkadot.network/grants"
-    enabled: True
+    enabled: False  # Unverified URL
     scraper: "third_party"
 
   - name: "Ethereum Foundation Scholarships"
     type: "web3"
     url: "https://www.ethereum.org/grants"
-    enabled: True
+    enabled: False  # Unverified URL (duplicate - correct URL is ethereum.org/en/community/grants/)
     scraper: "third_party"
 
