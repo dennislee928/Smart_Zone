@@ -137,6 +137,9 @@ fn parse_third_party_html(html: &str, base_url: &str) -> Vec<Lead> {
                             canonical_url: None,
                             is_directory_page: false,
                             official_source_url: None,
+                            confidence: None,
+                            eligibility_confidence: None,
+                            tags: vec![],
                         });
                     }
                 }
@@ -270,6 +273,9 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://www.gatescambridge.org/".to_string()),
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
         },
         Lead {
             name: "Rhodes Scholarship (Oxford)".to_string(),
@@ -304,6 +310,9 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://www.rhodeshouse.ox.ac.uk/scholarships/".to_string()),
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
         },
         Lead {
             name: "Clarendon Scholarship (Oxford)".to_string(),
@@ -337,6 +346,9 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://www.ox.ac.uk/clarendon/".to_string()),
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
         },
         Lead {
             name: "Wellcome Trust PhD Programmes".to_string(),
@@ -370,6 +382,9 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://wellcome.org/grant-funding".to_string()),
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
         },
     ]
 }

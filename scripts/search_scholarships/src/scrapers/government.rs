@@ -175,6 +175,9 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://www.marshallscholarship.org/".to_string()),
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
         },
     ]
 }

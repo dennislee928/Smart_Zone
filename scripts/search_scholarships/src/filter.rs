@@ -581,7 +581,7 @@ pub fn generate_dedup_key(lead: &Lead) -> String {
 
 /// Detect if a single source URL produced too many leads (indicates directory page)
 /// Returns true if the URL should be treated as a directory page
-pub fn detect_bulk_extraction(url: &str, lead_count: usize) -> bool {
+pub fn detect_bulk_extraction(_url: &str, lead_count: usize) -> bool {
     // If a single URL produces more than 3 leads, it's likely a directory page
     // not individual scholarship pages
     lead_count > 3

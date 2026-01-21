@@ -210,7 +210,7 @@ fn is_transient_error(status_code: u16) -> bool {
 /// - Ok: 200-299 (healthy)
 fn classify_http_status(status_code: u16) -> LinkHealthStatus {
     match status_code {
-        200..=299 | 206 => LinkHealthStatus::Ok,  // 206 = Partial Content (from Range request)
+        200..=299 => LinkHealthStatus::Ok,  // Includes 206 Partial Content (from Range request)
         301 | 302 | 303 | 307 | 308 => LinkHealthStatus::Redirect,
         403 => LinkHealthStatus::Forbidden,  // Transient - may be blocking bots
         404 | 410 => LinkHealthStatus::NotFound,  // True dead link

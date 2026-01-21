@@ -6,7 +6,6 @@
 //! - Follow redirects to get final canonical URLs
 
 use crate::types::Lead;
-use regex::Regex;
 use std::collections::{HashMap, HashSet};
 
 /// Tracking parameters to remove from URLs

@@ -144,6 +144,9 @@ fn parse_dynamic_html(html: &str, base_url: &str) -> Vec<Lead> {
                         canonical_url: None,
                         is_directory_page: false,
                         official_source_url: None,
+                        confidence: None,
+                        eligibility_confidence: None,
+                        tags: vec![],
                     });
                 }
             }
