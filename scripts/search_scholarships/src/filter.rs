@@ -157,6 +157,13 @@ fn extract_country_list(text: &str) -> Option<Vec<String>> {
 
 /// Update lead with country eligibility information
 pub fn update_country_eligibility(lead: &mut Lead) {
+    // IMPORTANT: Only update if not already explicitly set
+    // Scrapers may have already set is_taiwan_eligible based on known data
+    if lead.is_taiwan_eligible.is_some() && !lead.eligible_countries.is_empty() {
+        // Already has explicit eligibility data from scraper, don't override
+        return;
+    }
+    
     let text = format!("{} {} {} {}", 
         lead.name, 
         lead.notes, 
@@ -166,11 +173,12 @@ pub fn update_country_eligibility(lead: &mut Lead) {
     
     let (countries, is_eligible) = parse_eligible_countries(&text);
     
-    if !countries.is_empty() {
+    if !countries.is_empty() && lead.eligible_countries.is_empty() {
         lead.eligible_countries = countries;
     }
     
-    if is_eligible.is_some() {
+    // Only update is_taiwan_eligible if not already explicitly set by scraper
+    if lead.is_taiwan_eligible.is_none() && is_eligible.is_some() {
         lead.is_taiwan_eligible = is_eligible;
     }
 }
@@ -385,11 +393,18 @@ const DIRECTORY_PATTERNS: &[&str] = &[
     "/scholarships/$",
     "/scholarships/search",
     "/scholarships/find",
+    "/scholarships/postgraduate",
+    "/scholarships/international",
+    "/scholarships/all",
     "/funding/$",
     "/funding/search",
+    "/funding/postgraduate",
     "/bursaries/$",
     "/financial-support/$",
     "/student-finance/$",
+    "/fees-and-funding/scholarships",
+    "/fees-and-funding/$",
+    "/study/fees/scholarships",
 ];
 
 /// Generate canonical URL for deduplication
@@ -529,6 +544,47 @@ pub fn generate_dedup_key(lead: &Lead) -> String {
         .join(" ");
     
     format!("{}|{}", canonical, name_normalized)
+}
+
+/// Detect if a single source URL produced too many leads (indicates directory page)
+/// Returns true if the URL should be treated as a directory page
+pub fn detect_bulk_extraction(url: &str, lead_count: usize) -> bool {
+    // If a single URL produces more than 3 leads, it's likely a directory page
+    // not individual scholarship pages
+    lead_count > 3
+}
+
+/// Count leads from the same base URL
+pub fn count_leads_by_url<'a>(leads: impl Iterator<Item = &'a Lead>) -> std::collections::HashMap<String, usize> {
+    let mut url_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+    
+    for lead in leads {
+        let canonical = lead.canonical_url.as_ref()
+            .map(|s| s.as_str())
+            .unwrap_or(&lead.url);
+        *url_counts.entry(canonical.to_string()).or_insert(0) += 1;
+    }
+    
+    url_counts
+}
+
+/// Mark leads from bulk-extracted URLs as directory pages
+pub fn mark_bulk_extracted_leads(leads: &mut [Lead]) {
+    // First pass: count leads per URL
+    let url_counts = count_leads_by_url(leads.iter());
+    
+    // Second pass: mark leads from URLs with too many extractions
+    for lead in leads.iter_mut() {
+        let canonical = lead.canonical_url.as_ref()
+            .map(|s| s.as_str())
+            .unwrap_or(&lead.url);
+        
+        if let Some(&count) = url_counts.get(canonical) {
+            if detect_bulk_extraction(canonical, count) {
+                lead.is_directory_page = true;
+            }
+        }
+    }
 }
 
 // ============================================

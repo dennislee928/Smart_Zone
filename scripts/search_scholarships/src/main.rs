@@ -222,6 +222,23 @@ async fn main() -> Result<()> {
     println!();
     
     // ==========================================
+    // Stage 1.5: Bulk Extraction Detection & Deduplication
+    // ==========================================
+    println!("Stage 1.5: Detecting bulk extractions and deduplicating...");
+    let before_count = all_leads.len();
+    
+    // Mark leads from URLs that produced too many extractions
+    filter::mark_bulk_extracted_leads(&mut all_leads);
+    
+    // Filter out newly marked directory pages
+    let bulk_extracted_count = all_leads.iter().filter(|l| l.is_directory_page).count();
+    all_leads.retain(|l| !l.is_directory_page);
+    
+    println!("  Marked {} leads as bulk extractions from directory pages", bulk_extracted_count);
+    println!("  Leads after dedup: {} (removed {})", all_leads.len(), before_count - all_leads.len());
+    println!();
+    
+    // ==========================================
     // Stage 2: Link Health Check (optional, skip if too many)
     // ==========================================
     let mut dead_links = Vec::new();

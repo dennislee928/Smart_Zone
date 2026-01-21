@@ -25,10 +25,12 @@ pub fn scrape_leads_only(url: &str) -> Result<Vec<Lead>> {
 /// Known UK government scholarships
 fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
     vec![
+        // NOTE: Chevening 2026/27 cycle closed on 2025-10-07
+        // The next cycle (2027/28) typically opens Aug 2026, closes Nov 2026
         Lead {
-            name: "Chevening Scholarships".to_string(),
+            name: "Chevening Scholarships 2027/28".to_string(),
             amount: "Full tuition + living costs + flights".to_string(),
-            deadline: "2026-11-05".to_string(),
+            deadline: "2026-11-03".to_string(),  // Estimated for 2027/28 cycle
             source: source_url.to_string(),
             source_type: "government".to_string(),
             status: "new".to_string(),
@@ -37,7 +39,7 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
                 "2+ years work experience".to_string(),
                 "Return to home country for 2 years".to_string(),
             ],
-            notes: "UK government's global scholarship programme".to_string(),
+            notes: "UK government's global scholarship programme - 2027/28 intake (NOT for Sep 2026 start)".to_string(),
             added_date: String::new(),
             url: "https://www.chevening.org/scholarships/".to_string(),
             match_score: 0,
@@ -50,11 +52,11 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             matched_rule_ids: vec![],
             eligible_countries: vec![],
             is_taiwan_eligible: Some(true), // Chevening includes Taiwan
-            deadline_date: Some("2026-11-05".to_string()),
-            deadline_label: Some("applications close".to_string()),
+            deadline_date: Some("2026-11-03".to_string()),
+            deadline_label: Some("applications close (estimated)".to_string()),
             intake_year: Some("2027/28".to_string()),
-            study_start: Some("2027-09".to_string()),
-            deadline_confidence: Some("confirmed".to_string()),
+            study_start: Some("2027-09-01".to_string()),  // Study starts Sep 2027, NOT 2026
+            deadline_confidence: Some("estimated".to_string()),
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://www.chevening.org/scholarships/".to_string()),
@@ -67,10 +69,11 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             source_type: "government".to_string(),
             status: "new".to_string(),
             eligibility: vec![
-                "Commonwealth country citizens".to_string(),
+                "Commonwealth country citizens ONLY".to_string(),
                 "Cannot afford to study without funding".to_string(),
+                "Taiwan NOT eligible".to_string(),
             ],
-            notes: "For students from developing Commonwealth countries".to_string(),
+            notes: "For students from developing Commonwealth countries - Taiwan NOT eligible".to_string(),
             added_date: String::new(),
             url: "https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/".to_string(),
             match_score: 0,
@@ -81,12 +84,18 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             trust_tier: Some("S".to_string()),
             risk_flags: vec![],
             matched_rule_ids: vec![],
-            eligible_countries: vec![],
-            is_taiwan_eligible: Some(false), // Taiwan is NOT a Commonwealth country
+            eligible_countries: vec![
+                "Bangladesh".to_string(), "Cameroon".to_string(), "Ghana".to_string(),
+                "India".to_string(), "Kenya".to_string(), "Malawi".to_string(),
+                "Nigeria".to_string(), "Pakistan".to_string(), "Rwanda".to_string(),
+                "Sierra Leone".to_string(), "Sri Lanka".to_string(), "Tanzania".to_string(),
+                "Uganda".to_string(), "Zambia".to_string(),
+            ],
+            is_taiwan_eligible: Some(false), // Taiwan is NOT a Commonwealth country - HARD REJECT
             deadline_date: Some("2026-10-18".to_string()),
             deadline_label: Some("applications close".to_string()),
             intake_year: Some("2027/28".to_string()),
-            study_start: Some("2027-09".to_string()),
+            study_start: Some("2027-09-01".to_string()),
             deadline_confidence: Some("confirmed".to_string()),
             canonical_url: None,
             is_directory_page: false,

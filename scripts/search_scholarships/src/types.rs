@@ -223,6 +223,8 @@ pub struct RuleCondition {
     #[serde(default)]
     pub any_regex: Option<Vec<String>>,
     #[serde(default)]
+    pub not_any_regex: Option<Vec<String>>,  // Negative match - trigger if NONE match
+    #[serde(default)]
     pub deadline: Option<DeadlineCondition>,
     #[serde(default)]
     pub http_status: Option<HttpStatusCondition>,
@@ -238,6 +240,10 @@ pub struct DeadlineCondition {
     pub lt_today: Option<bool>,
     #[serde(default)]
     pub is_null: Option<bool>,
+    #[serde(default)]
+    pub gt_study_start: Option<bool>,      // Deadline is after target study start date
+    #[serde(default)]
+    pub safety_margin_days: Option<i64>,   // Days before study start to reject (default: 60)
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]

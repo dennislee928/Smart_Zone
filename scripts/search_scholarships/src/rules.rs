@@ -159,7 +159,7 @@ fn build_search_text(lead: &Lead) -> String {
 
 /// Check if a rule condition matches
 fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &str) -> bool {
-    // Check regex patterns
+    // Check positive regex patterns (any match = true)
     if let Some(ref patterns) = condition.any_regex {
         for pattern in patterns {
             if let Ok(re) = Regex::new(pattern) {
@@ -167,6 +167,23 @@ fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &st
                     return true;
                 }
             }
+        }
+    }
+    
+    // Check negative regex patterns (NONE match = true, i.e., trigger if NOT target)
+    if let Some(ref patterns) = condition.not_any_regex {
+        let mut any_matched = false;
+        for pattern in patterns {
+            if let Ok(re) = Regex::new(pattern) {
+                if re.is_match(search_text) {
+                    any_matched = true;
+                    break;
+                }
+            }
+        }
+        // Return true only if NONE of the patterns matched
+        if !any_matched {
+            return true;
         }
     }
     
@@ -184,6 +201,24 @@ fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &st
         if deadline_cond.is_null.unwrap_or(false) {
             if lead.deadline.is_empty() || lead.deadline.to_lowercase() == "check website" || lead.deadline.to_lowercase() == "tbd" {
                 return true;
+            }
+        }
+        
+        // Check if deadline is after study start (wrong intake cycle)
+        if deadline_cond.gt_study_start.unwrap_or(false) {
+            if let Some(deadline_date) = parse_deadline(&lead.deadline) {
+                // Use lead's study_start if available, otherwise use target date (2026-09-14)
+                let study_start = lead.study_start.as_ref()
+                    .and_then(|s| parse_deadline(s))
+                    .unwrap_or_else(|| NaiveDate::from_ymd_opt(2026, 9, 14).unwrap());
+                
+                // Apply safety margin (default 60 days before study start)
+                let margin_days = deadline_cond.safety_margin_days.unwrap_or(60);
+                let cutoff_date = study_start - chrono::Duration::days(margin_days);
+                
+                if deadline_date > cutoff_date {
+                    return true;
+                }
             }
         }
     }
