@@ -44,9 +44,10 @@ pub struct Lead {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 pub enum Bucket {
-    A,  // 主攻 (High priority)
+    A,  // 主攻 (High priority, apply now)
     B,  // 備援 (Needs verification / medium priority)
-    C,  // 淘汰 (Hard fail)
+    C,  // 淘汰 (Hard fail - ineligible)
+    X,  // 已截止 (Missed - keep for next cycle)
 }
 
 impl std::fmt::Display for Bucket {
@@ -55,6 +56,7 @@ impl std::fmt::Display for Bucket {
             Bucket::A => write!(f, "A"),
             Bucket::B => write!(f, "B"),
             Bucket::C => write!(f, "C"),
+            Bucket::X => write!(f, "X"),
         }
     }
 }
@@ -247,6 +249,8 @@ pub struct BucketCounts {
     pub a: usize,
     pub b: usize,
     pub c: usize,
+    #[serde(default)]
+    pub x: usize,  // Missed/Closed - saved for next cycle
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

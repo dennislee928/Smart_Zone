@@ -30,6 +30,7 @@ pub fn triage_leads(leads: &mut [Lead], rules: &RulesConfig) -> TriageStats {
             Some(Bucket::A) => stats.bucket_a += 1,
             Some(Bucket::B) => stats.bucket_b += 1,
             Some(Bucket::C) => stats.bucket_c += 1,
+            Some(Bucket::X) => stats.bucket_x += 1,
             None => stats.bucket_c += 1, // Default to C
         }
         
@@ -43,16 +44,18 @@ pub fn triage_leads(leads: &mut [Lead], rules: &RulesConfig) -> TriageStats {
     stats
 }
 
-/// Split leads into buckets
-pub fn split_by_bucket(leads: Vec<Lead>) -> (Vec<Lead>, Vec<Lead>, Vec<Lead>) {
+/// Split leads into buckets (A, B, C, X)
+pub fn split_by_bucket(leads: Vec<Lead>) -> (Vec<Lead>, Vec<Lead>, Vec<Lead>, Vec<Lead>) {
     let mut bucket_a = Vec::new();
     let mut bucket_b = Vec::new();
     let mut bucket_c = Vec::new();
+    let mut bucket_x = Vec::new();
     
     for lead in leads {
         match lead.bucket {
             Some(Bucket::A) => bucket_a.push(lead),
             Some(Bucket::B) => bucket_b.push(lead),
+            Some(Bucket::X) => bucket_x.push(lead),
             Some(Bucket::C) | None => bucket_c.push(lead),
         }
     }
@@ -61,8 +64,9 @@ pub fn split_by_bucket(leads: Vec<Lead>) -> (Vec<Lead>, Vec<Lead>, Vec<Lead>) {
     bucket_a.sort_by(|a, b| b.match_score.cmp(&a.match_score));
     bucket_b.sort_by(|a, b| b.match_score.cmp(&a.match_score));
     bucket_c.sort_by(|a, b| b.match_score.cmp(&a.match_score));
+    bucket_x.sort_by(|a, b| b.match_score.cmp(&a.match_score));
     
-    (bucket_a, bucket_b, bucket_c)
+    (bucket_a, bucket_b, bucket_c, bucket_x)
 }
 
 /// Generate triage.md report
@@ -70,6 +74,7 @@ pub fn generate_triage_md(
     bucket_a: &[Lead],
     bucket_b: &[Lead],
     bucket_c: &[Lead],
+    bucket_x: &[Lead],
     watchlist: &[Lead],
 ) -> String {
     let mut report = String::from("# ScholarshipOps Triage Report\n\n");
@@ -80,6 +85,9 @@ pub fn generate_triage_md(
     report.push_str(&format!("- **A (主攻):** {} scholarships\n", bucket_a.len()));
     report.push_str(&format!("- **B (備援):** {} scholarships\n", bucket_b.len()));
     report.push_str(&format!("- **C (淘汰):** {} scholarships\n", bucket_c.len()));
+    if !bucket_x.is_empty() {
+        report.push_str(&format!("- **X (已截止):** {} scholarships (saved for next cycle)\n", bucket_x.len()));
+    }
     if !watchlist.is_empty() {
         report.push_str(&format!("- **Watchlist:** {} scholarships\n", watchlist.len()));
     }
@@ -196,6 +204,33 @@ pub fn generate_triage_md(
         report.push_str("\n");
     }
     
+    // Bucket X - Missed/Closed (saved for next cycle)
+    if !bucket_x.is_empty() {
+        report.push_str("---\n\n");
+        report.push_str("## X: 已截止 (Missed - Next Cycle)\n\n");
+        report.push_str("These scholarships have passed their deadline but are saved for next application cycle:\n\n");
+        
+        report.push_str("| # | Name | Amount | Deadline | Score | URL |\n");
+        report.push_str("|---|------|--------|----------|-------|-----|\n");
+        
+        for (i, lead) in bucket_x.iter().take(15).enumerate() {
+            report.push_str(&format!(
+                "| {} | {} | {} | {} | {} | [Link]({}) |\n",
+                i + 1,
+                truncate_str(&lead.name, 40),
+                lead.amount,
+                lead.deadline,
+                lead.match_score,
+                lead.url
+            ));
+        }
+        
+        if bucket_x.len() > 15 {
+            report.push_str(&format!("\n*... and {} more*\n", bucket_x.len() - 15));
+        }
+        report.push_str("\n");
+    }
+    
     // Watchlist
     if !watchlist.is_empty() {
         report.push_str("---\n\n");
@@ -219,6 +254,7 @@ pub fn generate_triage_csv(
     bucket_a: &[Lead],
     bucket_b: &[Lead],
     bucket_c: &[Lead],
+    bucket_x: &[Lead],
 ) -> String {
     let mut csv = String::from("bucket,name,amount,deadline,score,effort,trust_tier,reason,url\n");
     
@@ -248,6 +284,10 @@ pub fn generate_triage_csv(
     
     for lead in bucket_c {
         write_lead(&mut csv, "C", lead);
+    }
+    
+    for lead in bucket_x {
+        write_lead(&mut csv, "X", lead);
     }
     
     csv
@@ -322,6 +362,7 @@ pub struct TriageStats {
     pub bucket_a: usize,
     pub bucket_b: usize,
     pub bucket_c: usize,
+    pub bucket_x: usize,  // Missed/Closed - saved for next cycle
     pub watchlist: usize,
     pub rule_hits: HashMap<String, usize>,
 }

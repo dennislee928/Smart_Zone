@@ -116,13 +116,13 @@ hard_reject_rules:
   - id: "T-DEAD-PAST-001"
     name: "Deadline Passed"
     stage: "timeline"
-    description: "Deadline has passed"
+    description: "Deadline has passed - saved for next cycle"
     when:
       deadline:
         lt_today: true
     action:
-      bucket: "C"
-      reason: "Deadline passed."
+      bucket: "X"
+      reason: "Deadline passed - saved for next cycle"
 
   # === Scam Detection ===
   - id: "S-SCAM-001"

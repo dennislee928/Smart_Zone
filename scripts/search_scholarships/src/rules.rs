@@ -38,17 +38,23 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
     // Build searchable text from lead
     let search_text = build_search_text(lead);
     
-    // Stage 1: Apply hard reject rules (C bucket)
+    // Stage 1: Apply hard reject rules (C or X bucket)
     for rule in &rules.hard_reject_rules {
         if check_rule_condition(&rule.when, lead, &search_text) {
+            // Determine target bucket from rule action (default to C)
+            let target_bucket = match rule.action.bucket.as_deref() {
+                Some("X") => Bucket::X,
+                Some("C") | _ => Bucket::C,
+            };
+            
             result.matched_rules.push(RuleMatch {
                 rule_id: rule.id.clone(),
                 rule_name: rule.name.clone(),
                 stage: rule.stage.clone(),
-                action: format!("Hard reject -> Bucket C"),
+                action: format!("Hard reject -> Bucket {}", target_bucket),
                 reason: rule.action.reason.clone(),
             });
-            result.bucket = Some(Bucket::C);
+            result.bucket = Some(target_bucket);
             result.hard_rejected = true;
             result.rejection_reason = Some(rule.action.reason.clone());
             // Hard reject stops further processing
