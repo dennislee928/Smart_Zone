@@ -1,7 +1,72 @@
 {
   "description": "Test fixtures for ScholarshipOps triage rules",
-  "version": "1.0",
+  "version": "2.0",
   "test_cases": [
+    {
+      "id": "TC-GLA-001",
+      "name": "Glasgow Global Leadership Scholarship -> A",
+      "description": "High-value Glasgow scholarship for international students should be bucket A",
+      "input": {
+        "name": "Glasgow Global Leadership Scholarship",
+        "amount": "£10,000 fee discount",
+        "deadline": "2026-02-15",
+        "deadline_date": "2026-02-15",
+        "eligibility": ["International students", "Postgraduate taught programmes", "All nationalities"],
+        "notes": "For students who demonstrate exceptional leadership potential",
+        "url": "https://www.gla.ac.uk/scholarships/globalleadershipscholarship/",
+        "trust_tier": "S",
+        "http_status": 200,
+        "is_taiwan_eligible": true
+      },
+      "expected": {
+        "bucket": "A",
+        "matched_rules": ["P-TARGET-001", "P-INTL-001", "P-LEVEL-001"],
+        "score_min": 100,
+        "confidence_min": 0.7
+      }
+    },
+    {
+      "id": "TC-GLA-002",
+      "name": "Glasgow Computing Science Bursary -> A/B",
+      "description": "Computing-related Glasgow scholarship should score high",
+      "input": {
+        "name": "School of Computing Science Excellence Award",
+        "amount": "£5,000",
+        "deadline": "2026-03-01",
+        "deadline_date": "2026-03-01",
+        "eligibility": ["MSc Software Development", "MSc Data Science", "International students welcome"],
+        "notes": "Merit-based award for computing programmes",
+        "url": "https://www.gla.ac.uk/schools/computing/postgraduate/funding/",
+        "trust_tier": "S",
+        "http_status": 200
+      },
+      "expected": {
+        "bucket_in": ["A", "B"],
+        "matched_rules": ["P-TARGET-001", "P-COMPUTING-001", "P-LEVEL-001"],
+        "score_min": 80
+      }
+    },
+    {
+      "id": "TC-GLA-003",
+      "name": "Glasgow Scotland Saltire Scholarship -> B (needs verification)",
+      "description": "Scotland-specific scholarship may need eligibility verification",
+      "input": {
+        "name": "Scotland's Saltire Scholarship",
+        "amount": "£8,000",
+        "deadline": "2026-05-31",
+        "deadline_date": "2026-05-31",
+        "eligibility": ["Selected countries including Taiwan", "Science, Technology, Creative Industries"],
+        "notes": "Funded by Scottish Government",
+        "url": "https://www.scotland.org/study/saltire-scholarships",
+        "trust_tier": "A",
+        "http_status": 200
+      },
+      "expected": {
+        "bucket_in": ["A", "B"],
+        "matched_rules": ["P-TAIWAN-001"],
+        "score_min": 40
+      }
+    },
     {
       "id": "TC-001",
       "name": "Home fee status only -> C",
