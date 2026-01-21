@@ -62,6 +62,10 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          # Source filtering config
+          SOURCE_EXCLUDE_TYPES: "web3"  # Exclude web3 sources by default
+          SOURCE_MAX_FAILURES: "3"       # Auto-disable after 3 consecutive failures
+          SOURCE_SKIP_DISABLED: "true"   # Skip auto-disabled sources
         run: cargo run --release
       
       - name: Upload search reports
