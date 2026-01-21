@@ -12,6 +12,7 @@ mod rules;
 mod link_health;
 mod triage;
 mod effort;
+mod source_health;
 
 pub use types::*;
 
@@ -36,7 +37,23 @@ async fn main() -> Result<()> {
     
     let criteria = storage::load_criteria(&root)?;
     let sources = storage::load_sources(&root)?;
-    let enabled_sources: Vec<_> = sources.sources.iter().filter(|s| s.enabled).collect();
+    
+    // Load source filter config from environment or use defaults
+    let source_filter = load_source_filter_config();
+    println!("  Source filter: include={:?}, exclude={:?}, max_failures={}",
+        source_filter.include_types,
+        source_filter.exclude_types,
+        source_filter.max_consecutive_failures
+    );
+    
+    // Load source health tracking
+    let mut health_file = source_health::load_health(&root)?;
+    println!("  Source health records: {}", health_file.sources.len());
+    
+    // Filter enabled sources based on type and health
+    let enabled_sources: Vec<_> = sources.sources.iter()
+        .filter(|s| s.enabled)
+        .collect();
     
     // Load rules (optional - continue without if missing)
     let rules_config = match rules::load_rules(&root) {
@@ -69,22 +86,63 @@ async fn main() -> Result<()> {
     println!();
     
     // ==========================================
-    // Stage 1: Scrape Sources
+    // Stage 1: Scrape Sources (with health tracking)
     // ==========================================
-    println!("Stage 1: Scraping {} enabled sources...", enabled_sources.len());
+    let mut skipped_sources: Vec<(String, String)> = Vec::new();
+    let sources_to_scrape: Vec<_> = enabled_sources.iter()
+        .filter(|s| {
+            if let Some(reason) = source_health::should_skip_source(s, &health_file, &source_filter) {
+                skipped_sources.push((s.name.clone(), reason));
+                false
+            } else {
+                true
+            }
+        })
+        .collect();
+    
+    println!("Stage 1: Scraping {} sources ({} skipped)...", 
+        sources_to_scrape.len(), skipped_sources.len());
+    
+    if !skipped_sources.is_empty() {
+        println!("  Skipped sources:");
+        for (name, reason) in &skipped_sources {
+            println!("    - {}: {}", name, reason);
+        }
+    }
     
     let mut all_leads: Vec<Lead> = Vec::new();
     let mut filtered_out: Vec<(String, Vec<String>)> = Vec::new();
     let mut errors: Vec<String> = Vec::new();
+    let mut source_stats = SourceStats::default();
     
-    for source in &enabled_sources {
+    for source in sources_to_scrape {
         println!("  Scraping: {} ({})", source.name, source.url);
+        
         match scrapers::scrape_source(source).await {
-            Ok(scraped) => {
-                println!("    Found {} raw leads", scraped.len());
-                let mut added = 0;
+            Ok(result) => {
+                // Update health tracking
+                source_health::update_health(
+                    &mut health_file, 
+                    source, 
+                    &result, 
+                    source_filter.max_consecutive_failures
+                );
                 
-                for mut lead in scraped {
+                // Track stats
+                if result.status == SourceStatus::Ok {
+                    source_stats.success += 1;
+                    println!("    Found {} raw leads", result.leads.len());
+                } else {
+                    source_stats.failed += 1;
+                    println!("    Failed: {}", result.status);
+                    if let Some(ref err) = result.error_message {
+                        errors.push(format!("{}: {}", source.name, err));
+                    }
+                    continue; // Skip processing leads from failed sources
+                }
+                
+                let mut added = 0;
+                for mut lead in result.leads {
                     // Create unique key
                     let key = format!("{}|{}", lead.name.to_lowercase().trim(), lead.url.to_lowercase().trim());
                     
@@ -125,10 +183,14 @@ async fn main() -> Result<()> {
                 let err_msg = format!("Failed to scrape {}: {}", source.name, e);
                 println!("    Error: {}", err_msg);
                 errors.push(err_msg);
+                source_stats.failed += 1;
             }
         }
     }
     
+    source_stats.skipped = skipped_sources.len();
+    println!("  Source stats: {} success, {} failed, {} skipped", 
+        source_stats.success, source_stats.failed, source_stats.skipped);
     println!("  Total qualified leads: {}", all_leads.len());
     println!();
     
@@ -220,6 +282,7 @@ async fn main() -> Result<()> {
     let triage_md = triage::generate_triage_md(&bucket_a, &bucket_b, &bucket_c, &watchlist);
     let triage_csv = triage::generate_triage_csv(&bucket_a, &bucket_b, &bucket_c);
     let deadlinks_md = link_health::generate_deadlinks_report(&dead_links);
+    let health_report_md = source_health::generate_health_report(&health_file);
     
     let full_report = build_full_report(&now, &all_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
     let summary_report = build_summary_report(&now, &bucket_a, &bucket_b, &bucket_c, &filtered_out, &errors, leads_file.leads.len());
@@ -230,6 +293,7 @@ async fn main() -> Result<()> {
     fs::write(report_dir.join("triage.md"), &triage_md)?;
     fs::write(report_dir.join("triage.csv"), &triage_csv)?;
     fs::write(report_dir.join("deadlinks.md"), &deadlinks_md)?;
+    fs::write(report_dir.join("source_health.md"), &health_report_md)?;
     fs::write(report_dir.join("report.txt"), &full_report)?;
     fs::write(report_dir.join("report.md"), &markdown_report)?;
     fs::write(report_dir.join("report.html"), &html_report)?;
@@ -247,10 +311,15 @@ async fn main() -> Result<()> {
     fs::write("summary.txt", &summary_report)?;
     
     // ==========================================
-    // Stage 7: Update Database & Notify
+    // Stage 7: Update Database & Health Tracking
     // ==========================================
     println!();
-    println!("Stage 7: Updating database...");
+    println!("Stage 7: Updating database and health tracking...");
+    
+    // Save source health tracking
+    source_health::save_health(&root, &health_file)?;
+    let disabled_count = health_file.sources.iter().filter(|h| h.auto_disabled).count();
+    println!("  Updated source health ({} auto-disabled)", disabled_count);
     
     // Only save A and B bucket leads to database
     let leads_to_save: Vec<Lead> = all_leads.iter()
@@ -274,6 +343,50 @@ async fn main() -> Result<()> {
     println!("=== Complete ===");
     
     Ok(())
+}
+
+// ==========================================
+// Source Stats & Filter Config
+// ==========================================
+
+#[derive(Default)]
+struct SourceStats {
+    success: usize,
+    failed: usize,
+    skipped: usize,
+}
+
+/// Load source filter config from environment variables
+fn load_source_filter_config() -> SourceFilterConfig {
+    let include_types: Vec<String> = std::env::var("SOURCE_INCLUDE_TYPES")
+        .unwrap_or_default()
+        .split(',')
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .collect();
+    
+    let exclude_types: Vec<String> = std::env::var("SOURCE_EXCLUDE_TYPES")
+        .unwrap_or_else(|_| "web3".to_string()) // Default: exclude web3
+        .split(',')
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .collect();
+    
+    let max_failures: u32 = std::env::var("SOURCE_MAX_FAILURES")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(3);
+    
+    let skip_disabled: bool = std::env::var("SOURCE_SKIP_DISABLED")
+        .map(|s| s != "false" && s != "0")
+        .unwrap_or(true);
+    
+    SourceFilterConfig {
+        include_types,
+        exclude_types,
+        max_consecutive_failures: max_failures,
+        skip_auto_disabled: skip_disabled,
+    }
 }
 
 // ==========================================

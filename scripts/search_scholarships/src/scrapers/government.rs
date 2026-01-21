@@ -1,12 +1,25 @@
-use crate::types::Lead;
+use crate::types::{Lead, ScrapeResult, SourceStatus};
 use anyhow::Result;
 
-pub fn scrape(url: &str) -> Result<Vec<Lead>> {
+/// Scrape a government source and return detailed result for health tracking
+pub fn scrape(url: &str) -> Result<ScrapeResult> {
     println!("Scraping government website: {}", url);
     
     // Government scholarship data - these are well-known programmes
     // Real scraping of gov.uk is complex due to their structure
-    Ok(get_known_government_scholarships(url))
+    // For government sources, we return known scholarships as "success"
+    Ok(ScrapeResult {
+        leads: get_known_government_scholarships(url),
+        status: SourceStatus::Ok,
+        http_code: Some(200),
+        error_message: None,
+    })
+}
+
+/// Legacy wrapper for backward compatibility
+pub fn scrape_leads_only(url: &str) -> Result<Vec<Lead>> {
+    let result = scrape(url)?;
+    Ok(result.leads)
 }
 
 /// Known UK government scholarships

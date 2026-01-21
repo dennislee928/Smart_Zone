@@ -1,38 +1,86 @@
-use crate::types::Lead;
+use crate::types::{Lead, ScrapeResult, SourceStatus};
 use anyhow::Result;
 use scraper::{Html, Selector};
 
-pub fn scrape(url: &str) -> Result<Vec<Lead>> {
+/// Scrape a third-party source and return detailed result for health tracking
+pub fn scrape(url: &str) -> Result<ScrapeResult> {
     println!("Scraping third-party database: {}", url);
     
     let client = reqwest::blocking::Client::builder()
         .user_agent("Mozilla/5.0 (compatible; ScholarshipBot/1.0)")
         .timeout(std::time::Duration::from_secs(30))
+        .redirect(reqwest::redirect::Policy::limited(5))
         .build()?;
     
     let response = client.get(url).send();
     
     match response {
-        Ok(resp) if resp.status().is_success() => {
-            let html = resp.text()?;
-            let leads = parse_third_party_html(&html, url);
+        Ok(resp) => {
+            let status_code = resp.status().as_u16();
             
-            if leads.is_empty() {
-                println!("No scholarships found from HTML, using known scholarships");
-                Ok(get_known_third_party_scholarships(url))
+            if resp.status().is_success() {
+                let html = resp.text()?;
+                let leads = parse_third_party_html(&html, url);
+                
+                if leads.is_empty() {
+                    println!("  No scholarships found from HTML (empty result)");
+                }
+                
+                Ok(ScrapeResult {
+                    leads,
+                    status: SourceStatus::Ok,
+                    http_code: Some(status_code),
+                    error_message: None,
+                })
             } else {
-                Ok(leads)
+                // HTTP error - return empty leads, don't fallback to fake data
+                let status = match status_code {
+                    404 => SourceStatus::NotFound,
+                    403 => SourceStatus::Forbidden,
+                    429 => SourceStatus::RateLimited,
+                    500..=599 => SourceStatus::ServerError,
+                    _ => SourceStatus::Unknown,
+                };
+                
+                println!("  HTTP {} - {}", status_code, status);
+                
+                Ok(ScrapeResult {
+                    leads: vec![],
+                    status,
+                    http_code: Some(status_code),
+                    error_message: Some(format!("HTTP {}", status_code)),
+                })
             }
         }
-        Ok(resp) => {
-            println!("HTTP error {}: using known scholarships", resp.status());
-            Ok(get_known_third_party_scholarships(url))
-        }
         Err(e) => {
-            println!("Request failed ({}): using known scholarships", e);
-            Ok(get_known_third_party_scholarships(url))
+            // Network/connection error
+            let error_str = e.to_string();
+            let status = if error_str.contains("SSL") || error_str.contains("certificate") {
+                SourceStatus::SslError
+            } else if error_str.contains("timeout") {
+                SourceStatus::Timeout
+            } else if error_str.contains("redirect") {
+                SourceStatus::TooManyRedirects
+            } else {
+                SourceStatus::NetworkError
+            };
+            
+            println!("  Request failed: {} - {}", status, error_str);
+            
+            Ok(ScrapeResult {
+                leads: vec![],
+                status,
+                http_code: None,
+                error_message: Some(error_str),
+            })
         }
     }
+}
+
+/// Legacy wrapper for backward compatibility - returns only leads
+pub fn scrape_leads_only(url: &str) -> Result<Vec<Lead>> {
+    let result = scrape(url)?;
+    Ok(result.leads)
 }
 
 fn parse_third_party_html(html: &str, base_url: &str) -> Vec<Lead> {

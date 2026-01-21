@@ -5891,148 +5891,171 @@ sources:
     enabled: True
     scraper: "third_party"
 
+  # ============================================
+  # Web3 Grants - VERIFIED SOURCES ONLY
+  # Note: Most NFT projects don't have scholarship/grant programs
+  # Only enable sources with verified grant programs
+  # ============================================
+
+  - name: "Decentraland DAO Grants"
+    type: "web3"
+    url: "https://governance.decentraland.org/"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Gitcoin Grants"
+    type: "web3"
+    url: "https://www.gitcoin.co/grants"
+    enabled: True
+    scraper: "third_party"
+
+  - name: "Ethereum Foundation Grants"
+    type: "web3"
+    url: "https://ethereum.org/en/community/grants/"
+    enabled: True
+    scraper: "third_party"
+
+  # ============================================
+  # DISABLED - No verified grant programs
+  # These NFT projects do not have scholarship/grant programs
+  # ============================================
+
   - name: "Nifty Gateway Scholarships"
     type: "web3"
     url: "https://www.niftygateway.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "MakersPlace Scholarships"
     type: "web3"
     url: "https://www.makersplace.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Async Art Scholarships"
     type: "web3"
     url: "https://www.async.art/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "KnownOrigin Scholarships"
     type: "web3"
     url: "https://www.knownorigin.io/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Art Blocks Scholarships"
     type: "web3"
     url: "https://www.artblocks.io/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "CryptoPunks Scholarships"
     type: "web3"
     url: "https://www.larvalabs.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Bored Ape Yacht Club Scholarships"
     type: "web3"
     url: "https://www.boredapeyachtclub.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Doodles Scholarships"
     type: "web3"
     url: "https://www.doodles.app/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Cool Cats Scholarships"
     type: "web3"
     url: "https://www.coolcatsnft.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Azuki Scholarships"
     type: "web3"
     url: "https://www.azuki.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Moonbirds Scholarships"
     type: "web3"
     url: "https://www.moonbirds.xyz/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "World of Women Scholarships"
     type: "web3"
     url: "https://www.worldofwomen.art/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "CryptoKitties Scholarships"
     type: "web3"
     url: "https://www.cryptokitties.co/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Decentraland Scholarships"
-    type: "web3"
-    url: "https://www.decentraland.org/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "The Sandbox Scholarships"
     type: "web3"
     url: "https://www.sandbox.game/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Axie Infinity Scholarships"
     type: "web3"
     url: "https://www.axieinfinity.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Enjin Scholarships"
     type: "web3"
     url: "https://www.enjin.io/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Immutable X Scholarships"
     type: "web3"
     url: "https://www.immutable.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Flow Scholarships"
     type: "web3"
     url: "https://www.flow.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Wax Scholarships"
     type: "web3"
     url: "https://www.wax.io/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Ronin Scholarships"
     type: "web3"
     url: "https://www.roninchain.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Polygon Studios Scholarships"
     type: "web3"
     url: "https://www.polygonstudios.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Animoca Brands Scholarships"
     type: "web3"
     url: "https://www.animocabrands.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Sky Mavis Scholarships"
     type: "web3"
     url: "https://www.skymavis.com/grants"
-    enabled: True
+    enabled: False  # No grant program exists
     scraper: "third_party"
 
   - name: "Dapper Labs Scholarships"
@@ -6977,183 +7000,41 @@ sources:
     enabled: True
     scraper: "third_party"
 
-  - name: "Wax Scholarships"
-    type: "web3"
-    url: "https://www.wax.io/grants"
-    enabled: True
-    scraper: "third_party"
+  # ============================================
+  # DUPLICATE ENTRIES - All disabled
+  # These are duplicates of entries above
+  # ============================================
 
-  - name: "Flow Scholarships"
-    type: "web3"
-    url: "https://www.flow.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Immutable X Scholarships"
-    type: "web3"
-    url: "https://www.immutable.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Enjin Scholarships"
-    type: "web3"
-    url: "https://www.enjin.io/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Axie Infinity Scholarships"
-    type: "web3"
-    url: "https://www.axieinfinity.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "The Sandbox Scholarships"
-    type: "web3"
-    url: "https://www.sandbox.game/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Decentraland Scholarships"
-    type: "web3"
-    url: "https://www.decentraland.org/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "CryptoKitties Scholarships"
-    type: "web3"
-    url: "https://www.cryptokitties.co/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "World of Women Scholarships"
-    type: "web3"
-    url: "https://www.worldofwomen.art/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Moonbirds Scholarships"
-    type: "web3"
-    url: "https://www.moonbirds.xyz/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Azuki Scholarships"
-    type: "web3"
-    url: "https://www.azuki.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Cool Cats Scholarships"
-    type: "web3"
-    url: "https://www.coolcatsnft.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Doodles Scholarships"
-    type: "web3"
-    url: "https://www.doodles.app/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Bored Ape Yacht Club Scholarships"
-    type: "web3"
-    url: "https://www.boredapeyachtclub.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "CryptoPunks Scholarships"
-    type: "web3"
-    url: "https://www.larvalabs.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Art Blocks Scholarships"
-    type: "web3"
-    url: "https://www.artblocks.io/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "KnownOrigin Scholarships"
-    type: "web3"
-    url: "https://www.knownorigin.io/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Async Art Scholarships"
-    type: "web3"
-    url: "https://www.async.art/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "MakersPlace Scholarships"
-    type: "web3"
-    url: "https://www.makersplace.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Nifty Gateway Scholarships"
-    type: "web3"
-    url: "https://www.niftygateway.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Foundation Scholarships"
-    type: "web3"
-    url: "https://www.foundation.app/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "SuperRare Scholarships"
-    type: "web3"
-    url: "https://www.superrare.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Rarible Scholarships"
-    type: "web3"
-    url: "https://www.rarible.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "OpenSea Scholarships"
-    type: "web3"
-    url: "https://www.opensea.io/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "0x Scholarships"
-    type: "web3"
-    url: "https://www.0x.org/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "1inch Scholarships"
-    type: "web3"
-    url: "https://www.1inch.io/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Balancer Scholarships"
-    type: "web3"
-    url: "https://www.balancer.fi/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "SushiSwap Scholarships"
-    type: "web3"
-    url: "https://www.sushi.com/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Yearn Finance Scholarships"
-    type: "web3"
-    url: "https://www.yearn.finance/grants"
-    enabled: True
-    scraper: "third_party"
-
-  - name: "Curve Scholarships"
-    type: "web3"
-    url: "https://www.curve.fi/grants"
+  # - name: "Wax Scholarships" (DUPLICATE - disabled)
+  # - name: "Flow Scholarships" (DUPLICATE - disabled)
+  # - name: "Immutable X Scholarships" (DUPLICATE - disabled)
+  # - name: "Enjin Scholarships" (DUPLICATE - disabled)
+  # - name: "Axie Infinity Scholarships" (DUPLICATE - disabled)
+  # - name: "The Sandbox Scholarships" (DUPLICATE - disabled)
+  # - name: "Decentraland Scholarships" (DUPLICATE - disabled)
+  # - name: "CryptoKitties Scholarships" (DUPLICATE - disabled)
+  # - name: "World of Women Scholarships" (DUPLICATE - disabled)
+  # - name: "Moonbirds Scholarships" (DUPLICATE - disabled)
+  # - name: "Azuki Scholarships" (DUPLICATE - disabled)
+  # - name: "Cool Cats Scholarships" (DUPLICATE - disabled)
+  # - name: "Doodles Scholarships" (DUPLICATE - disabled)
+  # - name: "Bored Ape Yacht Club Scholarships" (DUPLICATE - disabled)
+  # - name: "CryptoPunks Scholarships" (DUPLICATE - disabled)
+  # - name: "Art Blocks Scholarships" (DUPLICATE - disabled)
+  # - name: "KnownOrigin Scholarships" (DUPLICATE - disabled)
+  # - name: "Async Art Scholarships" (DUPLICATE - disabled)
+  # - name: "MakersPlace Scholarships" (DUPLICATE - disabled)
+  # - name: "Nifty Gateway Scholarships" (DUPLICATE - disabled)
+  # - name: "Foundation Scholarships" (DUPLICATE - disabled)
+  # - name: "SuperRare Scholarships" (DUPLICATE - disabled)
+  # - name: "Rarible Scholarships" (DUPLICATE - disabled)
+  # - name: "OpenSea Scholarships" (DUPLICATE - disabled)
+  # - name: "0x Scholarships" (DUPLICATE - disabled)
+  # - name: "1inch Scholarships" (DUPLICATE - disabled)
+  # - name: "Balancer Scholarships" (DUPLICATE - disabled)
+  # - name: "SushiSwap Scholarships" (DUPLICATE - disabled)
+  # - name: "Yearn Finance Scholarships" (DUPLICATE - disabled)
+  # - name: "Curve Scholarships" (DUPLICATE - disabled)
     enabled: True
     scraper: "third_party"
 
