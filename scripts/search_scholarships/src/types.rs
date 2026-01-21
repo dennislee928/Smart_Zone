@@ -405,6 +405,8 @@ pub struct Source {
     pub url: String,
     pub enabled: bool,
     pub scraper: String,
+    #[serde(default)]
+    pub priority: Option<u8>,  // 1 = highest priority (Glasgow), None = default
 }
 
 // ============================================

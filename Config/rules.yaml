@@ -112,6 +112,51 @@ hard_reject_rules:
       bucket: "C"
       reason: "Local council/authority residents only."
 
+  # === US Residency Gate ===
+  - id: "E-RESIDENCY-001"
+    name: "US State/County Residency Required"
+    stage: "eligibility"
+    description: "Requires US state or county residency - not applicable for international students"
+    when:
+      any_regex:
+        - "(?i)resident\\s+of\\s+(the\\s+)?state\\s+of"
+        - "(?i)resident\\s+of\\s+\\w+\\s+county"
+        - "(?i)Washington\\s+State\\s+resident"
+        - "(?i)high\\s+school\\s+seniors?\\s+in\\s+\\w+"
+        - "(?i)U\\.?S\\.?\\s+citizen(ship)?\\s*(or\\s+permanent\\s+resident)?"
+        - "(?i)must\\s+be\\s+a\\s+resident\\s+of"
+        - "(?i)\\bSeattle\\s+Foundation\\b"
+        - "(?i)\\bcommunity\\s+foundation\\b.*\\b(state|county|local)\\b"
+        - "(?i)\\b(California|Texas|Florida|New York|Illinois|Pennsylvania|Ohio|Georgia|Michigan|Arizona)\\s+residents?\\b"
+    action:
+      bucket: "C"
+      reason: "Requires US state/county residency - not applicable for Taiwan"
+
+  # === Non-Target University Gate ===
+  - id: "E-NONTARGET-001"
+    name: "Non-Target and Non-Portable"
+    stage: "eligibility"
+    description: "Not from Glasgow and not explicitly portable to UK universities"
+    when:
+      not_any_regex:
+        - "(?i)gla\\.ac\\.uk"
+        - "(?i)glasgow\\.ac\\.uk"
+        - "(?i)University\\s*of\\s*Glasgow"
+        - "(?i)\\bGlasgow\\b.*scholarship"
+        - "(?i)any\\s*(UK|British)\\s*university"
+        - "(?i)tenable\\s+at\\s+any\\s+UK"
+        - "(?i)\\bChevening\\b"
+        - "(?i)\\bGates\\s*Cambridge\\b"
+        - "(?i)\\bRhodes\\s*Scholar"
+        - "(?i)\\bMarshall\\s*Scholar"
+        - "(?i)\\bCommonwealth\\s*Scholar"
+        - "(?i)\\bRotary\\s*Foundation\\b"
+        - "(?i)\\bFulbright\\b"
+        - "(?i)international\\s+students?\\s+at\\s+UK\\s+universit"
+    action:
+      bucket: "C"
+      reason: "Not from Glasgow and not portable to UK universities"
+
   # === Country Eligibility Gate ===
   - id: "E-COUNTRY-001"
     name: "Taiwan Not Eligible"
@@ -229,21 +274,6 @@ soft_downgrade_rules:
     action:
       bucket: "B"
       reason: "High application effort; consider if award justifies cost."
-
-  - id: "B-NONTARGET-001"
-    name: "Non-Target University"
-    stage: "scoring"
-    description: "Not from target university (Glasgow) - deprioritize"
-    when:
-      not_any_regex:
-        - "(?i)gla\\.ac\\.uk"
-        - "(?i)glasgow\\.ac\\.uk"
-        - "(?i)University\\s*of\\s*Glasgow"
-        - "(?i)\\bGlasgow\\b.*scholarship"
-    action:
-      bucket: "B"
-      score_add: -30
-      reason: "Not from target university (Glasgow); deprioritized."
 
 # ============================================
 # 加分規則 (Positive Scoring Rules)

@@ -89,7 +89,7 @@ async fn main() -> Result<()> {
     // Stage 1: Scrape Sources (with health tracking)
     // ==========================================
     let mut skipped_sources: Vec<(String, String)> = Vec::new();
-    let sources_to_scrape: Vec<_> = enabled_sources.iter()
+    let mut sources_to_scrape: Vec<_> = enabled_sources.iter()
         .filter(|s| {
             if let Some(reason) = source_health::should_skip_source(s, &health_file, &source_filter) {
                 skipped_sources.push((s.name.clone(), reason));
@@ -100,8 +100,18 @@ async fn main() -> Result<()> {
         })
         .collect();
     
-    println!("Stage 1: Scraping {} sources ({} skipped)...", 
-        sources_to_scrape.len(), skipped_sources.len());
+    // Sort sources by priority: priority 1 first, then by None (default)
+    sources_to_scrape.sort_by(|a, b| {
+        let pri_a = a.priority.unwrap_or(255);  // Default to lowest priority
+        let pri_b = b.priority.unwrap_or(255);
+        pri_a.cmp(&pri_b)
+    });
+    
+    // Count priority sources for logging
+    let priority_count = sources_to_scrape.iter().filter(|s| s.priority == Some(1)).count();
+    
+    println!("Stage 1: Scraping {} sources ({} priority, {} skipped)...", 
+        sources_to_scrape.len(), priority_count, skipped_sources.len());
     
     if !skipped_sources.is_empty() {
         println!("  Skipped sources:");
@@ -180,6 +190,9 @@ async fn main() -> Result<()> {
                     filter::update_country_eligibility(&mut lead);
                     filter::update_structured_dates(&mut lead);
                     filter::update_trust_info(&mut lead);
+                    
+                    // Handle unknown eligibility - lower trust for untrusted sources
+                    filter::handle_unknown_eligibility(&mut lead);
                     
                     // Profile-based filtering
                     if let Some(ref profile) = criteria.profile {

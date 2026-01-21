@@ -1,10 +1,45 @@
 sources:
+  # ============================================
+  # PRIORITY 1: Glasgow Target University (Process First)
+  # ============================================
+  - name: "Glasgow All Scholarships"
+    type: "university"
+    url: "https://www.gla.ac.uk/scholarships/all/"
+    enabled: true
+    priority: 1
+    scraper: "university"
+
+  - name: "Glasgow Global Leadership Scholarship"
+    type: "university"
+    url: "https://www.gla.ac.uk/scholarships/globalleadershipscholarship/"
+    enabled: true
+    priority: 1
+    scraper: "university"
+
+  - name: "Glasgow PGT Fees & Funding"
+    type: "university"
+    url: "https://www.gla.ac.uk/study/postgraduate/fees-funding/scholarships/"
+    enabled: true
+    priority: 1
+    scraper: "university"
+
+  - name: "Glasgow International Scholarships"
+    type: "university"
+    url: "https://www.gla.ac.uk/international/support/fees-funding/"
+    enabled: true
+    priority: 1
+    scraper: "university"
+
   - name: "University of Glasgow Scholarships"
     type: "university"
     url: "https://www.gla.ac.uk/scholarships/"
-    enabled: True
+    enabled: true
+    priority: 1
     scraper: "university"
 
+  # ============================================
+  # PRIORITY 2: UK Government & Portable Scholarships
+  # ============================================
   - name: "UK Government Scholarships"
     type: "government"
     url: "https://www.gov.uk/browse/education/student-finance"

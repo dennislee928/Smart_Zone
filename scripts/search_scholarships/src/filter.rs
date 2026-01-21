@@ -183,6 +183,39 @@ pub fn update_country_eligibility(lead: &mut Lead) {
     }
 }
 
+/// Handle unknown eligibility - don't assume eligible, lower trust instead
+/// Call this AFTER update_country_eligibility to handle cases where eligibility couldn't be determined
+pub fn handle_unknown_eligibility(lead: &mut Lead) {
+    // If eligibility is still unknown after parsing, lower the trust tier
+    if lead.is_taiwan_eligible.is_none() {
+        // Check if the source is a known trustworthy UK/international scholarship
+        let text = format!("{} {} {}", lead.name, lead.url, lead.notes).to_lowercase();
+        
+        // Glasgow and known portable scholarships are trusted even without explicit eligibility
+        let is_trusted_source = text.contains("gla.ac.uk") 
+            || text.contains("glasgow")
+            || text.contains("chevening")
+            || text.contains("gates cambridge")
+            || text.contains("rhodes scholar")
+            || text.contains("marshall scholar")
+            || text.contains("commonwealth scholar")
+            || text.contains("fulbright")
+            || text.contains("rotary foundation");
+        
+        if !is_trusted_source {
+            // Unknown eligibility from untrusted source - lower trust tier
+            if lead.trust_tier.as_ref().map(|t| t.as_str()) != Some("C") {
+                lead.trust_tier = Some("C".to_string());
+            }
+            
+            // Add risk flag for unknown eligibility
+            if !lead.risk_flags.contains(&"eligibility_unknown".to_string()) {
+                lead.risk_flags.push("eligibility_unknown".to_string());
+            }
+        }
+    }
+}
+
 // ============================================
 // Structured Date Parsing
 // ============================================
