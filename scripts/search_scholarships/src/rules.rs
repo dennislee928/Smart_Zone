@@ -38,6 +38,22 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
     // Build searchable text from lead
     let search_text = build_search_text(lead);
     
+    // #region agent log
+    // Debug: Log lead being processed
+    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(
+        std::env::var("DEBUG_LOG_PATH").unwrap_or_else(|_| "/tmp/debug.log".to_string())
+    ) {
+        use std::io::Write;
+        let _ = writeln!(f, r#"{{"location":"rules.rs:apply_rules","message":"Processing lead","data":{{"name":"{}","is_taiwan_eligible":{:?},"deadline_date":{:?},"study_start":{:?}}},"timestamp":{},"hypothesisId":"H1"}}"#,
+            lead.name.replace('"', "'"),
+            lead.is_taiwan_eligible,
+            lead.deadline_date,
+            lead.study_start,
+            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis()
+        );
+    }
+    // #endregion
+    
     // Stage 1: Apply hard reject rules (C or X bucket)
     for rule in &rules.hard_reject_rules {
         if check_rule_condition(&rule.when, lead, &search_text) {
@@ -46,6 +62,22 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
                 Some("X") => Bucket::X,
                 Some("C") | _ => Bucket::C,
             };
+            
+            // #region agent log
+            // Debug: Log which rule matched
+            if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(
+                std::env::var("DEBUG_LOG_PATH").unwrap_or_else(|_| "/tmp/debug.log".to_string())
+            ) {
+                use std::io::Write;
+                let _ = writeln!(f, r#"{{"location":"rules.rs:hard_reject","message":"Rule matched","data":{{"lead":"{}","rule_id":"{}","rule_name":"{}","reason":"{}"}},"timestamp":{},"hypothesisId":"H2"}}"#,
+                    lead.name.replace('"', "'"),
+                    rule.id,
+                    rule.name.replace('"', "'"),
+                    rule.action.reason.replace('"', "'"),
+                    std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis()
+                );
+            }
+            // #endregion
             
             result.matched_rules.push(RuleMatch {
                 rule_id: rule.id.clone(),
@@ -275,6 +307,21 @@ fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &st
             all_passed = false;
         }
     }
+    
+    // #region agent log
+    // Debug: Log condition evaluation result
+    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(
+        std::env::var("DEBUG_LOG_PATH").unwrap_or_else(|_| "/tmp/debug.log".to_string())
+    ) {
+        use std::io::Write;
+        let _ = writeln!(f, r#"{{"location":"rules.rs:check_rule_condition","message":"Condition eval","data":{{"has_any_condition":{},"all_passed":{},"result":{}}},"timestamp":{},"hypothesisId":"H3"}}"#,
+            has_any_condition,
+            all_passed,
+            has_any_condition && all_passed,
+            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis()
+        );
+    }
+    // #endregion
     
     // Rule triggers only if there's at least one condition AND all conditions pass
     has_any_condition && all_passed
