@@ -341,7 +341,7 @@ pub struct SourceHealth {
     pub disabled_reason: Option<String>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub enum SourceStatus {
     Ok,
     NotFound,
