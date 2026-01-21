@@ -176,6 +176,362 @@ pub fn update_country_eligibility(lead: &mut Lead) {
     }
 }
 
+// ============================================
+// Structured Date Parsing
+// ============================================
+
+/// Date type classification
+#[derive(Debug, Clone, PartialEq)]
+pub enum DateType {
+    ApplicationDeadline,  // "applications close", "deadline", "closing date"
+    StudyStart,           // "study starts", "programme begins", "start date"
+    ResultsAnnounced,     // "results announced", "notification date"
+    OfferDeadline,        // "offer deadline", "accept by"
+    Unknown,
+}
+
+/// Parsed date with context
+#[derive(Debug, Clone)]
+pub struct ParsedDate {
+    pub date: String,           // ISO format YYYY-MM-DD
+    pub date_type: DateType,
+    pub label: String,          // Original label text
+    pub confidence: String,     // "confirmed", "inferred", "unknown"
+}
+
+/// Parse structured dates from scholarship text
+pub fn parse_structured_dates(text: &str) -> Vec<ParsedDate> {
+    let text_lower = text.to_lowercase();
+    let mut dates = Vec::new();
+    
+    // Patterns for application deadlines (highest priority)
+    let deadline_patterns = [
+        (r"(?i)application[s]?\s+(?:deadline|close[s]?|due)[:\s]+(\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4})", "applications close"),
+        (r"(?i)(?:deadline|closing\s+date)[:\s]+(\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4})", "deadline"),
+        (r"(?i)(?:deadline|closing\s+date)[:\s]+(\d{1,2}\s+\w+\s+\d{4})", "deadline"),
+        (r"(?i)(?:apply\s+by|submit\s+by)[:\s]+(\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4})", "apply by"),
+        (r"(?i)(?:apply\s+by|submit\s+by)[:\s]+(\d{1,2}\s+\w+\s+\d{4})", "apply by"),
+        (r"(?i)closes?[:\s]+(\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4})", "closes"),
+        (r"(?i)closes?[:\s]+(\d{1,2}\s+\w+\s+\d{4})", "closes"),
+    ];
+    
+    for (pattern, label) in &deadline_patterns {
+        if let Ok(re) = regex::Regex::new(pattern) {
+            for caps in re.captures_iter(&text_lower) {
+                if let Some(date_match) = caps.get(1) {
+                    if let Some(iso_date) = normalize_date(date_match.as_str()) {
+                        dates.push(ParsedDate {
+                            date: iso_date,
+                            date_type: DateType::ApplicationDeadline,
+                            label: label.to_string(),
+                            confidence: "confirmed".to_string(),
+                        });
+                    }
+                }
+            }
+        }
+    }
+    
+    // Patterns for study start dates
+    let study_start_patterns = [
+        (r"(?i)(?:study|programme|course)\s+(?:starts?|begins?|commences?)[:\s]+(\w+\s+\d{4})", "study starts"),
+        (r"(?i)(?:start(?:ing)?|begin(?:ning)?)\s+(?:in\s+)?(\w+\s+\d{4})", "starting"),
+        (r"(?i)(?:september|october)\s+(\d{4})\s+(?:intake|entry|start)", "intake"),
+    ];
+    
+    for (pattern, label) in &study_start_patterns {
+        if let Ok(re) = regex::Regex::new(pattern) {
+            for caps in re.captures_iter(&text_lower) {
+                if let Some(date_match) = caps.get(1) {
+                    if let Some(iso_date) = normalize_date(date_match.as_str()) {
+                        dates.push(ParsedDate {
+                            date: iso_date,
+                            date_type: DateType::StudyStart,
+                            label: label.to_string(),
+                            confidence: "inferred".to_string(),
+                        });
+                    }
+                }
+            }
+        }
+    }
+    
+    // Extract intake year patterns like "2026/27" or "2026-27"
+    if let Ok(re) = regex::Regex::new(r"(?i)(\d{4})[/\-](\d{2})\s*(?:intake|session|academic\s*year)?") {
+        for caps in re.captures_iter(&text_lower) {
+            if let (Some(year1), Some(_year2)) = (caps.get(1), caps.get(2)) {
+                let year = year1.as_str();
+                // Infer September start for academic year
+                dates.push(ParsedDate {
+                    date: format!("{}-09-01", year),
+                    date_type: DateType::StudyStart,
+                    label: "academic year".to_string(),
+                    confidence: "inferred".to_string(),
+                });
+            }
+        }
+    }
+    
+    dates
+}
+
+/// Normalize various date formats to ISO YYYY-MM-DD
+fn normalize_date(date_str: &str) -> Option<String> {
+    let date_str = date_str.trim();
+    
+    // Try common formats
+    let formats = [
+        "%Y-%m-%d",
+        "%d/%m/%Y",
+        "%m/%d/%Y",
+        "%d-%m-%Y",
+        "%d %B %Y",
+        "%d %b %Y",
+        "%B %d, %Y",
+        "%b %d, %Y",
+        "%B %Y",      // Month Year only
+        "%b %Y",
+    ];
+    
+    for fmt in &formats {
+        if let Ok(date) = NaiveDate::parse_from_str(date_str, fmt) {
+            return Some(date.format("%Y-%m-%d").to_string());
+        }
+    }
+    
+    // Try to extract year-month-day from string
+    if let Ok(re) = regex::Regex::new(r"(\d{4})-(\d{2})-(\d{2})") {
+        if let Some(caps) = re.captures(date_str) {
+            return Some(format!("{}-{}-{}", &caps[1], &caps[2], &caps[3]));
+        }
+    }
+    
+    // Try month year format (e.g., "September 2026")
+    let months = [
+        ("january", "01"), ("february", "02"), ("march", "03"), ("april", "04"),
+        ("may", "05"), ("june", "06"), ("july", "07"), ("august", "08"),
+        ("september", "09"), ("october", "10"), ("november", "11"), ("december", "12"),
+        ("jan", "01"), ("feb", "02"), ("mar", "03"), ("apr", "04"),
+        ("jun", "06"), ("jul", "07"), ("aug", "08"), ("sep", "09"),
+        ("oct", "10"), ("nov", "11"), ("dec", "12"),
+    ];
+    
+    let date_lower = date_str.to_lowercase();
+    for (month_name, month_num) in &months {
+        if date_lower.contains(month_name) {
+            if let Ok(re) = regex::Regex::new(r"(\d{4})") {
+                if let Some(caps) = re.captures(&date_lower) {
+                    return Some(format!("{}-{}-01", &caps[1], month_num));
+                }
+            }
+        }
+    }
+    
+    None
+}
+
+/// Update lead with structured date information
+pub fn update_structured_dates(lead: &mut Lead) {
+    let text = format!("{} {} {} {}", 
+        lead.name, 
+        lead.notes, 
+        lead.eligibility.join(" "),
+        lead.deadline
+    );
+    
+    let parsed_dates = parse_structured_dates(&text);
+    
+    // Find the best application deadline
+    for parsed in &parsed_dates {
+        if parsed.date_type == DateType::ApplicationDeadline {
+            lead.deadline_date = Some(parsed.date.clone());
+            lead.deadline_label = Some(parsed.label.clone());
+            lead.deadline_confidence = Some(parsed.confidence.clone());
+            break;
+        }
+    }
+    
+    // Find study start date
+    for parsed in &parsed_dates {
+        if parsed.date_type == DateType::StudyStart {
+            lead.study_start = Some(parsed.date.clone());
+            // Extract intake year
+            if let Some(year) = parsed.date.split('-').next() {
+                let next_year: i32 = year.parse().unwrap_or(2026) + 1;
+                lead.intake_year = Some(format!("{}/{}", year, next_year % 100));
+            }
+            break;
+        }
+    }
+    
+    // If we still don't have a deadline_date but have a deadline string, try to parse it
+    if lead.deadline_date.is_none() && !lead.deadline.is_empty() {
+        if let Some(iso_date) = normalize_date(&lead.deadline) {
+            lead.deadline_date = Some(iso_date);
+            lead.deadline_confidence = Some("inferred".to_string());
+        } else if lead.deadline.to_lowercase().contains("check") || 
+                  lead.deadline.to_lowercase().contains("tbd") ||
+                  lead.deadline.to_lowercase().contains("see website") {
+            lead.deadline_confidence = Some("unknown".to_string());
+        }
+    }
+}
+
+// ============================================
+// Deduplication Logic
+// ============================================
+
+/// Directory page patterns - these are landing pages, not specific scholarships
+const DIRECTORY_PATTERNS: &[&str] = &[
+    "/scholarships/$",
+    "/scholarships/search",
+    "/scholarships/find",
+    "/funding/$",
+    "/funding/search",
+    "/bursaries/$",
+    "/financial-support/$",
+    "/student-finance/$",
+];
+
+/// Generate canonical URL for deduplication
+pub fn generate_canonical_url(url: &str) -> String {
+    let mut canonical = url.to_lowercase();
+    
+    // Remove trailing slashes
+    while canonical.ends_with('/') {
+        canonical.pop();
+    }
+    
+    // Remove common tracking parameters
+    if let Some(idx) = canonical.find('?') {
+        canonical = canonical[..idx].to_string();
+    }
+    
+    // Remove fragment
+    if let Some(idx) = canonical.find('#') {
+        canonical = canonical[..idx].to_string();
+    }
+    
+    // Normalize www prefix
+    canonical = canonical.replace("://www.", "://");
+    
+    // Remove protocol for comparison
+    canonical = canonical.replace("https://", "").replace("http://", "");
+    
+    canonical
+}
+
+/// Check if a URL is a directory/landing page rather than a specific scholarship
+pub fn is_directory_page(url: &str, name: &str) -> bool {
+    let url_lower = url.to_lowercase();
+    let name_lower = name.to_lowercase();
+    
+    // Check URL patterns
+    for pattern in DIRECTORY_PATTERNS {
+        if pattern.ends_with('$') {
+            // Exact match at end
+            let pattern_clean = &pattern[..pattern.len()-1];
+            if url_lower.ends_with(pattern_clean) {
+                return true;
+            }
+        } else if url_lower.contains(pattern) {
+            return true;
+        }
+    }
+    
+    // Check if name is generic
+    let generic_names = [
+        "scholarships",
+        "find a scholarship",
+        "scholarship search",
+        "funding opportunities",
+        "bursaries",
+        "financial support",
+        "scholarships and bursaries",
+        "scholarships listing",
+        "scholarship database",
+    ];
+    
+    for generic in &generic_names {
+        if name_lower == *generic || name_lower.starts_with(generic) {
+            return true;
+        }
+    }
+    
+    false
+}
+
+/// Check if a lead has sufficient detail to be a valid scholarship entry
+pub fn has_sufficient_detail(lead: &Lead) -> bool {
+    // Must have a meaningful name (not generic)
+    let name_lower = lead.name.to_lowercase();
+    if name_lower.len() < 10 {
+        return false;
+    }
+    
+    // Generic names are not sufficient
+    let generic_patterns = [
+        "scholarships",
+        "find a scholarship",
+        "apply for",
+        "search",
+        "browse",
+    ];
+    
+    for pattern in &generic_patterns {
+        if name_lower == *pattern {
+            return false;
+        }
+    }
+    
+    // Should have either:
+    // 1. A specific amount (not "See website")
+    // 2. A specific deadline (not "Check website")
+    // 3. Specific eligibility criteria
+    
+    let has_amount = !lead.amount.is_empty() && 
+                     !lead.amount.to_lowercase().contains("see website") &&
+                     !lead.amount.to_lowercase().contains("check website");
+    
+    let has_deadline = !lead.deadline.is_empty() && 
+                       !lead.deadline.to_lowercase().contains("check website") &&
+                       !lead.deadline.to_lowercase().contains("tbd");
+    
+    let has_eligibility = !lead.eligibility.is_empty() && 
+                          !lead.eligibility.iter().any(|e| 
+                              e.to_lowercase().contains("see website"));
+    
+    // At least one specific detail required
+    has_amount || has_deadline || has_eligibility
+}
+
+/// Update lead with deduplication information
+pub fn update_dedup_info(lead: &mut Lead) {
+    // Generate canonical URL
+    lead.canonical_url = Some(generate_canonical_url(&lead.url));
+    
+    // Check if this is a directory page
+    lead.is_directory_page = is_directory_page(&lead.url, &lead.name);
+}
+
+/// Generate deduplication key for a lead
+pub fn generate_dedup_key(lead: &Lead) -> String {
+    let canonical = lead.canonical_url.as_ref()
+        .map(|s| s.as_str())
+        .unwrap_or(&lead.url);
+    
+    // Use canonical URL + normalized name as key
+    let name_normalized = lead.name.to_lowercase()
+        .chars()
+        .filter(|c| c.is_alphanumeric() || c.is_whitespace())
+        .collect::<String>()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
+    
+    format!("{}|{}", canonical, name_normalized)
+}
+
 /// Basic criteria matching (keywords)
 pub fn matches_criteria(lead: &Lead, criteria: &Criteria) -> bool {
     let text = format!("{} {} {}", lead.name, lead.notes, lead.eligibility.join(" ")).to_lowercase();

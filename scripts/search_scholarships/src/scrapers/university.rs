@@ -125,6 +125,13 @@ fn parse_university_html(html: &str, base_url: &str) -> Vec<Lead> {
                         matched_rule_ids: vec![],
                         eligible_countries: vec![],
                         is_taiwan_eligible: None,
+                        deadline_date: None,
+                        deadline_label: None,
+                        intake_year: None,
+                        study_start: None,
+                        deadline_confidence: None,
+                        canonical_url: None,
+                        is_directory_page: false,
                     });
                 }
             }
@@ -221,6 +228,13 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             matched_rule_ids: vec![],
             eligible_countries: vec![],
             is_taiwan_eligible: Some(true), // International students = Taiwan eligible
+            deadline_date: Some("2026-06-30".to_string()),
+            deadline_label: Some("applications close".to_string()),
+            intake_year: Some("2026/27".to_string()),
+            study_start: Some("2026-09".to_string()),
+            deadline_confidence: Some("confirmed".to_string()),
+            canonical_url: None,
+            is_directory_page: false,
         },
         Lead {
             name: "Global Talent Scholarship".to_string(),
@@ -246,6 +260,13 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             matched_rule_ids: vec![],
             eligible_countries: vec![],
             is_taiwan_eligible: Some(true), // International students = Taiwan eligible
+            deadline_date: Some("2026-05-31".to_string()),
+            deadline_label: Some("applications close".to_string()),
+            intake_year: Some("2026/27".to_string()),
+            study_start: Some("2026-09".to_string()),
+            deadline_confidence: Some("confirmed".to_string()),
+            canonical_url: None,
+            is_directory_page: false,
         },
     ]
 }

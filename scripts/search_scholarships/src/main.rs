@@ -142,9 +142,27 @@ async fn main() -> Result<()> {
                 }
                 
                 let mut added = 0;
+                let mut skipped_directory = 0;
+                let mut skipped_insufficient = 0;
+                
                 for mut lead in result.leads {
-                    // Create unique key
-                    let key = format!("{}|{}", lead.name.to_lowercase().trim(), lead.url.to_lowercase().trim());
+                    // Update deduplication info first
+                    filter::update_dedup_info(&mut lead);
+                    
+                    // Skip directory/landing pages
+                    if lead.is_directory_page {
+                        skipped_directory += 1;
+                        continue;
+                    }
+                    
+                    // Skip leads without sufficient detail
+                    if !filter::has_sufficient_detail(&lead) {
+                        skipped_insufficient += 1;
+                        continue;
+                    }
+                    
+                    // Create unique key using improved dedup logic
+                    let key = filter::generate_dedup_key(&lead);
                     
                     // Skip duplicates
                     if existing_keys.contains(&key) || seen_keys.contains(&key) {
@@ -158,8 +176,9 @@ async fn main() -> Result<()> {
                         continue;
                     }
                     
-                    // Update country eligibility before profile filtering
+                    // Update country eligibility and structured dates before profile filtering
                     filter::update_country_eligibility(&mut lead);
+                    filter::update_structured_dates(&mut lead);
                     
                     // Profile-based filtering
                     if let Some(ref profile) = criteria.profile {
@@ -179,6 +198,10 @@ async fn main() -> Result<()> {
                         all_leads.push(lead);
                         added += 1;
                     }
+                }
+                if skipped_directory > 0 || skipped_insufficient > 0 {
+                    println!("    Skipped: {} directory pages, {} insufficient detail", 
+                        skipped_directory, skipped_insufficient);
                 }
                 println!("    Added {} qualified leads", added);
             }

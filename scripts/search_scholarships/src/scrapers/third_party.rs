@@ -129,6 +129,13 @@ fn parse_third_party_html(html: &str, base_url: &str) -> Vec<Lead> {
                             matched_rule_ids: vec![],
                             eligible_countries: vec![],
                             is_taiwan_eligible: None,
+                            deadline_date: None,
+                            deadline_label: None,
+                            intake_year: None,
+                            study_start: None,
+                            deadline_confidence: Some("unknown".to_string()),
+                            canonical_url: None,
+                            is_directory_page: false,
                         });
                     }
                 }
@@ -202,6 +209,15 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             trust_tier: Some("A".to_string()), // Major foundation = Tier A
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: Some(true), // Non-UK citizens = Taiwan eligible
+            deadline_date: Some("2026-10-13".to_string()),
+            deadline_label: Some("applications close".to_string()),
+            intake_year: Some("2027/28".to_string()),
+            study_start: Some("2027-10".to_string()),
+            deadline_confidence: Some("confirmed".to_string()),
+            canonical_url: None,
+            is_directory_page: false,
         },
         Lead {
             name: "Rhodes Scholarship (Oxford)".to_string(),
@@ -226,6 +242,15 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             trust_tier: Some("A".to_string()),
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: None, // Need to verify - Taiwan may not be in Rhodes list
+            deadline_date: Some("2026-10-01".to_string()),
+            deadline_label: Some("applications close".to_string()),
+            intake_year: Some("2027/28".to_string()),
+            study_start: Some("2027-10".to_string()),
+            deadline_confidence: Some("confirmed".to_string()),
+            canonical_url: None,
+            is_directory_page: false,
         },
         Lead {
             name: "Clarendon Scholarship (Oxford)".to_string(),
@@ -249,6 +274,15 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             trust_tier: Some("S".to_string()), // University official
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: Some(true), // All nationalities = Taiwan eligible
+            deadline_date: Some("2026-01-10".to_string()),
+            deadline_label: Some("applications close".to_string()),
+            intake_year: Some("2026/27".to_string()),
+            study_start: Some("2026-10".to_string()),
+            deadline_confidence: Some("confirmed".to_string()),
+            canonical_url: None,
+            is_directory_page: false,
         },
         Lead {
             name: "Wellcome Trust PhD Programmes".to_string(),
@@ -272,6 +306,15 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             trust_tier: Some("A".to_string()),
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: Some(true), // International students eligible
+            deadline_date: Some("2026-11-30".to_string()),
+            deadline_label: Some("applications close".to_string()),
+            intake_year: Some("2027/28".to_string()),
+            study_start: Some("2027-10".to_string()),
+            deadline_confidence: Some("confirmed".to_string()),
+            canonical_url: None,
+            is_directory_page: false,
         },
     ]
 }

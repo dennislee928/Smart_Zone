@@ -42,6 +42,28 @@ pub struct Lead {
     pub eligible_countries: Vec<String>,    // Normalized country list
     #[serde(default)]
     pub is_taiwan_eligible: Option<bool>,   // Explicit eligibility flag
+    
+    // Structured date fields
+    #[serde(default)]
+    pub deadline_date: Option<String>,      // ISO format YYYY-MM-DD (application deadline)
+    #[serde(default)]
+    pub deadline_label: Option<String>,     // "applications close", "deadline", etc.
+    #[serde(default)]
+    pub intake_year: Option<String>,        // "2026/27"
+    #[serde(default)]
+    pub study_start: Option<String>,        // "2026-09"
+    #[serde(default)]
+    pub deadline_confidence: Option<String>, // "confirmed", "inferred", "unknown"
+    
+    // Deduplication fields
+    #[serde(default)]
+    pub canonical_url: Option<String>,      // Normalized URL for deduplication
+    #[serde(default)]
+    pub is_directory_page: bool,            // True if this is a landing/directory page
+    
+    // Source priority fields
+    #[serde(default)]
+    pub official_source_url: Option<String>, // Official source URL (if found via aggregator)
 }
 
 // ============================================
@@ -70,6 +92,58 @@ impl std::fmt::Display for Bucket {
 impl Default for Bucket {
     fn default() -> Self {
         Bucket::C
+    }
+}
+
+// ============================================
+// Trust Tier Enum
+// ============================================
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+pub enum TrustTier {
+    S,  // Official university/government - highest trust
+    A,  // Major foundation (Gates, Rhodes, Chevening)
+    B,  // Verified aggregator (British Council, FindAPhD)
+    C,  // Unverified source
+}
+
+impl std::fmt::Display for TrustTier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TrustTier::S => write!(f, "S"),
+            TrustTier::A => write!(f, "A"),
+            TrustTier::B => write!(f, "B"),
+            TrustTier::C => write!(f, "C"),
+        }
+    }
+}
+
+impl Default for TrustTier {
+    fn default() -> Self {
+        TrustTier::C
+    }
+}
+
+impl TrustTier {
+    /// Parse trust tier from string
+    pub fn from_str(s: &str) -> Self {
+        match s.to_uppercase().as_str() {
+            "S" => TrustTier::S,
+            "A" => TrustTier::A,
+            "B" => TrustTier::B,
+            _ => TrustTier::C,
+        }
+    }
+    
+    /// Get trust tier from source type
+    pub fn from_source_type(source_type: &str) -> Self {
+        match source_type.to_lowercase().as_str() {
+            "university" => TrustTier::S,
+            "government" => TrustTier::S,
+            "foundation" => TrustTier::A,
+            "third_party" => TrustTier::B,
+            _ => TrustTier::C,
+        }
     }
 }
 
