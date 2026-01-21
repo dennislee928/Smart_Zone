@@ -157,56 +157,66 @@ fn build_search_text(lead: &Lead) -> String {
     ).to_lowercase()
 }
 
-/// Check if a rule condition matches
+/// Check if a rule condition matches (AND semantics - all specified conditions must pass)
 fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &str) -> bool {
-    // Check positive regex patterns (any match = true)
+    let mut has_any_condition = false;
+    let mut all_passed = true;
+    
+    // Check positive regex patterns (any_regex: at least one pattern must match)
     if let Some(ref patterns) = condition.any_regex {
-        for pattern in patterns {
-            if let Ok(re) = Regex::new(pattern) {
-                if re.is_match(search_text) {
-                    return true;
-                }
-            }
+        has_any_condition = true;
+        let regex_matched = patterns.iter().any(|pattern| {
+            Regex::new(pattern)
+                .map(|re| re.is_match(search_text))
+                .unwrap_or(false)
+        });
+        if !regex_matched {
+            all_passed = false;
         }
     }
     
-    // Check negative regex patterns (NONE match = true, i.e., trigger if NOT target)
+    // Check negative regex patterns (not_any_regex: NONE of the patterns should match)
     if let Some(ref patterns) = condition.not_any_regex {
-        let mut any_matched = false;
-        for pattern in patterns {
-            if let Ok(re) = Regex::new(pattern) {
-                if re.is_match(search_text) {
-                    any_matched = true;
-                    break;
-                }
-            }
-        }
-        // Return true only if NONE of the patterns matched
-        if !any_matched {
-            return true;
+        has_any_condition = true;
+        let any_matched = patterns.iter().any(|pattern| {
+            Regex::new(pattern)
+                .map(|re| re.is_match(search_text))
+                .unwrap_or(false)
+        });
+        // Condition passes only if NONE of the patterns matched
+        if any_matched {
+            all_passed = false;
         }
     }
     
     // Check deadline conditions
+    // Priority: use deadline_date first, fallback to deadline
     if let Some(ref deadline_cond) = condition.deadline {
+        has_any_condition = true;
+        let mut deadline_condition_passed = false;
+        
+        // Get deadline string with priority: deadline_date > deadline
+        let deadline_str = lead.deadline_date.as_deref().unwrap_or(&lead.deadline);
+        
         if deadline_cond.lt_today.unwrap_or(false) {
-            if let Some(deadline_date) = parse_deadline(&lead.deadline) {
+            if let Some(deadline_date) = parse_deadline(deadline_str) {
                 let today = Utc::now().date_naive();
                 if deadline_date < today {
-                    return true;
+                    deadline_condition_passed = true;
                 }
             }
         }
         
         if deadline_cond.is_null.unwrap_or(false) {
-            if lead.deadline.is_empty() || lead.deadline.to_lowercase() == "check website" || lead.deadline.to_lowercase() == "tbd" {
-                return true;
+            let dl_lower = deadline_str.to_lowercase();
+            if deadline_str.is_empty() || dl_lower == "check website" || dl_lower == "tbd" || dl_lower == "unknown" {
+                deadline_condition_passed = true;
             }
         }
         
         // Check if deadline is after study start (wrong intake cycle)
         if deadline_cond.gt_study_start.unwrap_or(false) {
-            if let Some(deadline_date) = parse_deadline(&lead.deadline) {
+            if let Some(deadline_date) = parse_deadline(deadline_str) {
                 // Use lead's study_start if available, otherwise use target date (2026-09-14)
                 let study_start = lead.study_start.as_ref()
                     .and_then(|s| parse_deadline(s))
@@ -217,19 +227,27 @@ fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &st
                 let cutoff_date = study_start - chrono::Duration::days(margin_days);
                 
                 if deadline_date > cutoff_date {
-                    return true;
+                    deadline_condition_passed = true;
                 }
             }
+        }
+        
+        if !deadline_condition_passed {
+            all_passed = false;
         }
     }
     
     // Check HTTP status conditions
     if let Some(ref http_cond) = condition.http_status {
         if let Some(ref any_of) = http_cond.any_of {
+            has_any_condition = true;
             if let Some(status) = lead.http_status {
-                if any_of.contains(&status) {
-                    return true;
+                if !any_of.contains(&status) {
+                    all_passed = false;
                 }
+            } else {
+                // No HTTP status available, condition not met
+                all_passed = false;
             }
         }
     }
@@ -237,22 +255,29 @@ fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &st
     // Check effort score conditions
     if let Some(ref effort_cond) = condition.effort_score {
         if let Some(gt) = effort_cond.gt {
-            if lead.effort_score.unwrap_or(0) > gt {
-                return true;
+            has_any_condition = true;
+            if lead.effort_score.unwrap_or(0) <= gt {
+                all_passed = false;
             }
         }
     }
     
     // Check country eligibility condition
     if let Some(expected_eligible) = condition.is_taiwan_eligible {
+        has_any_condition = true;
         if let Some(actual_eligible) = lead.is_taiwan_eligible {
-            if actual_eligible == expected_eligible {
-                return true;
+            if actual_eligible != expected_eligible {
+                all_passed = false;
             }
+        } else {
+            // No eligibility info available, condition not met for false check
+            // For true check, we can't confirm so fail
+            all_passed = false;
         }
     }
     
-    false
+    // Rule triggers only if there's at least one condition AND all conditions pass
+    has_any_condition && all_passed
 }
 
 /// Parse deadline string to NaiveDate
@@ -302,10 +327,10 @@ pub struct RuleApplicationResult {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::types::DeadlineCondition;
     
-    #[test]
-    fn test_build_search_text() {
-        let lead = Lead {
+    fn create_test_lead() -> Lead {
+        Lead {
             name: "Test Scholarship".to_string(),
             amount: "£5000".to_string(),
             deadline: "2026-06-30".to_string(),
@@ -334,10 +359,119 @@ mod tests {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: None,
-        };
-        
+        }
+    }
+    
+    #[test]
+    fn test_build_search_text() {
+        let lead = create_test_lead();
         let text = build_search_text(&lead);
         assert!(text.contains("test scholarship"));
         assert!(text.contains("international students"));
+    }
+    
+    #[test]
+    fn test_rule_condition_and_semantics_regex_only() {
+        let lead = create_test_lead();
+        let search_text = build_search_text(&lead);
+        
+        // Test: any_regex matches -> should pass
+        let condition = RuleCondition {
+            any_regex: Some(vec!["(?i)scholarship".to_string()]),
+            ..Default::default()
+        };
+        assert!(check_rule_condition(&condition, &lead, &search_text));
+        
+        // Test: any_regex does not match -> should fail
+        let condition = RuleCondition {
+            any_regex: Some(vec!["(?i)phd only".to_string()]),
+            ..Default::default()
+        };
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+    }
+    
+    #[test]
+    fn test_rule_condition_and_semantics_combined() {
+        let mut lead = create_test_lead();
+        lead.http_status = Some(403);
+        let search_text = build_search_text(&lead);
+        
+        // Test: regex matches + http_status matches -> should pass (both conditions)
+        let condition = RuleCondition {
+            any_regex: Some(vec!["(?i)scholarship".to_string()]),
+            http_status: Some(crate::types::HttpStatusCondition {
+                any_of: Some(vec![403, 429]),
+            }),
+            ..Default::default()
+        };
+        assert!(check_rule_condition(&condition, &lead, &search_text));
+        
+        // Test: regex matches + http_status does NOT match -> should FAIL (AND semantics)
+        lead.http_status = Some(200);
+        let condition = RuleCondition {
+            any_regex: Some(vec!["(?i)scholarship".to_string()]),
+            http_status: Some(crate::types::HttpStatusCondition {
+                any_of: Some(vec![403, 429]),
+            }),
+            ..Default::default()
+        };
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+    }
+    
+    #[test]
+    fn test_rule_condition_not_any_regex() {
+        let mut lead = create_test_lead();
+        lead.url = "https://random-site.com".to_string();
+        let search_text = build_search_text(&lead);
+        
+        // Test: not_any_regex - none match -> should pass (target NOT in allowlist)
+        let condition = RuleCondition {
+            not_any_regex: Some(vec!["(?i)gla\\.ac\\.uk".to_string(), "(?i)glasgow".to_string()]),
+            ..Default::default()
+        };
+        assert!(check_rule_condition(&condition, &lead, &search_text));
+        
+        // Test: not_any_regex - one matches -> should fail
+        lead.url = "https://gla.ac.uk/scholarship".to_string();
+        let search_text = build_search_text(&lead);
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+    }
+    
+    #[test]
+    fn test_deadline_date_priority() {
+        let mut lead = create_test_lead();
+        lead.deadline = "2020-01-01".to_string(); // Old date in deadline
+        lead.deadline_date = Some("2026-12-31".to_string()); // Future date in deadline_date
+        let search_text = build_search_text(&lead);
+        
+        // Test: deadline_date should take priority over deadline
+        // lt_today check should use deadline_date (2026-12-31), not deadline (2020-01-01)
+        let condition = RuleCondition {
+            deadline: Some(DeadlineCondition {
+                lt_today: Some(true),
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        // Should NOT trigger because deadline_date (2026-12-31) is in the future
+        assert!(!check_rule_condition(&condition, &lead, &search_text));
+        
+        // Now test without deadline_date - should fallback to deadline
+        lead.deadline_date = None;
+        // Should trigger because deadline (2020-01-01) is in the past
+        assert!(check_rule_condition(&condition, &lead, &search_text));
+    }
+    
+    #[test]
+    fn test_parse_deadline_formats() {
+        // ISO format
+        assert_eq!(parse_deadline("2026-06-30"), Some(NaiveDate::from_ymd_opt(2026, 6, 30).unwrap()));
+        
+        // UK format
+        assert_eq!(parse_deadline("30/06/2026"), Some(NaiveDate::from_ymd_opt(2026, 6, 30).unwrap()));
+        
+        // Invalid
+        assert_eq!(parse_deadline("check website"), None);
+        assert_eq!(parse_deadline(""), None);
     }
 }

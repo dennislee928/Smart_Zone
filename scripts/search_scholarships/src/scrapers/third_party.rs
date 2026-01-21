@@ -184,8 +184,58 @@ fn extract_amount(text: &str) -> Option<String> {
     None
 }
 
+/// Generate search queries with location-constrained keywords
+/// Returns queries optimized for UK/Scotland/International students
+pub fn generate_search_queries() -> Vec<String> {
+    let subjects = vec![
+        "Software Development",
+        "Computer Science", 
+        "Data Science",
+        "Computing",
+    ];
+    
+    let mut queries = Vec::new();
+    
+    for subject in &subjects {
+        // Strategy A: Location-specific (most effective for filtering US-only)
+        queries.push(format!("{} scholarship UK", subject));
+        queries.push(format!("{} scholarship Scotland", subject));
+        queries.push(format!("{} scholarship University of Glasgow", subject));
+        
+        // Strategy B: Identity-based (international students)
+        queries.push(format!("{} scholarship for international students", subject));
+        queries.push(format!("{} scholarship for Taiwanese students", subject));
+        
+        // Strategy C: Degree-level (exclude high school/undergraduate)
+        queries.push(format!("{} master's scholarship", subject));
+        queries.push(format!("{} MSc funding", subject));
+        queries.push(format!("{} postgraduate scholarship UK", subject));
+    }
+    
+    // Add portable scholarship keywords
+    queries.push("scholarship for international students UK masters".to_string());
+    queries.push("Chevening scholarship".to_string());
+    queries.push("Commonwealth scholarship UK".to_string());
+    queries.push("Rotary Global Grant UK".to_string());
+    
+    queries
+}
+
 /// Known third-party scholarships as fallback
-fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
+/// DEPRECATED: Do not use in production - generates hardcoded fake data
+/// This function is kept for reference only and should not be called
+#[allow(dead_code)]
+#[deprecated(note = "Do not use in production - generates hardcoded data that may be outdated")]
+fn get_known_third_party_scholarships(_source_url: &str) -> Vec<Lead> {
+    // Return empty vector to prevent fake data generation
+    // The original hardcoded data has been removed to prevent misleading results
+    vec![]
+}
+
+/// DEPRECATED: Original hardcoded scholarship data - DO NOT USE
+/// Kept as reference only. All scholarship discovery should come from actual web scraping.
+#[allow(dead_code)]
+fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead> {
     vec![
         Lead {
             name: "Gates Cambridge Scholarship".to_string(),
@@ -322,4 +372,35 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             official_source_url: Some("https://wellcome.org/grant-funding".to_string()),
         },
     ]
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn test_generate_search_queries() {
+        let queries = generate_search_queries();
+        
+        // Should have queries
+        assert!(!queries.is_empty());
+        
+        // Should contain UK-focused queries
+        assert!(queries.iter().any(|q| q.contains("UK")));
+        assert!(queries.iter().any(|q| q.contains("Scotland")));
+        assert!(queries.iter().any(|q| q.contains("Glasgow")));
+        
+        // Should contain international student queries
+        assert!(queries.iter().any(|q| q.contains("international students")));
+        
+        // Should contain postgraduate queries
+        assert!(queries.iter().any(|q| q.contains("master") || q.contains("MSc") || q.contains("postgraduate")));
+    }
+    
+    #[test]
+    fn test_deprecated_function_returns_empty() {
+        #[allow(deprecated)]
+        let leads = get_known_third_party_scholarships("https://example.com");
+        assert!(leads.is_empty(), "Deprecated function should return empty vector");
+    }
 }
