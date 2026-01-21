@@ -60,6 +60,9 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://www.chevening.org/scholarships/".to_string()),
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
         },
         Lead {
             name: "Commonwealth Scholarships (Taught Masters)".to_string(),
@@ -100,6 +103,9 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/".to_string()),
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
         },
         Lead {
             name: "GREAT Scholarships".to_string(),
@@ -133,6 +139,9 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://study-uk.britishcouncil.org/scholarships/great-scholarships".to_string()),
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
         },
         Lead {
             name: "Marshall Scholarships".to_string(),
