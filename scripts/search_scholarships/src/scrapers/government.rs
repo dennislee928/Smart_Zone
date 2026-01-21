@@ -48,6 +48,16 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             trust_tier: Some("S".to_string()), // Government = Tier S
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: Some(true), // Chevening includes Taiwan
+            deadline_date: Some("2026-11-05".to_string()),
+            deadline_label: Some("applications close".to_string()),
+            intake_year: Some("2027/28".to_string()),
+            study_start: Some("2027-09".to_string()),
+            deadline_confidence: Some("confirmed".to_string()),
+            canonical_url: None,
+            is_directory_page: false,
+            official_source_url: Some("https://www.chevening.org/scholarships/".to_string()),
         },
         Lead {
             name: "Commonwealth Scholarships (Taught Masters)".to_string(),
@@ -71,6 +81,16 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             trust_tier: Some("S".to_string()),
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: Some(false), // Taiwan is NOT a Commonwealth country
+            deadline_date: Some("2026-10-18".to_string()),
+            deadline_label: Some("applications close".to_string()),
+            intake_year: Some("2027/28".to_string()),
+            study_start: Some("2027-09".to_string()),
+            deadline_confidence: Some("confirmed".to_string()),
+            canonical_url: None,
+            is_directory_page: false,
+            official_source_url: Some("https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/".to_string()),
         },
         Lead {
             name: "GREAT Scholarships".to_string(),
@@ -94,6 +114,16 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             trust_tier: Some("S".to_string()),
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: Some(false), // Taiwan is NOT in GREAT Scholarships list
+            deadline_date: Some("2026-05-15".to_string()),
+            deadline_label: Some("applications close".to_string()),
+            intake_year: Some("2026/27".to_string()),
+            study_start: Some("2026-09".to_string()),
+            deadline_confidence: Some("confirmed".to_string()),
+            canonical_url: None,
+            is_directory_page: false,
+            official_source_url: Some("https://study-uk.britishcouncil.org/scholarships/great-scholarships".to_string()),
         },
         Lead {
             name: "Marshall Scholarships".to_string(),
@@ -117,6 +147,16 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             trust_tier: Some("S".to_string()),
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec!["United States".to_string()],
+            is_taiwan_eligible: Some(false), // US citizens only
+            deadline_date: Some("2026-09-30".to_string()),
+            deadline_label: Some("applications close".to_string()),
+            intake_year: Some("2027/28".to_string()),
+            study_start: Some("2027-09".to_string()),
+            deadline_confidence: Some("confirmed".to_string()),
+            canonical_url: None,
+            is_directory_page: false,
+            official_source_url: Some("https://www.marshallscholarship.org/".to_string()),
         },
     ]
 }

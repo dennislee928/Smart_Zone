@@ -134,6 +134,16 @@ fn parse_dynamic_html(html: &str, base_url: &str) -> Vec<Lead> {
                         trust_tier: Some("B".to_string()),
                         risk_flags: vec![],
                         matched_rule_ids: vec![],
+                        eligible_countries: vec![],
+                        is_taiwan_eligible: None,
+                        deadline_date: None,
+                        deadline_label: None,
+                        intake_year: None,
+                        study_start: None,
+                        deadline_confidence: Some("unknown".to_string()),
+                        canonical_url: None,
+                        is_directory_page: false,
+                        official_source_url: None,
                     });
                 }
             }

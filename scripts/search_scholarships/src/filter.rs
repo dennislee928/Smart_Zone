@@ -1,6 +1,5 @@
 use crate::types::{Lead, Criteria, Profile};
 use chrono::NaiveDate;
-use std::collections::HashSet;
 
 // ============================================
 // Known Country Lists for Scholarship Programs
