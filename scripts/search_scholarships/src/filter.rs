@@ -532,6 +532,121 @@ pub fn generate_dedup_key(lead: &Lead) -> String {
     format!("{}|{}", canonical, name_normalized)
 }
 
+// ============================================
+// Trust Tier & Source Priority Logic
+// ============================================
+
+use crate::types::TrustTier;
+
+/// Known official scholarship domains (Tier S)
+const TIER_S_DOMAINS: &[&str] = &[
+    // UK Universities
+    "gla.ac.uk", "glasgow.ac.uk", "ox.ac.uk", "cam.ac.uk", "imperial.ac.uk",
+    "ucl.ac.uk", "lse.ac.uk", "kcl.ac.uk", "ed.ac.uk", "manchester.ac.uk",
+    "bristol.ac.uk", "warwick.ac.uk", "leeds.ac.uk", "birmingham.ac.uk",
+    "sheffield.ac.uk", "nottingham.ac.uk", "southampton.ac.uk", "york.ac.uk",
+    "durham.ac.uk", "exeter.ac.uk", "bath.ac.uk", "st-andrews.ac.uk",
+    "liverpool.ac.uk", "cardiff.ac.uk", "qub.ac.uk", "abdn.ac.uk",
+    // Government
+    "gov.uk", "ukri.org", "cscuk.fcdo.gov.uk",
+];
+
+/// Known major foundation domains (Tier A)
+const TIER_A_DOMAINS: &[&str] = &[
+    "gatescambridge.org", "rhodeshouse.ox.ac.uk", "chevening.org",
+    "marshallscholarship.org", "wellcome.org", "leverhulme.ac.uk",
+    "carnegie-trust.org", "wolfson.org.uk",
+];
+
+/// Known verified aggregator domains (Tier B)
+const TIER_B_DOMAINS: &[&str] = &[
+    "britishcouncil.org", "study-uk.britishcouncil.org", "findaphd.com",
+    "scholarshipportal.com", "prospects.ac.uk", "postgraduatesearch.com",
+];
+
+/// Determine trust tier from URL
+pub fn determine_trust_tier(url: &str) -> TrustTier {
+    let url_lower = url.to_lowercase();
+    
+    // Check Tier S (official sources)
+    for domain in TIER_S_DOMAINS {
+        if url_lower.contains(domain) {
+            return TrustTier::S;
+        }
+    }
+    
+    // Check Tier A (major foundations)
+    for domain in TIER_A_DOMAINS {
+        if url_lower.contains(domain) {
+            return TrustTier::A;
+        }
+    }
+    
+    // Check Tier B (verified aggregators)
+    for domain in TIER_B_DOMAINS {
+        if url_lower.contains(domain) {
+            return TrustTier::B;
+        }
+    }
+    
+    // Default to Tier C (unverified)
+    TrustTier::C
+}
+
+/// Try to find official source URL for a scholarship found via aggregator
+pub fn find_official_source(lead: &Lead) -> Option<String> {
+    let name_lower = lead.name.to_lowercase();
+    
+    // Known scholarship -> official URL mappings
+    let known_mappings = [
+        ("chevening", "https://www.chevening.org/scholarships/"),
+        ("commonwealth", "https://cscuk.fcdo.gov.uk/scholarships/"),
+        ("gates cambridge", "https://www.gatescambridge.org/"),
+        ("rhodes", "https://www.rhodeshouse.ox.ac.uk/scholarships/"),
+        ("marshall", "https://www.marshallscholarship.org/"),
+        ("clarendon", "https://www.ox.ac.uk/clarendon/"),
+    ];
+    
+    for (pattern, official_url) in &known_mappings {
+        if name_lower.contains(pattern) {
+            return Some(official_url.to_string());
+        }
+    }
+    
+    // Try to infer university official URL from name
+    let university_patterns = [
+        ("glasgow", "https://www.gla.ac.uk/scholarships/"),
+        ("oxford", "https://www.ox.ac.uk/admissions/graduate/fees-and-funding/"),
+        ("cambridge", "https://www.cam.ac.uk/study/postgraduate/funding"),
+        ("imperial", "https://www.imperial.ac.uk/study/pg/fees-and-funding/"),
+        ("ucl", "https://www.ucl.ac.uk/scholarships/"),
+        ("edinburgh", "https://www.ed.ac.uk/student-funding/postgraduate"),
+        ("manchester", "https://www.manchester.ac.uk/study/postgraduate/fees-and-funding/"),
+    ];
+    
+    for (pattern, official_url) in &university_patterns {
+        if name_lower.contains(pattern) {
+            return Some(official_url.to_string());
+        }
+    }
+    
+    None
+}
+
+/// Update lead with trust tier and official source information
+pub fn update_trust_info(lead: &mut Lead) {
+    // Determine trust tier from URL
+    let tier = determine_trust_tier(&lead.url);
+    lead.trust_tier = Some(tier.to_string());
+    
+    // If from aggregator (Tier B or C), try to find official source
+    if tier == TrustTier::B || tier == TrustTier::C {
+        if let Some(official_url) = find_official_source(lead) {
+            lead.official_source_url = Some(official_url);
+        }
+    }
+}
+
 /// Basic criteria matching (keywords)
 pub fn matches_criteria(lead: &Lead, criteria: &Criteria) -> bool {
     let text = format!("{} {} {}", lead.name, lead.notes, lead.eligibility.join(" ")).to_lowercase();

@@ -298,6 +298,7 @@ mod tests {
             deadline_confidence: None,
             canonical_url: None,
             is_directory_page: false,
+            official_source_url: None,
         };
         
         let text = build_search_text(&lead);

@@ -176,9 +176,10 @@ async fn main() -> Result<()> {
                         continue;
                     }
                     
-                    // Update country eligibility and structured dates before profile filtering
+                    // Update country eligibility, structured dates, and trust info before profile filtering
                     filter::update_country_eligibility(&mut lead);
                     filter::update_structured_dates(&mut lead);
+                    filter::update_trust_info(&mut lead);
                     
                     // Profile-based filtering
                     if let Some(ref profile) = criteria.profile {

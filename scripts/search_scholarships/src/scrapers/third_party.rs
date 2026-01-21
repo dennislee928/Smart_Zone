@@ -136,6 +136,7 @@ fn parse_third_party_html(html: &str, base_url: &str) -> Vec<Lead> {
                             deadline_confidence: Some("unknown".to_string()),
                             canonical_url: None,
                             is_directory_page: false,
+                            official_source_url: None,
                         });
                     }
                 }
@@ -218,6 +219,7 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             deadline_confidence: Some("confirmed".to_string()),
             canonical_url: None,
             is_directory_page: false,
+            official_source_url: Some("https://www.gatescambridge.org/".to_string()),
         },
         Lead {
             name: "Rhodes Scholarship (Oxford)".to_string(),
@@ -251,6 +253,7 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             deadline_confidence: Some("confirmed".to_string()),
             canonical_url: None,
             is_directory_page: false,
+            official_source_url: Some("https://www.rhodeshouse.ox.ac.uk/scholarships/".to_string()),
         },
         Lead {
             name: "Clarendon Scholarship (Oxford)".to_string(),
@@ -283,6 +286,7 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             deadline_confidence: Some("confirmed".to_string()),
             canonical_url: None,
             is_directory_page: false,
+            official_source_url: Some("https://www.ox.ac.uk/clarendon/".to_string()),
         },
         Lead {
             name: "Wellcome Trust PhD Programmes".to_string(),
@@ -315,6 +319,7 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
             deadline_confidence: Some("confirmed".to_string()),
             canonical_url: None,
             is_directory_page: false,
+            official_source_url: Some("https://wellcome.org/grant-funding".to_string()),
         },
     ]
 }

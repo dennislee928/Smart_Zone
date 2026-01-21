@@ -132,6 +132,7 @@ fn parse_university_html(html: &str, base_url: &str) -> Vec<Lead> {
                         deadline_confidence: None,
                         canonical_url: None,
                         is_directory_page: false,
+                        official_source_url: None,
                     });
                 }
             }
@@ -235,6 +236,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             deadline_confidence: Some("confirmed".to_string()),
             canonical_url: None,
             is_directory_page: false,
+            official_source_url: None,
         },
         Lead {
             name: "Global Talent Scholarship".to_string(),
@@ -267,6 +269,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             deadline_confidence: Some("confirmed".to_string()),
             canonical_url: None,
             is_directory_page: false,
+            official_source_url: None,
         },
     ]
 }
