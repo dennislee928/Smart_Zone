@@ -36,6 +36,12 @@ pub struct Lead {
     pub risk_flags: Vec<String>,
     #[serde(default)]
     pub matched_rule_ids: Vec<String>,
+    
+    // Country eligibility fields
+    #[serde(default)]
+    pub eligible_countries: Vec<String>,    // Normalized country list
+    #[serde(default)]
+    pub is_taiwan_eligible: Option<bool>,   // Explicit eligibility flag
 }
 
 // ============================================
@@ -148,6 +154,8 @@ pub struct RuleCondition {
     pub http_status: Option<HttpStatusCondition>,
     #[serde(default)]
     pub effort_score: Option<EffortScoreCondition>,
+    #[serde(default)]
+    pub is_taiwan_eligible: Option<bool>,  // Country eligibility gate
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]

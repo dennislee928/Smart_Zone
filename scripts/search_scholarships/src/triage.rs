@@ -330,6 +330,7 @@ pub fn generate_rules_audit(
             a: stats.bucket_a,
             b: stats.bucket_b,
             c: stats.bucket_c,
+            x: stats.bucket_x,
         },
         rule_hits,
     }

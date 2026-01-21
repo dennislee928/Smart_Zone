@@ -226,8 +226,8 @@ async fn main() -> Result<()> {
     if let Some(ref rules) = rules_config {
         println!("Stage 4: Applying rules and triage...");
         triage_stats = triage::triage_leads(&mut all_leads, rules);
-        println!("  Bucket A: {} | Bucket B: {} | Bucket C: {}",
-            triage_stats.bucket_a, triage_stats.bucket_b, triage_stats.bucket_c);
+        println!("  Bucket A: {} | Bucket B: {} | Bucket C: {} | Bucket X: {}",
+            triage_stats.bucket_a, triage_stats.bucket_b, triage_stats.bucket_c, triage_stats.bucket_x);
     } else {
         println!("Stage 4: Skipping rules (no rules.yaml)");
         // Default triage based on score
@@ -245,6 +245,7 @@ async fn main() -> Result<()> {
             bucket_a: all_leads.iter().filter(|l| l.bucket == Some(Bucket::A)).count(),
             bucket_b: all_leads.iter().filter(|l| l.bucket == Some(Bucket::B)).count(),
             bucket_c: all_leads.iter().filter(|l| l.bucket == Some(Bucket::C)).count(),
+            bucket_x: all_leads.iter().filter(|l| l.bucket == Some(Bucket::X)).count(),
             ..Default::default()
         };
     }
@@ -256,15 +257,15 @@ async fn main() -> Result<()> {
     println!("Stage 5: Sorting leads...");
     sorter::sort_leads(&mut all_leads);
     
-    // Split into buckets
-    let (bucket_a, bucket_b, bucket_c) = triage::split_by_bucket(all_leads.clone());
+    // Split into buckets (A, B, C, X)
+    let (bucket_a, bucket_b, bucket_c, bucket_x) = triage::split_by_bucket(all_leads.clone());
     let watchlist: Vec<Lead> = all_leads.iter()
         .filter(|l| l.deadline.to_lowercase().contains("check") || l.deadline.to_lowercase().contains("tbd"))
         .cloned()
         .collect();
     
-    println!("  Final: A={}, B={}, C={}, Watchlist={}",
-        bucket_a.len(), bucket_b.len(), bucket_c.len(), watchlist.len());
+    println!("  Final: A={}, B={}, C={}, X={}, Watchlist={}",
+        bucket_a.len(), bucket_b.len(), bucket_c.len(), bucket_x.len(), watchlist.len());
     println!();
     
     // ==========================================
@@ -279,8 +280,8 @@ async fn main() -> Result<()> {
     fs::create_dir_all(&report_dir)?;
     
     // Generate all reports
-    let triage_md = triage::generate_triage_md(&bucket_a, &bucket_b, &bucket_c, &watchlist);
-    let triage_csv = triage::generate_triage_csv(&bucket_a, &bucket_b, &bucket_c);
+    let triage_md = triage::generate_triage_md(&bucket_a, &bucket_b, &bucket_c, &bucket_x, &watchlist);
+    let triage_csv = triage::generate_triage_csv(&bucket_a, &bucket_b, &bucket_c, &bucket_x);
     let deadlinks_md = link_health::generate_deadlinks_report(&dead_links);
     let health_report_md = source_health::generate_health_report(&health_file);
     
