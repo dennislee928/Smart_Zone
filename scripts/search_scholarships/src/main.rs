@@ -13,6 +13,7 @@ mod link_health;
 mod triage;
 mod effort;
 mod source_health;
+mod normalize;
 
 pub use types::*;
 
@@ -235,7 +236,7 @@ async fn main() -> Result<()> {
     println!();
     
     // ==========================================
-    // Stage 1.5: Bulk Extraction Detection & Deduplication
+    // Stage 1.5: Bulk Extraction Detection & URL Normalization/Deduplication
     // ==========================================
     println!("Stage 1.5: Detecting bulk extractions and deduplicating...");
     let before_count = all_leads.len();
@@ -247,7 +248,13 @@ async fn main() -> Result<()> {
     let bulk_extracted_count = all_leads.iter().filter(|l| l.is_directory_page).count();
     all_leads.retain(|l| !l.is_directory_page);
     
+    // Apply URL normalization and deduplication
+    let before_dedup = all_leads.len();
+    all_leads = normalize::deduplicate_leads(all_leads);
+    let dedup_removed = before_dedup - all_leads.len();
+    
     println!("  Marked {} leads as bulk extractions from directory pages", bulk_extracted_count);
+    println!("  URL normalization removed {} duplicates", dedup_removed);
     println!("  Leads after dedup: {} (removed {})", all_leads.len(), before_count - all_leads.len());
     println!();
     
