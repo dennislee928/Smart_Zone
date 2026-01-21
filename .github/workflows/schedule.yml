@@ -1,6 +1,9 @@
 name: ScholarshipOps - Schedule
 
 on:
+  push:
+    branches:
+      - feature/ScholarshipOps
   schedule:
     - cron: "10 4 * * 1"   # Monday 12:10 Asia/Taipei (Monday review)
   workflow_dispatch: {}

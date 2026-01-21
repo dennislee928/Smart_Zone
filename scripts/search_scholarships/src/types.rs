@@ -314,3 +314,114 @@ pub struct Source {
     pub enabled: bool,
     pub scraper: String,
 }
+
+// ============================================
+// Source Health Tracking Types
+// ============================================
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct SourceHealthFile {
+    pub last_updated: String,
+    pub sources: Vec<SourceHealth>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct SourceHealth {
+    pub url: String,
+    pub name: String,
+    pub source_type: String,
+    pub consecutive_failures: u32,
+    pub total_attempts: u32,
+    pub total_successes: u32,
+    pub last_status: SourceStatus,
+    pub last_http_code: Option<u16>,
+    pub last_error: Option<String>,
+    pub last_checked: String,
+    pub auto_disabled: bool,
+    pub disabled_reason: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+pub enum SourceStatus {
+    Ok,
+    NotFound,
+    Forbidden,
+    RateLimited,
+    ServerError,
+    SslError,
+    Timeout,
+    TooManyRedirects,
+    NetworkError,
+    Unknown,
+}
+
+impl std::fmt::Display for SourceStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            SourceStatus::Ok => write!(f, "OK"),
+            SourceStatus::NotFound => write!(f, "404 Not Found"),
+            SourceStatus::Forbidden => write!(f, "403 Forbidden"),
+            SourceStatus::RateLimited => write!(f, "429 Rate Limited"),
+            SourceStatus::ServerError => write!(f, "5xx Server Error"),
+            SourceStatus::SslError => write!(f, "SSL Error"),
+            SourceStatus::Timeout => write!(f, "Timeout"),
+            SourceStatus::TooManyRedirects => write!(f, "Too Many Redirects"),
+            SourceStatus::NetworkError => write!(f, "Network Error"),
+            SourceStatus::Unknown => write!(f, "Unknown"),
+        }
+    }
+}
+
+impl Default for SourceHealth {
+    fn default() -> Self {
+        Self {
+            url: String::new(),
+            name: String::new(),
+            source_type: String::new(),
+            consecutive_failures: 0,
+            total_attempts: 0,
+            total_successes: 0,
+            last_status: SourceStatus::Unknown,
+            last_http_code: None,
+            last_error: None,
+            last_checked: String::new(),
+            auto_disabled: false,
+            disabled_reason: None,
+        }
+    }
+}
+
+// ============================================
+// Source Filter Config
+// ============================================
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct SourceFilterConfig {
+    /// 只爬取這些類型的來源 (空 = 全部)
+    #[serde(default)]
+    pub include_types: Vec<String>,
+    /// 排除這些類型的來源
+    #[serde(default)]
+    pub exclude_types: Vec<String>,
+    /// 連續失敗幾次後自動停用
+    #[serde(default = "default_max_failures")]
+    pub max_consecutive_failures: u32,
+    /// 是否跳過已自動停用的來源
+    #[serde(default = "default_true")]
+    pub skip_auto_disabled: bool,
+}
+
+fn default_max_failures() -> u32 { 3 }
+fn default_true() -> bool { true }
+
+// ============================================
+// Scrape Result for Health Tracking
+// ============================================
+
+#[derive(Debug, Clone)]
+pub struct ScrapeResult {
+    pub leads: Vec<Lead>,
+    pub status: SourceStatus,
+    pub http_code: Option<u16>,
+    pub error_message: Option<String>,
+}
