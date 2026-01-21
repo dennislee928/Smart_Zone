@@ -72,6 +72,7 @@ pub async fn scrape_source(source: &Source) -> Result<ScrapeResult> {
 }
 
 /// Legacy function - returns only leads (for backward compatibility)
+#[allow(dead_code)]
 pub async fn scrape_source_leads_only(source: &Source) -> Result<Vec<Lead>> {
     let result = scrape_source(source).await?;
     Ok(result.leads)
