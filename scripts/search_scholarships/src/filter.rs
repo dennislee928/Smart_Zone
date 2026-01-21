@@ -1,5 +1,180 @@
 use crate::types::{Lead, Criteria, Profile};
 use chrono::NaiveDate;
+use std::collections::HashSet;
+
+// ============================================
+// Known Country Lists for Scholarship Programs
+// ============================================
+
+/// Commonwealth countries eligible for CSC scholarships (low and middle income)
+const COMMONWEALTH_ELIGIBLE: &[&str] = &[
+    "bangladesh", "belize", "botswana", "cameroon", "dominica", "eswatini", "fiji",
+    "gambia", "ghana", "grenada", "guyana", "india", "jamaica", "kenya", "kiribati",
+    "lesotho", "malawi", "malaysia", "maldives", "mauritius", "mozambique", "namibia",
+    "nauru", "nigeria", "pakistan", "papua new guinea", "rwanda", "saint lucia",
+    "saint vincent and the grenadines", "samoa", "seychelles", "sierra leone",
+    "solomon islands", "south africa", "sri lanka", "tanzania", "tonga", "trinidad and tobago",
+    "tuvalu", "uganda", "vanuatu", "zambia",
+];
+
+/// GREAT Scholarships 2026 eligible countries (varies by university)
+const GREAT_SCHOLARSHIPS_COUNTRIES: &[&str] = &[
+    "bangladesh", "china", "egypt", "ghana", "greece", "india", "indonesia",
+    "kenya", "malaysia", "mauritius", "mexico", "nepal", "nigeria", "pakistan",
+    "philippines", "spain", "sri lanka", "thailand", "turkey", "vietnam",
+];
+
+/// Chevening eligible countries (Taiwan IS eligible for Chevening)
+const CHEVENING_ELIGIBLE: &[&str] = &[
+    "taiwan", "china", "hong kong", "india", "pakistan", "bangladesh", "sri lanka",
+    "nepal", "malaysia", "singapore", "indonesia", "philippines", "thailand", "vietnam",
+    "japan", "south korea", "mongolia", "myanmar", "cambodia", "laos",
+    // ... many more countries - Chevening covers 160+ countries
+];
+
+// ============================================
+// Country Eligibility Parsing
+// ============================================
+
+/// Parse eligible countries from scholarship text and determine Taiwan eligibility
+pub fn parse_eligible_countries(text: &str) -> (Vec<String>, Option<bool>) {
+    let text_lower = text.to_lowercase();
+    let mut eligible_countries: Vec<String> = Vec::new();
+    let mut is_taiwan_eligible: Option<bool> = None;
+    
+    // 1. Check for explicit "Taiwan" mention
+    if text_lower.contains("taiwan") || text_lower.contains("taiwanese") {
+        is_taiwan_eligible = Some(true);
+        eligible_countries.push("Taiwan".to_string());
+    }
+    
+    // 2. Check for Commonwealth Scholarships (Taiwan NOT eligible)
+    if text_lower.contains("commonwealth") && 
+       (text_lower.contains("scholarship") || text_lower.contains("master")) {
+        // Commonwealth scholarships are only for Commonwealth countries
+        eligible_countries = COMMONWEALTH_ELIGIBLE.iter().map(|s| s.to_string()).collect();
+        if is_taiwan_eligible.is_none() {
+            is_taiwan_eligible = Some(false);
+        }
+        return (eligible_countries, is_taiwan_eligible);
+    }
+    
+    // 3. Check for GREAT Scholarships with specific country lists
+    if text_lower.contains("great scholarship") {
+        // Check if specific countries are mentioned
+        let great_countries: Vec<String> = GREAT_SCHOLARSHIPS_COUNTRIES.iter()
+            .filter(|c| text_lower.contains(*c))
+            .map(|s| s.to_string())
+            .collect();
+        
+        if !great_countries.is_empty() {
+            eligible_countries = great_countries;
+            // Taiwan is NOT in GREAT Scholarships list
+            if is_taiwan_eligible.is_none() {
+                is_taiwan_eligible = Some(false);
+            }
+            return (eligible_countries, is_taiwan_eligible);
+        }
+    }
+    
+    // 4. Check for Chevening (Taiwan IS eligible)
+    if text_lower.contains("chevening") {
+        eligible_countries = vec!["Taiwan".to_string()]; // Simplified - Taiwan is eligible
+        is_taiwan_eligible = Some(true);
+        return (eligible_countries, is_taiwan_eligible);
+    }
+    
+    // 5. Check for explicit country lists pattern: "eligible countries: X, Y, Z"
+    if let Some(countries) = extract_country_list(&text_lower) {
+        eligible_countries = countries.clone();
+        let taiwan_in_list = countries.iter()
+            .any(|c| c.to_lowercase().contains("taiwan"));
+        if is_taiwan_eligible.is_none() {
+            is_taiwan_eligible = Some(taiwan_in_list);
+        }
+        return (eligible_countries, is_taiwan_eligible);
+    }
+    
+    // 6. Check for "international students" / "all nationalities" (Taiwan likely eligible)
+    if text_lower.contains("international student") || 
+       text_lower.contains("all nationalities") ||
+       text_lower.contains("open to all") ||
+       text_lower.contains("overseas student") {
+        if is_taiwan_eligible.is_none() {
+            is_taiwan_eligible = Some(true);
+        }
+    }
+    
+    // 7. Check for explicit exclusions
+    let exclusion_patterns = [
+        ("uk citizens only", false),
+        ("british citizens only", false),
+        ("eu citizens only", false),
+        ("domestic students only", false),
+        ("home students only", false),
+        ("us citizens only", false),
+    ];
+    
+    for (pattern, eligible) in &exclusion_patterns {
+        if text_lower.contains(pattern) {
+            is_taiwan_eligible = Some(*eligible);
+            break;
+        }
+    }
+    
+    (eligible_countries, is_taiwan_eligible)
+}
+
+/// Extract country list from text patterns like "eligible countries: X, Y, Z"
+fn extract_country_list(text: &str) -> Option<Vec<String>> {
+    // Pattern: "eligible countries" or "open to students from" followed by country names
+    let patterns = [
+        r"(?i)eligible\s+countries?[:\s]+([^.]+)",
+        r"(?i)open\s+to\s+students?\s+from[:\s]+([^.]+)",
+        r"(?i)available\s+to\s+(?:students?\s+from\s+)?([^.]+(?:,\s*[^.]+)+)",
+        r"(?i)nationals?\s+of[:\s]+([^.]+)",
+    ];
+    
+    for pattern in &patterns {
+        if let Ok(re) = regex::Regex::new(pattern) {
+            if let Some(caps) = re.captures(text) {
+                if let Some(countries_str) = caps.get(1) {
+                    let countries: Vec<String> = countries_str.as_str()
+                        .split(&[',', ';', '/', '&'][..])
+                        .map(|s| s.trim().to_string())
+                        .filter(|s| !s.is_empty() && s.len() > 2)
+                        .collect();
+                    
+                    if !countries.is_empty() {
+                        return Some(countries);
+                    }
+                }
+            }
+        }
+    }
+    
+    None
+}
+
+/// Update lead with country eligibility information
+pub fn update_country_eligibility(lead: &mut Lead) {
+    let text = format!("{} {} {} {}", 
+        lead.name, 
+        lead.notes, 
+        lead.eligibility.join(" "),
+        lead.url
+    );
+    
+    let (countries, is_eligible) = parse_eligible_countries(&text);
+    
+    if !countries.is_empty() {
+        lead.eligible_countries = countries;
+    }
+    
+    if is_eligible.is_some() {
+        lead.is_taiwan_eligible = is_eligible;
+    }
+}
 
 /// Basic criteria matching (keywords)
 pub fn matches_criteria(lead: &Lead, criteria: &Criteria) -> bool {

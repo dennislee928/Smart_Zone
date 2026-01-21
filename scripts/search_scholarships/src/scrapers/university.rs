@@ -123,6 +123,8 @@ fn parse_university_html(html: &str, base_url: &str) -> Vec<Lead> {
                         trust_tier: Some("S".to_string()), // University = Tier S
                         risk_flags: vec![],
                         matched_rule_ids: vec![],
+                        eligible_countries: vec![],
+                        is_taiwan_eligible: None,
                     });
                 }
             }
@@ -217,6 +219,8 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             trust_tier: Some("S".to_string()),
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: Some(true), // International students = Taiwan eligible
         },
         Lead {
             name: "Global Talent Scholarship".to_string(),
@@ -240,6 +244,8 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             trust_tier: Some("S".to_string()),
             risk_flags: vec![],
             matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: Some(true), // International students = Taiwan eligible
         },
     ]
 }

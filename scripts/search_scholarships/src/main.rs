@@ -158,6 +158,9 @@ async fn main() -> Result<()> {
                         continue;
                     }
                     
+                    // Update country eligibility before profile filtering
+                    filter::update_country_eligibility(&mut lead);
+                    
                     // Profile-based filtering
                     if let Some(ref profile) = criteria.profile {
                         if filter::filter_by_profile(&mut lead, profile) {

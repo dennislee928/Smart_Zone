@@ -208,6 +208,15 @@ fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &st
         }
     }
     
+    // Check country eligibility condition
+    if let Some(expected_eligible) = condition.is_taiwan_eligible {
+        if let Some(actual_eligible) = lead.is_taiwan_eligible {
+            if actual_eligible == expected_eligible {
+                return true;
+            }
+        }
+    }
+    
     false
 }
 

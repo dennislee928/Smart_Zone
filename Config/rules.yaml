@@ -112,6 +112,17 @@ hard_reject_rules:
       bucket: "C"
       reason: "Local council/authority residents only."
 
+  # === Country Eligibility Gate ===
+  - id: "E-COUNTRY-001"
+    name: "Taiwan Not Eligible"
+    stage: "eligibility"
+    description: "Taiwan is not in the eligible countries list"
+    when:
+      is_taiwan_eligible: false
+    action:
+      bucket: "C"
+      reason: "Taiwan not in eligible countries list"
+
   # === Timeline Gate ===
   - id: "T-DEAD-PAST-001"
     name: "Deadline Passed"

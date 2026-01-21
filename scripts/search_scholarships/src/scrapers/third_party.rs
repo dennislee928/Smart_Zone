@@ -127,6 +127,8 @@ fn parse_third_party_html(html: &str, base_url: &str) -> Vec<Lead> {
                             trust_tier: Some("B".to_string()), // Third party = Tier B
                             risk_flags: vec![],
                             matched_rule_ids: vec![],
+                            eligible_countries: vec![],
+                            is_taiwan_eligible: None,
                         });
                     }
                 }
