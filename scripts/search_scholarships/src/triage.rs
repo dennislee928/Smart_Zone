@@ -536,6 +536,42 @@ pub struct TriageStats {
 mod tests {
     use super::*;
     
+    fn create_test_lead() -> Lead {
+        Lead {
+            name: "Test Scholarship".to_string(),
+            amount: "£5000".to_string(),
+            deadline: "2026-06-30".to_string(),
+            source: "https://example.com".to_string(),
+            source_type: "university".to_string(),
+            status: "new".to_string(),
+            eligibility: vec!["International students".to_string()],
+            notes: "Merit-based".to_string(),
+            added_date: "2026-01-01".to_string(),
+            url: "https://example.com/scholarship".to_string(),
+            match_score: 0,
+            match_reasons: vec![],
+            bucket: None,
+            http_status: None,
+            effort_score: None,
+            trust_tier: None,
+            risk_flags: vec![],
+            matched_rule_ids: vec![],
+            eligible_countries: vec![],
+            is_taiwan_eligible: None,
+            deadline_date: None,
+            deadline_label: None,
+            intake_year: None,
+            study_start: None,
+            deadline_confidence: None,
+            canonical_url: None,
+            is_directory_page: false,
+            official_source_url: None,
+            confidence: None,
+            eligibility_confidence: None,
+            tags: vec![],
+        }
+    }
+    
     #[test]
     fn test_truncate_str() {
         assert_eq!(truncate_str("short", 10), "short");
@@ -547,5 +583,53 @@ mod tests {
         assert_eq!(escape_csv("simple"), "simple");
         assert_eq!(escape_csv("with,comma"), "\"with,comma\"");
         assert_eq!(escape_csv("with\"quote"), "\"with\"\"quote\"");
+    }
+    
+    #[test]
+    fn test_calculate_confidence_high() {
+        let mut lead = create_test_lead();
+        lead.deadline_date = Some("2026-06-30".to_string());
+        lead.is_taiwan_eligible = Some(true);
+        lead.trust_tier = Some("S".to_string());
+        lead.http_status = Some(200);
+        lead.amount = "£10,000".to_string();
+        
+        let confidence = calculate_confidence(&lead);
+        assert!(confidence >= 0.9, "High quality lead should have confidence >= 0.9, got {}", confidence);
+    }
+    
+    #[test]
+    fn test_calculate_confidence_low() {
+        let mut lead = create_test_lead();
+        lead.deadline_date = None;
+        lead.deadline = "Check website".to_string();
+        lead.is_taiwan_eligible = None;
+        lead.trust_tier = None;
+        lead.http_status = None;
+        lead.amount = "See website".to_string();
+        
+        let confidence = calculate_confidence(&lead);
+        assert!(confidence < 0.3, "Low quality lead should have confidence < 0.3, got {}", confidence);
+    }
+    
+    #[test]
+    fn test_parse_deadline_date() {
+        assert_eq!(parse_deadline_date("2026-06-30"), Some(NaiveDate::from_ymd_opt(2026, 6, 30).unwrap()));
+        assert_eq!(parse_deadline_date("30/06/2026"), Some(NaiveDate::from_ymd_opt(2026, 6, 30).unwrap()));
+        assert_eq!(parse_deadline_date("Check website"), None);
+    }
+    
+    #[test]
+    fn test_is_watchlist_candidate() {
+        let mut lead = create_test_lead();
+        lead.deadline = "Check website".to_string();
+        lead.deadline_date = None;
+        assert!(is_watchlist_candidate(&lead));
+        
+        lead.deadline = "rolling".to_string();
+        assert!(is_watchlist_candidate(&lead));
+        
+        lead.deadline_date = Some("2026-06-30".to_string());
+        assert!(!is_watchlist_candidate(&lead));
     }
 }
