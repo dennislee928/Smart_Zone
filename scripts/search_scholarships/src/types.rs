@@ -64,6 +64,14 @@ pub struct Lead {
     // Source priority fields
     #[serde(default)]
     pub official_source_url: Option<String>, // Official source URL (if found via aggregator)
+    
+    // Confidence scoring fields (0.0 - 1.0)
+    #[serde(default)]
+    pub confidence: Option<f32>,            // Overall confidence score
+    #[serde(default)]
+    pub eligibility_confidence: Option<f32>, // Confidence in eligibility data
+    #[serde(default)]
+    pub tags: Vec<String>,                  // Tags: ["catalog_only", "needs_verification", "auto_considered"]
 }
 
 // ============================================
