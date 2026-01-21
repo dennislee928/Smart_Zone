@@ -1,22 +1,42 @@
 //! Triage Module
 //! 
 //! Implements A/B/C bucket classification and generates triage reports
+//!
+//! Bucketing Rules:
+//! - A (Apply Today): deadline <= 30 days AND confidence >= 0.7
+//! - B (Prepare): 31-90 days OR confidence 0.5-0.7
+//! - Watchlist: deadline unknown/annual OR confidence < 0.5
+//! - C (Rejected): Hard reject from rules engine
+//! - X (Missed): Deadline passed
 
 use crate::types::{Lead, Bucket, RulesConfig, RulesAudit, BucketCounts, RuleHitCount};
 use crate::rules::apply_rules;
-use chrono::Utc;
+use chrono::{NaiveDate, Utc};
 use std::collections::HashMap;
 
-/// Perform triage on leads using rules engine
+/// Bucket thresholds for deadline-based classification
+const APPLY_NOW_DAYS: i64 = 30;
+const PREPARE_MAX_DAYS: i64 = 90;
+const HIGH_CONFIDENCE: f32 = 0.7;
+const MED_CONFIDENCE: f32 = 0.5;
+
+/// Perform triage on leads using rules engine + deadline/confidence logic
 pub fn triage_leads(leads: &mut [Lead], rules: &RulesConfig) -> TriageStats {
     let mut stats = TriageStats::default();
     let mut rule_hits: HashMap<String, usize> = HashMap::new();
     
+    let today = Utc::now().date_naive();
+    
     for lead in leads.iter_mut() {
+        // First, calculate confidence if not set
+        if lead.confidence.is_none() {
+            lead.confidence = Some(calculate_confidence(lead));
+        }
+        
+        // Apply rules engine
         let result = apply_rules(lead, rules);
         
-        // Update lead with triage result
-        lead.bucket = result.bucket;
+        // Update match score
         lead.match_score += result.total_score_add;
         
         // Track matched rules
@@ -25,8 +45,17 @@ pub fn triage_leads(leads: &mut [Lead], rules: &RulesConfig) -> TriageStats {
             *rule_hits.entry(rule_match.rule_id.clone()).or_insert(0) += 1;
         }
         
+        // Determine final bucket: rules engine takes precedence, then deadline/confidence
+        lead.bucket = if result.hard_rejected {
+            // Hard reject from rules engine
+            result.bucket
+        } else {
+            // Apply deadline + confidence based bucketing
+            determine_bucket_by_deadline_and_confidence(lead, result.bucket, today)
+        };
+        
         // Update stats
-        match result.bucket {
+        match lead.bucket {
             Some(Bucket::A) => stats.bucket_a += 1,
             Some(Bucket::B) => stats.bucket_b += 1,
             Some(Bucket::C) => stats.bucket_c += 1,
@@ -34,7 +63,7 @@ pub fn triage_leads(leads: &mut [Lead], rules: &RulesConfig) -> TriageStats {
             None => stats.bucket_c += 1, // Default to C
         }
         
-        if result.add_to_watchlist {
+        if result.add_to_watchlist || is_watchlist_candidate(lead) {
             stats.watchlist += 1;
         }
     }
@@ -42,6 +71,141 @@ pub fn triage_leads(leads: &mut [Lead], rules: &RulesConfig) -> TriageStats {
     stats.rule_hits = rule_hits;
     stats.total = leads.len();
     stats
+}
+
+/// Calculate confidence score for a lead (0.0 - 1.0)
+fn calculate_confidence(lead: &Lead) -> f32 {
+    let mut score: f32 = 0.0;
+    let mut max_score: f32 = 0.0;
+    
+    // Deadline confidence (30%)
+    max_score += 0.3;
+    if lead.deadline_date.is_some() {
+        score += 0.3;
+    } else if !lead.deadline.is_empty() && lead.deadline != "Check website" && lead.deadline != "TBD" {
+        score += 0.15;
+    }
+    
+    // Eligibility data (25%)
+    max_score += 0.25;
+    if lead.is_taiwan_eligible == Some(true) {
+        score += 0.25;
+    } else if !lead.eligibility.is_empty() {
+        score += 0.1;
+    }
+    
+    // Trust tier (20%)
+    max_score += 0.2;
+    match lead.trust_tier.as_deref() {
+        Some("S") => score += 0.2,
+        Some("A") => score += 0.15,
+        Some("B") => score += 0.1,
+        _ => {}
+    }
+    
+    // HTTP status (15%)
+    max_score += 0.15;
+    if lead.http_status == Some(200) {
+        score += 0.15;
+    } else if lead.http_status.is_some() && lead.http_status != Some(404) && lead.http_status != Some(410) {
+        score += 0.05;
+    }
+    
+    // Amount specified (10%)
+    max_score += 0.1;
+    if !lead.amount.is_empty() && lead.amount != "See website" {
+        score += 0.1;
+    }
+    
+    // Normalize to 0-1
+    if max_score > 0.0 {
+        score / max_score
+    } else {
+        0.0
+    }
+}
+
+/// Determine bucket based on deadline days and confidence
+fn determine_bucket_by_deadline_and_confidence(
+    lead: &Lead, 
+    rules_bucket: Option<Bucket>,
+    today: NaiveDate,
+) -> Option<Bucket> {
+    let confidence = lead.confidence.unwrap_or(0.0);
+    
+    // If rules engine already assigned B (soft downgrade), respect that
+    if rules_bucket == Some(Bucket::B) {
+        return Some(Bucket::B);
+    }
+    
+    // Parse deadline
+    let deadline_str = lead.deadline_date.as_deref().unwrap_or(&lead.deadline);
+    let deadline_date = parse_deadline_date(deadline_str);
+    
+    if let Some(dl_date) = deadline_date {
+        let days_until = (dl_date - today).num_days();
+        
+        if days_until < 0 {
+            // Deadline passed
+            return Some(Bucket::X);
+        } else if days_until <= APPLY_NOW_DAYS && confidence >= HIGH_CONFIDENCE {
+            // Apply now: <= 30 days AND high confidence
+            return Some(Bucket::A);
+        } else if days_until <= PREPARE_MAX_DAYS || confidence >= MED_CONFIDENCE {
+            // Prepare: 31-90 days OR medium confidence
+            return Some(Bucket::B);
+        } else if days_until > PREPARE_MAX_DAYS {
+            // Too far out for immediate action
+            return Some(Bucket::B);
+        }
+    } else {
+        // No deadline - use confidence alone
+        if confidence >= HIGH_CONFIDENCE {
+            return Some(Bucket::B); // Good confidence but unknown deadline
+        } else if confidence < MED_CONFIDENCE {
+            return Some(Bucket::C); // Low confidence
+        }
+    }
+    
+    // Default based on score if confidence/deadline didn't determine
+    rules_bucket.or(Some(Bucket::B))
+}
+
+/// Check if lead should be on watchlist (deadline unknown or annual cycle)
+fn is_watchlist_candidate(lead: &Lead) -> bool {
+    let dl = lead.deadline.to_lowercase();
+    lead.deadline_date.is_none() && 
+        (dl.is_empty() || dl.contains("check") || dl.contains("tbd") || dl.contains("annual") || dl.contains("rolling"))
+}
+
+/// Parse deadline string to NaiveDate
+fn parse_deadline_date(deadline: &str) -> Option<NaiveDate> {
+    let formats = [
+        "%Y-%m-%d",
+        "%d/%m/%Y",
+        "%m/%d/%Y",
+        "%d %B %Y",
+        "%B %d, %Y",
+        "%d-%m-%Y",
+    ];
+    
+    for fmt in &formats {
+        if let Ok(date) = NaiveDate::parse_from_str(deadline, fmt) {
+            return Some(date);
+        }
+    }
+    
+    // Try regex for embedded dates
+    if let Ok(re) = regex::Regex::new(r"(\d{4})-(\d{2})-(\d{2})") {
+        if let Some(caps) = re.captures(deadline) {
+            let year: i32 = caps[1].parse().ok()?;
+            let month: u32 = caps[2].parse().ok()?;
+            let day: u32 = caps[3].parse().ok()?;
+            return NaiveDate::from_ymd_opt(year, month, day);
+        }
+    }
+    
+    None
 }
 
 /// Split leads into buckets (A, B, C, X)
