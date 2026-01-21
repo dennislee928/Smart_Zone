@@ -27,6 +27,12 @@ async fn main() -> Result<()> {
     let root = std::env::var("ROOT").unwrap_or_else(|_| ".".to_string());
     let now = chrono::Utc::now().format("%Y-%m-%d %H:%M UTC").to_string();
     
+    // #region agent log
+    // Set debug log path for rule debugging
+    let debug_log_path = PathBuf::from(&root).join(".cursor").join("debug.log");
+    std::env::set_var("DEBUG_LOG_PATH", debug_log_path.to_string_lossy().to_string());
+    // #endregion
+    
     println!("=== ScholarshipOps Search & Triage ===");
     println!("Timestamp: {}", now);
     println!();
