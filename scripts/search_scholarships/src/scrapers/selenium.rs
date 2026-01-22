@@ -4,7 +4,9 @@ use thirtyfour::prelude::*;
 use std::time::Duration;
 
 const WEBDRIVER_URL: &str = "http://localhost:9515";
+#[allow(dead_code)]
 const PAGE_LOAD_TIMEOUT: u64 = 30;
+#[allow(dead_code)]
 const IMPLICIT_WAIT_TIMEOUT: u64 = 10;
 const JS_RENDER_WAIT: u64 = 2;
 

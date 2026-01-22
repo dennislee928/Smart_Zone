@@ -17,6 +17,7 @@ pub fn scrape(url: &str) -> Result<ScrapeResult> {
 }
 
 /// Legacy wrapper for backward compatibility
+#[allow(dead_code)]
 pub fn scrape_leads_only(url: &str) -> Result<Vec<Lead>> {
     let result = scrape(url)?;
     Ok(result.leads)

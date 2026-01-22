@@ -380,6 +380,7 @@ fn truncate_url(url: &str, max_len: usize) -> String {
 
 /// Quick check without full validation (for filtering)
 /// Only considers 404/410 as truly dead - not transient errors
+#[allow(dead_code)]
 pub fn is_likely_dead(lead: &Lead) -> bool {
     if let Some(status) = lead.http_status {
         // Only 404/410 are true dead links
@@ -390,6 +391,7 @@ pub fn is_likely_dead(lead: &Lead) -> bool {
 }
 
 /// Check if a lead has a transient HTTP issue (may recover)
+#[allow(dead_code)]
 pub fn has_transient_issue(lead: &Lead) -> bool {
     if let Some(status) = lead.http_status {
         matches!(status, 403 | 429 | 500..=599)

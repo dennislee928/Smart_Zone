@@ -231,6 +231,7 @@ pub fn generate_health_report(health_file: &SourceHealthFile) -> String {
 }
 
 /// Re-enable a source that was auto-disabled
+#[allow(dead_code)]
 pub fn reenable_source(health_file: &mut SourceHealthFile, url: &str) -> bool {
     if let Some(h) = health_file.sources.iter_mut().find(|h| h.url == url) {
         h.auto_disabled = false;

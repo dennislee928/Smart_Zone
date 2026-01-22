@@ -167,6 +167,7 @@ fn count_essays(text: &str) -> Option<i32> {
 }
 
 /// Get effort level description
+#[allow(dead_code)]
 pub fn effort_level(score: i32) -> &'static str {
     match score {
         0..=20 => "Very Low (auto-considered)",

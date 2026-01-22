@@ -24,6 +24,7 @@ const GREAT_SCHOLARSHIPS_COUNTRIES: &[&str] = &[
 ];
 
 /// Chevening eligible countries (Taiwan IS eligible for Chevening)
+#[allow(dead_code)]
 const CHEVENING_ELIGIBLE: &[&str] = &[
     "taiwan", "china", "hong kong", "india", "pakistan", "bangladesh", "sri lanka",
     "nepal", "malaysia", "singapore", "indonesia", "philippines", "thailand", "vietnam",
@@ -222,6 +223,7 @@ pub fn handle_unknown_eligibility(lead: &mut Lead) {
 
 /// Date type classification
 #[derive(Debug, Clone, PartialEq)]
+#[allow(dead_code)]
 pub enum DateType {
     ApplicationDeadline,  // "applications close", "deadline", "closing date"
     StudyStart,           // "study starts", "programme begins", "start date"

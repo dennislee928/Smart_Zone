@@ -49,6 +49,7 @@ pub fn calculate_source_reliability_score(lead: &Lead) -> i32 {
 }
 
 /// Calculate days until deadline (for display)
+#[allow(dead_code)]
 pub fn days_until_deadline(lead: &Lead) -> Option<i64> {
     if let Ok(deadline) = parse_deadline(&lead.deadline) {
         let now = Utc::now().date_naive();
