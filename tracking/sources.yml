@@ -19,11 +19,18 @@ sources:
     url: "https://www.gla.ac.uk/scholarships/all/"
     enabled: true
     priority: 1
-    scraper: "university"
+    scraper: "selenium"  # JS-templated listing ({{scholar.title}}); needs browser-render
 
   - name: "Glasgow Scholarship Search"
     type: "university"
     url: "https://www.gla.ac.uk/scholarships/search/"
+    enabled: true
+    priority: 1
+    scraper: "selenium"  # search UI is also JS-heavy on UofG scholarships
+
+  - name: "Glasgow Scholarships Landing"
+    type: "university"
+    url: "https://www.gla.ac.uk/scholarships/"
     enabled: true
     priority: 1
     scraper: "university"
@@ -88,7 +95,7 @@ sources:
     url: "https://study-uk.britishcouncil.org/scholarships/great-scholarships"
     enabled: true
     priority: 2
-    scraper: "government"
+    scraper: "selenium"  # British Council pages often throttle/geo-block; browser fallback helps
 
   # Major International Foundations
   - name: "Rotary Foundation Global Grants"
@@ -126,7 +133,7 @@ sources:
     url: "https://study-uk.britishcouncil.org/scholarships"
     enabled: true
     priority: 2
-    scraper: "third_party"
+    scraper: "selenium"  # previously observed 403 in your productions; use browser to reduce blocks
 
   - name: "FindAPhD - Masters Funding"
     type: "third_party"
@@ -146,43 +153,193 @@ sources:
   - name: "SAAS - Student Awards Agency Scotland"
     type: "government"
     url: "https://www.saas.gov.uk/"
-    enabled: true
+    enabled: false  # generally home-fee aligned; Taiwan applicants typically ineligible
     priority: 2
     scraper: "government"
 
   - name: "Scotland's Saltire Scholarships"
     type: "government"
     url: "https://www.scotland.org/study/saltire-scholarships"
-    enabled: true
+    enabled: false  # citizenship limited (Canada/China(HK)/India/Japan/Pakistan/USA)
     priority: 2
     scraper: "government"
 
   # ============================================
-  # TIER 3: Other UK Russell Group Universities
-  # Disabled by default - enable when Tier 1/2 stable
-  # These are NOT portable scholarships
+  # TIER 3: Other UK Universities (External Links Discovery Only)
+  # These are used as "external funding source discoverers", not for collecting their internal scholarships
+  # discovery_mode: external_links_only - only extract external links (gov.uk, chevening, etc.)
   # ============================================
 
-  - name: "Edinburgh Scholarships"
+  - name: "Edinburgh Scholarships Index"
     type: "university"
     url: "https://www.ed.ac.uk/student-funding/postgraduate/international"
-    enabled: false
+    enabled: true
     priority: 3
     scraper: "university"
+    discovery_mode: "external_links_only"  # Only extract external links
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
+      - "charitycommission.gov.uk"
 
-  - name: "St Andrews International"
+  - name: "St Andrews Scholarships Index"
     type: "university"
     url: "https://www.st-andrews.ac.uk/study/fees-and-funding/postgraduate/"
-    enabled: false
+    enabled: true
     priority: 3
     scraper: "university"
+    discovery_mode: "external_links_only"
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
 
-  - name: "Strathclyde Scholarships"
+  - name: "Strathclyde Scholarships Index"
     type: "university"
     url: "https://www.strath.ac.uk/studywithus/scholarships/"
-    enabled: false
+    enabled: true
     priority: 3
     scraper: "university"
+    discovery_mode: "external_links_only"
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
+
+  - name: "Manchester Scholarships Index"
+    type: "university"
+    url: "https://www.manchester.ac.uk/study/international/finance/scholarships/"
+    enabled: true
+    priority: 3
+    scraper: "university"
+    discovery_mode: "external_links_only"
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
+
+  - name: "Birmingham Scholarships Index"
+    type: "university"
+    url: "https://www.birmingham.ac.uk/international/students/fees-and-funding/scholarships"
+    enabled: true
+    priority: 3
+    scraper: "university"
+    discovery_mode: "external_links_only"
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
+
+  - name: "Bristol Scholarships Index"
+    type: "university"
+    url: "https://www.bristol.ac.uk/fees-funding/awards/"
+    enabled: true
+    priority: 3
+    scraper: "university"
+    discovery_mode: "external_links_only"
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
+
+  - name: "Warwick Scholarships Index"
+    type: "university"
+    url: "https://warwick.ac.uk/study/international/admissions/finance/scholarships"
+    enabled: true
+    priority: 3
+    scraper: "university"
+    discovery_mode: "external_links_only"
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
+
+  - name: "Leeds Scholarships Index"
+    type: "university"
+    url: "https://www.leeds.ac.uk/international-students/doc/fees-scholarships"
+    enabled: true
+    priority: 3
+    scraper: "university"
+    discovery_mode: "external_links_only"
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
+
+  - name: "Sheffield Scholarships Index"
+    type: "university"
+    url: "https://www.sheffield.ac.uk/international/funding"
+    enabled: true
+    priority: 3
+    scraper: "university"
+    discovery_mode: "external_links_only"
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
+
+  - name: "Nottingham Scholarships Index"
+    type: "university"
+    url: "https://www.nottingham.ac.uk/studywithus/international-applicants/scholarships-finance-and-fees/scholarships.aspx"
+    enabled: true
+    priority: 3
+    scraper: "university"
+    discovery_mode: "external_links_only"
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
 
   # ============================================
   # DISABLED: Research-only aggregators
