@@ -335,6 +335,33 @@ soft_downgrade_rules:
       bucket: "B"
       reason: "High application effort; consider if award justifies cost."
 
+  - id: "B-GPA-UNK-001"
+    name: "GPA scale unclear"
+    stage: "eligibility"
+    description: "Scholarship mentions GPA requirement; scale or conversion unclear"
+    when:
+      any_regex:
+        - "(?i)gpa\\s*(of|>|>=|minimum)?\\s*[\\d.]+"
+        - "(?i)grade\\s*point\\s*average"
+        - "(?i)minimum\\s*[\\d.]+\\s*(gpa|grade)"
+    action:
+      bucket: "B"
+      reason: "GPA requirement mentioned; verify scale/conversion."
+
+  - id: "B-EFFORT-VIDEO-001"
+    name: "Requires Video Essay (Unprepared)"
+    stage: "effort"
+    description: "Scholarship requires video essay but user may not have prepared it"
+    when:
+      any_regex:
+        - "(?i)video\\s+essay"
+        - "(?i)video\\s+statement"
+        - "(?i)video\\s+interview"
+    action:
+      effort_add: 15
+      bucket: "B"
+      reason: "Requires video essay (not yet prepared)."
+
 # ============================================
 # 加分規則 (Positive Scoring Rules)
 # ============================================

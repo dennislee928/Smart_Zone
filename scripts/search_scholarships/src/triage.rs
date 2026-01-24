@@ -38,6 +38,9 @@ pub fn triage_leads(leads: &mut [Lead], rules: &RulesConfig) -> TriageStats {
         
         // Update match score
         lead.match_score += result.total_score_add;
+        // Apply effort adjustments (reduce from positive rules, add from soft e.g. B-EFFORT-VIDEO-001)
+        let eff = lead.effort_score.unwrap_or(0);
+        lead.effort_score = Some((eff - result.total_effort_reduce + result.total_effort_add).clamp(0, 100));
         
         // Track matched rules and populate reason fields separately
         for rule_match in &result.matched_rules {
@@ -581,6 +584,13 @@ mod tests {
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         }
     }
     

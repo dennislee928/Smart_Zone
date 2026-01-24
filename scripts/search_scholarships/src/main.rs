@@ -265,7 +265,27 @@ async fn main() -> Result<()> {
     let invalid_links = filter::validate_all_scholarship_links(&mut all_leads);
     println!("  Found {} leads with invalid links (pointing to homepages)", invalid_links);
     println!();
-    
+
+    // ==========================================
+    // Stage 1.65: Enrich index-only leads (two-hop to official)
+    // ==========================================
+    let index_only_count = all_leads.iter().filter(|l| l.is_index_only).count();
+    if index_only_count > 0 {
+        println!("Stage 1.65: Enriching {} index-only leads (two-hop to official)...", index_only_count);
+        let mut enriched_n = 0;
+        for lead in all_leads.iter_mut() {
+            if !lead.is_index_only || lead.official_source_url.is_none() {
+                continue;
+            }
+            if scrapers::enrich_from_official(lead) {
+                enriched_n += 1;
+            }
+        }
+        let still_index = all_leads.iter().filter(|l| l.is_index_only).count();
+        println!("  Enriched {} leads; {} remain index-only (needs_verification)", enriched_n, still_index);
+        println!();
+    }
+
     // ==========================================
     // Stage 1.7: Extract source domains for trust tier determination
     // ==========================================
@@ -396,25 +416,59 @@ async fn main() -> Result<()> {
     // ==========================================
     println!();
     println!("Stage 7: Updating database and health tracking...");
-    
+
     // Save source health tracking
     source_health::save_health(&root, &health_file)?;
     let disabled_count = health_file.sources.iter().filter(|h| h.auto_disabled).count();
     println!("  Updated source health ({} auto-disabled)", disabled_count);
-    
-    // Only save A and B bucket leads to database
-    let leads_to_save: Vec<Lead> = all_leads.iter()
-        .filter(|l| matches!(l.bucket, Some(Bucket::A) | Some(Bucket::B)))
-        .cloned()
+
+    // Persist A, B, and C (C for audit). Merge by dedup key; set first_seen_at, last_checked_at, next_check_at, persistence_status, source_seed, check_count.
+    let now = chrono::Utc::now();
+    let now_iso = now.to_rfc3339();
+    let mut by_key: std::collections::HashMap<String, Lead> = leads_file
+        .leads
+        .drain(..)
+        .map(|l| (filter::generate_dedup_key(&l), l))
         .collect();
-    
-    let saved_count = leads_to_save.len();
-    if !leads_to_save.is_empty() {
-        let mut new_leads = leads_to_save;
-        leads_file.leads.append(&mut new_leads);
-        storage::save_leads(&root, &leads_file)?;
-        println!("  Added {} leads to database", saved_count);
+
+    for mut lead in all_leads.iter().cloned() {
+        let key = filter::generate_dedup_key(&lead);
+        let is_new = !by_key.contains_key(&key);
+        if is_new {
+            lead.first_seen_at = Some(now_iso.clone());
+            lead.source_seed = Some(lead.source.clone());
+            lead.check_count = Some(1);
+        } else if let Some(existing) = by_key.get(&key) {
+            if lead.first_seen_at.is_none() {
+                lead.first_seen_at = existing.first_seen_at.clone();
+            }
+            if lead.source_seed.is_none() {
+                lead.source_seed = existing.source_seed.clone();
+            }
+            lead.check_count = Some(existing.check_count.unwrap_or(0) + 1);
+        }
+        lead.last_checked_at = Some(now_iso.clone());
+        let days = match lead.bucket {
+            Some(Bucket::A) | Some(Bucket::B) => 7,
+            Some(Bucket::C) => 30,
+            Some(Bucket::X) | None => 30,
+        };
+        lead.next_check_at = Some(
+            (now + chrono::Duration::days(days as i64)).to_rfc3339(),
+        );
+        lead.persistence_status = Some(match lead.bucket {
+            Some(Bucket::A) | Some(Bucket::B) => "ok".to_string(),
+            Some(Bucket::C) => "rejected".to_string(),
+            Some(Bucket::X) => "ok".to_string(),
+            None => "rejected".to_string(),
+        });
+        by_key.insert(key, lead);
     }
+
+    leads_file.leads = by_key.into_values().collect();
+    let saved_count = leads_file.leads.len();
+    storage::save_leads(&root, &leads_file)?;
+    println!("  Persisted {} leads (A+B+C, merge by dedup key)", saved_count);
     
     // Send notification
     println!("  Sending notification...");

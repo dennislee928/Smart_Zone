@@ -1,29 +1,247 @@
 use crate::types::{Lead, ScrapeResult, SourceStatus};
 use anyhow::Result;
 use scraper::{Html, Selector};
+use regex::Regex;
+
+/// URL patterns for aggregators that are often WAF-blocked; we use index-only (name + official link) then two-hop.
+const INDEX_ONLY_SOURCES: &[&str] = &[
+    "findamasters.com",
+    "findaphd.com",
+    "findamasters.com/funding",
+    "prospects.ac.uk",
+    "scholarshipportal.com",
+];
+
+fn is_index_only_source(url: &str) -> bool {
+    let u = url.to_lowercase();
+    INDEX_ONLY_SOURCES.iter().any(|s| u.contains(s))
+}
+
+/// Index-only parse: extract name + official link only; amount/deadline/eligibility = "See official page".
+fn parse_index_only(html: &str, base_url: &str) -> Vec<Lead> {
+    let document = Html::parse_document(html);
+    let mut leads = Vec::new();
+    let base_host = base_url
+        .find("://")
+        .map(|i| base_url[i + 3..].trim_start_matches('/'))
+        .and_then(|r| r.find('/').map(|i| &r[..i]).or(Some(r)))
+        .unwrap_or("");
+
+    let selectors = [".phd-result", ".result-item", ".funding-result", "article", "li"];
+    for sel_str in &selectors {
+        if let Ok(sel) = Selector::parse(sel_str) {
+            for el in document.select(&sel).take(50) {
+                let text = el.text().collect::<Vec<_>>().join(" ");
+                let title = extract_title(&el).unwrap_or_else(|| {
+                    text.split_whitespace().take(12).collect::<Vec<_>>().join(" ")
+                });
+                if title.len() < 10 {
+                    continue;
+                }
+                let mut official: Option<String> = None;
+                if let Ok(a_sel) = Selector::parse("a[href]") {
+                    for a in el.select(&a_sel) {
+                        let href = a.value().attr("href").unwrap_or("").trim();
+                        if href.is_empty() || href.starts_with('#') {
+                            continue;
+                        }
+                let abs = resolve_abs_url(base_url, href);
+                if abs != base_url && !abs.is_empty() {
+                    let abs_rest = abs.find("://").map(|i| &abs[i + 3..]).unwrap_or("");
+                    let abs_host = abs_rest.find('/').map(|i| &abs_rest[..i]).unwrap_or(abs_rest);
+                    let is_external = !abs_host.is_empty() && !abs_host.starts_with(base_host);
+                    if is_external {
+                        official = Some(abs);
+                        break;
+                    }
+                }
+                    }
+                }
+                let official = official.unwrap_or_else(|| base_url.to_string());
+                let mut lead = minimal_lead(&title, base_url, &official);
+                lead.is_index_only = true;
+                lead.official_source_url = Some(official.clone());
+                lead.url = official;
+                leads.push(lead);
+            }
+            if !leads.is_empty() {
+                break;
+            }
+        }
+    }
+    leads
+}
+
+fn resolve_abs_url(base: &str, href: &str) -> String {
+    if href.starts_with("http://") || href.starts_with("https://") {
+        return href.to_string();
+    }
+    let (scheme, rest) = match base.find("://") {
+        Some(i) => (base[..i + 3].to_string(), base[i + 3..].trim_start_matches('/')),
+        None => return href.to_string(),
+    };
+    let slash = rest.find('/').unwrap_or(rest.len());
+    let host = &rest[..slash];
+    let path = if slash < rest.len() { &rest[slash..] } else { "/" };
+    let path_dir = if path.ends_with('/') {
+        path.to_string()
+    } else {
+        let dir = path.rsplit_once('/').map(|(d, _)| d).unwrap_or("");
+        format!("{}/", dir)
+    };
+    if href.starts_with('/') {
+        format!("{}{}{}", scheme, host, href)
+    } else {
+        format!("{}{}/{}{}", scheme, host, path_dir.trim_start_matches('/'), href)
+    }
+}
+
+fn minimal_lead(name: &str, source: &str, url: &str) -> Lead {
+    Lead {
+        name: name.to_string(),
+        amount: "See official page".to_string(),
+        deadline: "See official page".to_string(),
+        source: source.to_string(),
+        source_type: "third_party".to_string(),
+        status: "new".to_string(),
+        eligibility: vec!["See official page".to_string()],
+        notes: String::new(),
+        added_date: String::new(),
+        url: url.to_string(),
+        match_score: 0,
+        match_reasons: vec![],
+        hard_fail_reasons: vec![],
+        soft_flags: vec![],
+        bucket: None,
+        http_status: None,
+        effort_score: None,
+        trust_tier: Some("B".to_string()),
+        risk_flags: vec![],
+        matched_rule_ids: vec![],
+        eligible_countries: vec![],
+        is_taiwan_eligible: None,
+        taiwan_eligibility_confidence: None,
+        deadline_date: None,
+        deadline_label: None,
+        intake_year: None,
+        study_start: None,
+        deadline_confidence: Some("unknown".to_string()),
+        canonical_url: None,
+        is_directory_page: false,
+        official_source_url: Some(url.to_string()),
+        source_domain: None,
+        confidence: None,
+        eligibility_confidence: None,
+        tags: vec!["index_only".to_string()],
+        is_index_only: true,
+        first_seen_at: None,
+        last_checked_at: None,
+        next_check_at: None,
+        persistence_status: None,
+        source_seed: None,
+        check_count: None,
+    }
+}
+
+/// Fetch official page and fill amount/deadline/eligibility. On failure, set trust_tier C and needs_verification.
+pub fn enrich_from_official(lead: &mut Lead) -> bool {
+    let official = match lead.official_source_url.as_ref() {
+        Some(u) if !u.is_empty() => u.clone(),
+        _ => return false,
+    };
+    let client = match reqwest::blocking::Client::builder()
+        .user_agent("Mozilla/5.0 (compatible; ScholarshipBot/1.0)")
+        .timeout(std::time::Duration::from_secs(15))
+        .redirect(reqwest::redirect::Policy::limited(3))
+        .build()
+    {
+        Ok(c) => c,
+        Err(_) => {
+            lead.trust_tier = Some("C".to_string());
+            if !lead.risk_flags.contains(&"needs_verification".to_string()) {
+                lead.risk_flags.push("needs_verification".to_string());
+            }
+            return false;
+        }
+    };
+    let resp = match client.get(&official).send() {
+        Ok(r) if r.status().is_success() => r,
+        _ => {
+            lead.trust_tier = Some("C".to_string());
+            if !lead.risk_flags.contains(&"needs_verification".to_string()) {
+                lead.risk_flags.push("needs_verification".to_string());
+            }
+            return false;
+        }
+    };
+    let html = match resp.text() {
+        Ok(h) => h,
+        Err(_) => {
+            lead.trust_tier = Some("C".to_string());
+            if !lead.risk_flags.contains(&"needs_verification".to_string()) {
+                lead.risk_flags.push("needs_verification".to_string());
+            }
+            return false;
+        }
+    };
+    let text = html.to_lowercase();
+    // Simple extraction
+    let amount = if let Ok(re) = Regex::new(r"£[\d,]+|\$[\d,]+|full\s*tuition|fully\s*funded") {
+        re.find(&text)
+            .map(|m| html[m.start()..m.end()].to_string())
+            .unwrap_or_else(|| "See official page".to_string())
+    } else {
+        "See official page".to_string()
+    };
+    let deadline = if let Ok(re) = Regex::new(r"\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4}|\d{1,2}\s+\w+\s+\d{4}") {
+        re.find(&text)
+            .map(|m| html[m.start()..m.end()].to_string())
+            .unwrap_or_else(|| "See official page".to_string())
+    } else {
+        "See official page".to_string()
+    };
+    if amount != "See official page" {
+        lead.amount = amount;
+    }
+    if deadline != "See official page" {
+        lead.deadline = deadline;
+    }
+    if text.contains("international") {
+        lead.eligibility = vec!["International students".to_string()];
+    }
+    lead.is_index_only = false;
+    true
+}
 
 /// Scrape a third-party source and return detailed result for health tracking
 pub fn scrape(url: &str) -> Result<ScrapeResult> {
     println!("Scraping third-party database: {}", url);
-    
+
     let client = reqwest::blocking::Client::builder()
         .user_agent("Mozilla/5.0 (compatible; ScholarshipBot/1.0)")
         .timeout(std::time::Duration::from_secs(30))
         .redirect(reqwest::redirect::Policy::limited(5))
         .build()?;
-    
+
     let response = client.get(url).send();
-    
+
     match response {
         Ok(resp) => {
             let status_code = resp.status().as_u16();
-            
+
             if resp.status().is_success() {
                 let html = resp.text()?;
-                let mut leads = parse_third_party_html(&html, url);
-                
-                // If HTML parsing found nothing, use known scholarships as fallback
-                if leads.is_empty() {
+                let mut leads = if is_index_only_source(url) {
+                    let idx = parse_index_only(&html, url);
+                    if !idx.is_empty() {
+                        println!("  Index-only: {} leads (two-hop to official for full info)", idx.len());
+                    }
+                    idx
+                } else {
+                    parse_third_party_html(&html, url)
+                };
+
+                if !is_index_only_source(url) && leads.is_empty() {
                     let known = get_known_third_party_scholarships(url);
                     if !known.is_empty() {
                         println!("  HTML parsing empty, using {} known scholarships", known.len());
@@ -32,7 +250,7 @@ pub fn scrape(url: &str) -> Result<ScrapeResult> {
                         println!("  No scholarships found from HTML (empty result)");
                     }
                 }
-                
+
                 Ok(ScrapeResult {
                     leads,
                     status: SourceStatus::Ok,
@@ -163,6 +381,13 @@ fn parse_third_party_html(html: &str, base_url: &str) -> Vec<Lead> {
                             confidence: None,
                             eligibility_confidence: None,
                             tags: vec![],
+                            is_index_only: false,
+                            first_seen_at: None,
+                            last_checked_at: None,
+                            next_check_at: None,
+                            persistence_status: None,
+                            source_seed: None,
+                            check_count: None,
                         });
                     }
                 }
@@ -298,6 +523,13 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
                 confidence: None,
                 eligibility_confidence: None,
                 tags: vec!["cambridge".to_string(), "prestigious".to_string()],
+                is_index_only: false,
+                first_seen_at: None,
+                last_checked_at: None,
+                next_check_at: None,
+                persistence_status: None,
+                source_seed: None,
+                check_count: None,
             },
         ];
     }
@@ -345,6 +577,13 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
                 confidence: None,
                 eligibility_confidence: None,
                 tags: vec!["rotary".to_string(), "sponsored".to_string()],
+                is_index_only: false,
+                first_seen_at: None,
+                last_checked_at: None,
+                next_check_at: None,
+                persistence_status: None,
+                source_seed: None,
+                check_count: None,
             },
         ];
     }
@@ -392,6 +631,13 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
                 confidence: None,
                 eligibility_confidence: None,
                 tags: vec!["us-only".to_string(), "prestigious".to_string()],
+                is_index_only: false,
+                first_seen_at: None,
+                last_checked_at: None,
+                next_check_at: None,
+                persistence_status: None,
+                source_seed: None,
+                check_count: None,
             },
         ];
     }
@@ -444,6 +690,13 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         },
         Lead {
             name: "Rhodes Scholarship (Oxford)".to_string(),
@@ -485,6 +738,13 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         },
         Lead {
             name: "Clarendon Scholarship (Oxford)".to_string(),
@@ -525,6 +785,13 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         },
         Lead {
             name: "Wellcome Trust PhD Programmes".to_string(),
@@ -565,6 +832,13 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         },
     ]
 }

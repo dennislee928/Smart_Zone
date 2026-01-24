@@ -3,6 +3,8 @@ mod government;
 mod third_party;
 mod selenium;
 
+pub use third_party::enrich_from_official;
+
 use crate::types::{Source, Lead, ScrapeResult, SourceStatus};
 use anyhow::Result;
 

@@ -78,8 +78,12 @@ pub fn calculate_effort_score(lead: &Lead) -> i32 {
         score += 15;
     }
     
-    // Video submission
+    // Video submission (generic)
     if contains_any(&text, &["video", "recording", "presentation"]) {
+        score += 15;
+    }
+    // Video essay / statement / interview (fine-grained; B-EFFORT-VIDEO-001 also applies via rules)
+    if contains_any(&text, &["video essay", "video statement", "video interview"]) {
         score += 15;
     }
     
@@ -215,6 +219,13 @@ mod tests {
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         }
     }
     

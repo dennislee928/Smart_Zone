@@ -600,7 +600,10 @@ pub fn has_sufficient_detail(lead: &Lead) -> bool {
                           !lead.eligibility.iter().any(|e| 
                               e.to_lowercase().contains("see website"));
     
-    // At least one specific detail required
+    // At least one specific detail required (skip check for index-only; they get "See official page")
+    if lead.is_index_only {
+        return true;
+    }
     has_amount || has_deadline || has_eligibility
 }
 

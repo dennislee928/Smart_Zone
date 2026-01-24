@@ -153,6 +153,13 @@ fn parse_dynamic_html(html: &str, base_url: &str) -> Vec<Lead> {
                         confidence: None,
                         eligibility_confidence: None,
                         tags: vec![],
+                        is_index_only: false,
+                        first_seen_at: None,
+                        last_checked_at: None,
+                        next_check_at: None,
+                        persistence_status: None,
+                        source_seed: None,
+                        check_count: None,
                     });
                 }
             }

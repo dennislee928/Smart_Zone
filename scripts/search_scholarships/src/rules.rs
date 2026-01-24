@@ -33,6 +33,7 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
         effort_adjustments: Vec::new(),
         total_score_add: 0,
         total_effort_reduce: 0,
+        total_effort_add: 0,
         hard_rejected: false,
         rejection_reason: None,
         add_to_watchlist: false,
@@ -77,6 +78,12 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
                 reason: rule.action.reason.clone(),
             });
             result.soft_flags.push(rule.action.reason.clone());
+
+            let effort_add = rule.action.effort_add.unwrap_or(0);
+            if effort_add > 0 {
+                result.effort_adjustments.push((rule.id.clone(), effort_add));
+                result.total_effort_add += effort_add;
+            }
             
             // Only downgrade if not already set to C
             if result.bucket.is_none() {
@@ -436,6 +443,7 @@ pub struct RuleApplicationResult {
     pub effort_adjustments: Vec<(String, i32)>,
     pub total_score_add: i32,
     pub total_effort_reduce: i32,
+    pub total_effort_add: i32,
     pub hard_rejected: bool,
     pub rejection_reason: Option<String>,
     pub add_to_watchlist: bool,
@@ -479,6 +487,13 @@ mod tests {
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         }
     }
     

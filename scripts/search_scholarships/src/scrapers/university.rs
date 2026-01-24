@@ -4,16 +4,22 @@ use anyhow::Result;
 use scraper::{Html, Selector};
 use std::collections::{HashSet, VecDeque};
 
-/// Returns true if url is a Glasgow directory/list page (e.g. /scholarships, /scholarships/all, fees-funding).
+/// Returns true if url is a Glasgow directory/list page (not a single scholarship detail page).
 fn is_glasgow_directory_url(url: &str) -> bool {
     let u = url.to_lowercase();
     if !u.contains("gla.ac.uk") {
         return false;
     }
-    u.contains("/scholarships")
-        || u.contains("/postgraduate/feesandfunding")
-        || u.contains("/fees-funding")
-        || u.contains("/study/postgraduate/fees-funding")
+    if u.contains("/scholarships/all") || u.contains("/scholarships/search") {
+        return true;
+    }
+    if u.ends_with("/scholarships") || u.ends_with("/scholarships/") {
+        return true;
+    }
+    if u.contains("feesandfunding") || u.contains("fees-funding") {
+        return true;
+    }
+    false
 }
 
 /// Resolve relative URL against base. Returns absolute URL (no normalizing).
@@ -163,6 +169,13 @@ fn extract_scholarship_from_page(html: &str, page_url: &str, source_url: &str) -
         confidence: None,
         eligibility_confidence: None,
         tags: vec!["glasgow".to_string(), "bfs".to_string()],
+        is_index_only: false,
+        first_seen_at: None,
+        last_checked_at: None,
+        next_check_at: None,
+        persistence_status: None,
+        source_seed: None,
+        check_count: None,
     };
     if lead.deadline.to_lowercase().contains("tbd") || lead.deadline.to_lowercase().contains("check") {
         lead.deadline_confidence = Some("TBD".to_string());
@@ -396,6 +409,13 @@ fn parse_university_html(html: &str, base_url: &str) -> Vec<Lead> {
                         confidence: None,
                         eligibility_confidence: None,
                         tags: vec![],
+                        is_index_only: false,
+                        first_seen_at: None,
+                        last_checked_at: None,
+                        next_check_at: None,
+                        persistence_status: None,
+                        source_seed: None,
+                        check_count: None,
                     });
                 }
             }
@@ -542,6 +562,13 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             confidence: None,
             eligibility_confidence: None,
             tags: vec!["glasgow".to_string(), "msc".to_string(), "international".to_string()],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         },
         // Glasgow GREAT Scholarships 2026
         Lead {
@@ -587,6 +614,13 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             confidence: None,
             eligibility_confidence: None,
             tags: vec!["glasgow".to_string(), "great".to_string(), "country-specific".to_string()],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         },
         // Adam Smith Business School Scholarships
         Lead {
@@ -628,6 +662,13 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             confidence: None,
             eligibility_confidence: None,
             tags: vec!["glasgow".to_string(), "business".to_string()],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         },
         // MSc International & Comparative Education Scholarship
         Lead {
@@ -670,6 +711,13 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             confidence: None,
             eligibility_confidence: None,
             tags: vec!["glasgow".to_string(), "education".to_string(), "automatic".to_string()],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         },
         // College of Science and Engineering Excellence Scholarship
         Lead {
@@ -712,6 +760,13 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             confidence: None,
             eligibility_confidence: None,
             tags: vec!["glasgow".to_string(), "stem".to_string(), "computing".to_string()],
+            is_index_only: false,
+            first_seen_at: None,
+            last_checked_at: None,
+            next_check_at: None,
+            persistence_status: None,
+            source_seed: None,
+            check_count: None,
         },
     ]
 }

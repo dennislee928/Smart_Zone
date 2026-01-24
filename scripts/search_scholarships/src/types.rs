@@ -80,6 +80,22 @@ pub struct Lead {
     pub eligibility_confidence: Option<f32>, // Confidence in eligibility data
     #[serde(default)]
     pub tags: Vec<String>,                  // Tags: ["catalog_only", "needs_verification", "auto_considered"]
+    #[serde(default)]
+    pub is_index_only: bool,                // Index-only from aggregator; two-hop to official for full info
+
+    // Persistence / tracking (Lead DB)
+    #[serde(default)]
+    pub first_seen_at: Option<String>,      // ISO 8601, first discovery
+    #[serde(default)]
+    pub last_checked_at: Option<String>,    // ISO 8601, last run
+    #[serde(default)]
+    pub next_check_at: Option<String>,      // ISO 8601, for scheduling
+    #[serde(default)]
+    pub persistence_status: Option<String>, // new | ok | blocked | dead | rejected
+    #[serde(default)]
+    pub source_seed: Option<String>,        // Seed URL for discovery path
+    #[serde(default)]
+    pub check_count: Option<u32>,
 }
 
 // ============================================
@@ -289,6 +305,8 @@ pub struct RuleAction {
     pub score_add: Option<i32>,
     #[serde(default)]
     pub effort_reduce: Option<i32>,
+    #[serde(default)]
+    pub effort_add: Option<i32>,
     #[serde(default)]
     pub add_to_watchlist: Option<bool>,
 }
