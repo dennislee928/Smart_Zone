@@ -337,26 +337,19 @@ async fn main() -> Result<()> {
             }
         }
         
-        // If we have fallback leads, add them to all_leads before normal scraping
-        if !fallback_leads.is_empty() {
-            println!("    Adding {} leads from fallback strategies", fallback_leads.len());
-            // These will be processed in the normal lead processing loop below
-        }
-        
-        match scrapers::scrape_source(source).await {
-            Ok(result) => {
-                // Update health tracking
-                source_health::update_health(
-                    &mut health_file, 
-                    source, 
-                    &result, 
-                    source_filter.max_consecutive_failures
-                );
-                
                 // Track stats
-                if result.status == SourceStatus::Ok {
-                    source_stats.success += 1;
-                    println!("    Found {} raw leads", result.leads.len());
+                if result.status == SourceStatus::Ok || !fallback_leads.is_empty() {
+                    if result.status == SourceStatus::Ok {
+                        source_stats.success += 1;
+                        println!("    Found {} raw leads", result.leads.len());
+                    }
+                    
+                    // Add fallback leads to result if we have them
+                    let mut all_result_leads = result.leads;
+                    if !fallback_leads.is_empty() {
+                        println!("    Adding {} leads from fallback strategies", fallback_leads.len());
+                        all_result_leads.extend(fallback_leads);
+                    }
                 } else {
                     source_stats.failed += 1;
                     println!("    Failed: {}", result.status);
@@ -370,7 +363,16 @@ async fn main() -> Result<()> {
                 let mut skipped_directory = 0;
                 let mut skipped_insufficient = 0;
                 
-                for mut lead in result.leads {
+                // Process both normal leads and fallback leads
+                let all_result_leads = if !fallback_leads.is_empty() {
+                    let mut combined = result.leads;
+                    combined.extend(fallback_leads);
+                    combined
+                } else {
+                    result.leads
+                };
+                
+                for mut lead in all_result_leads {
                     // Update deduplication info first
                     filter::update_dedup_info(&mut lead);
                     
