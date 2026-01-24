@@ -28,6 +28,71 @@ const TRACKING_PARAMS: &[&str] = &[
     "affiliate", "aff_id",       // Affiliate tracking
 ];
 
+/// Resolve canonical URL from HTML page
+/// 
+/// Attempts to extract canonical URL from:
+/// 1. <link rel="canonical" href="...">
+/// 2. HTTP redirects (301/302)
+/// 3. Falls back to normalized URL if not found
+pub async fn resolve_canonical_url(client: &Client, url: &str) -> String {
+    // First normalize the URL
+    let normalized = normalize_url(url);
+    
+    // Try to fetch HTML and extract canonical link
+    if let Ok(response) = client.get(&normalized).send().await {
+        let final_url = response.url().clone();
+        
+        if let Ok(html_text) = response.text().await {
+            let html = Html::parse_document(&html_text);
+            // Look for <link rel="canonical" href="...">
+            if let Ok(selector) = Selector::parse("link[rel='canonical']") {
+                for element in html.select(&selector) {
+                    if let Some(href) = element.value().attr("href") {
+                        // Resolve relative URLs
+                        if let Ok(resolved) = resolve_relative_url(&normalized, href) {
+                            return normalize_url(&resolved);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Check if URL was redirected
+        if final_url.as_str() != normalized {
+            return normalize_url(final_url.as_str());
+        }
+    }
+    
+    // Fallback to normalized URL
+    normalized
+}
+
+/// Resolve relative URL against base URL
+fn resolve_relative_url(base: &str, relative: &str) -> Result<String, ()> {
+    if relative.starts_with("http://") || relative.starts_with("https://") {
+        return Ok(relative.to_string());
+    }
+    
+    // Simple relative URL resolution
+    if let Some(pos) = base.rfind('/') {
+        if relative.starts_with('/') {
+            // Absolute path relative to domain
+            if let Some(domain_end) = base.find("://") {
+                if let Some(path_start) = base[domain_end + 3..].find('/') {
+                    let domain = &base[..domain_end + 3 + path_start];
+                    return Ok(format!("{}{}", domain, relative));
+                }
+            }
+        } else {
+            // Relative path
+            let base_path = &base[..pos + 1];
+            return Ok(format!("{}{}", base_path, relative));
+        }
+    }
+    
+    Err(())
+}
+
 /// Normalize a URL for canonical comparison
 /// 
 /// Normalization rules:
@@ -155,6 +220,62 @@ pub fn generate_dedup_key(lead: &Lead) -> String {
     format!("{}|{}|{}", name_normalized, amount_normalized, deadline)
 }
 
+/// Generate entity-level deduplication key
+/// 
+/// Uses: provider + title + deadline + award + level
+/// This is more robust than URL-based deduplication for cases where
+/// the same scholarship appears on multiple pages or domains
+pub fn generate_entity_dedup_key(lead: &Lead) -> String {
+    // Provider: source domain or source name
+    let provider = lead.source_domain.as_ref()
+        .map(|d| d.to_lowercase())
+        .unwrap_or_else(|| normalize_text(&lead.source));
+    
+    // Title: normalized scholarship name
+    let title = normalize_text(&lead.name);
+    
+    // Deadline: prefer structured date, fallback to deadline string
+    let deadline = lead.deadline_date.as_deref()
+        .unwrap_or_else(|| {
+            // Normalize deadline string (remove "TBD", "Check website", etc.)
+            let deadline_str = &lead.deadline;
+            if deadline_str.to_lowercase().contains("tbd") || 
+               deadline_str.to_lowercase().contains("check") ||
+               deadline_str.to_lowercase().contains("see website") {
+                "unknown"
+            } else {
+                deadline_str
+            }
+        });
+    
+    // Award: normalized amount
+    let award = normalize_text(&lead.amount);
+    
+    // Level: extract from eligibility or notes (postgraduate, undergraduate, etc.)
+    let level = extract_level(lead);
+    
+    format!("{}|{}|{}|{}|{}", provider, title, deadline, award, level)
+}
+
+/// Extract programme level from lead
+fn extract_level(lead: &Lead) -> String {
+    let text = format!("{} {} {}", 
+        lead.name, 
+        lead.notes, 
+        lead.eligibility.join(" ")
+    ).to_lowercase();
+    
+    if text.contains("postgraduate") || text.contains("master") || text.contains("masters") || text.contains("m.sc") || text.contains("m.a") || text.contains("m.eng") {
+        "postgraduate".to_string()
+    } else if text.contains("undergraduate") || text.contains("bachelor") || text.contains("b.sc") || text.contains("b.a") {
+        "undergraduate".to_string()
+    } else if text.contains("phd") || text.contains("doctoral") || text.contains("d.phil") {
+        "phd".to_string()
+    } else {
+        "unknown".to_string()
+    }
+}
+
 /// Normalize text for comparison (lowercase, remove extra whitespace)
 fn normalize_text(text: &str) -> String {
     // Simple whitespace normalization without regex for performance
@@ -165,18 +286,39 @@ fn normalize_text(text: &str) -> String {
         .join(" ")
 }
 
+/// Deduplication result with statistics
+#[derive(Debug, Default)]
+pub struct DeduplicationStats {
+    pub total_input: usize,
+    pub unique_output: usize,
+    pub duplicates_removed: usize,
+    pub dup_count_by_key: HashMap<String, usize>,
+}
+
 /// Deduplicate leads and return unique leads with best quality
 /// 
 /// When duplicates are found:
 /// - Keep the one with highest trust_tier
 /// - Keep the one with most complete data (deadline_date, eligibility)
 /// - Update canonical_url for all kept leads
+/// 
+/// Uses entity-level deduplication key: provider + title + deadline + award + level
 pub fn deduplicate_leads(leads: Vec<Lead>) -> Vec<Lead> {
+    deduplicate_leads_with_stats(leads).0
+}
+
+/// Deduplicate leads and return statistics
+pub fn deduplicate_leads_with_stats(leads: Vec<Lead>) -> (Vec<Lead>, DeduplicationStats) {
     let mut dedup_map: HashMap<String, Lead> = HashMap::new();
+    let mut dup_count: HashMap<String, usize> = HashMap::new();
     let mut seen_signatures: HashSet<String> = HashSet::new();
     
     for mut lead in leads {
-        let key = generate_dedup_key(&lead);
+        // Use entity-level deduplication key
+        let key = generate_entity_dedup_key(&lead);
+        
+        // Track duplicate count
+        *dup_count.entry(key.clone()).or_insert(0) += 1;
         
         // Also check content signature for near-duplicates
         let content_sig = format!("{}|{}", 
@@ -205,7 +347,20 @@ pub fn deduplicate_leads(leads: Vec<Lead>) -> Vec<Lead> {
         }
     }
     
-    dedup_map.into_values().collect()
+    let unique_output = dedup_map.len();
+    let total_input = dup_count.values().sum::<usize>();
+    let duplicates_removed = total_input - unique_output;
+    
+    let stats = DeduplicationStats {
+        total_input,
+        unique_output,
+        duplicates_removed,
+        dup_count_by_key: dup_count.into_iter()
+            .filter(|(_, count)| *count > 1)
+            .collect(),
+    };
+    
+    (dedup_map.into_values().collect(), stats)
 }
 
 /// Compare two leads and determine if the new one is better quality

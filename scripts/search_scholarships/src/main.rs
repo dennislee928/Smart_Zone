@@ -249,14 +249,18 @@ async fn main() -> Result<()> {
     all_leads.retain(|l| !l.is_directory_page);
     
     // Apply URL normalization and deduplication
-    let before_dedup = all_leads.len();
-    all_leads = normalize::deduplicate_leads(all_leads);
-    let dedup_removed = before_dedup - all_leads.len();
+    let (deduplicated_leads, dedup_stats) = normalize::deduplicate_leads_with_stats(all_leads);
+    all_leads = deduplicated_leads;
+    let dedup_removed = dedup_stats.duplicates_removed;
     
     println!("  Marked {} leads as bulk extractions from directory pages", bulk_extracted_count);
-    println!("  URL normalization removed {} duplicates", dedup_removed);
+    println!("  Entity-level deduplication removed {} duplicates ({} unique keys with duplicates)", 
+        dedup_removed, dedup_stats.dup_count_by_key.len());
     println!("  Leads after dedup: {} (removed {})", all_leads.len(), before_count - all_leads.len());
     println!();
+    
+    // Store dedup stats for report generation
+    let dedup_stats_for_report = dedup_stats;
     
     // ==========================================
     // Stage 1.6: Link Validation
@@ -385,10 +389,10 @@ async fn main() -> Result<()> {
     let deadlinks_md = link_health::generate_deadlinks_report(&dead_links);
     let health_report_md = source_health::generate_health_report(&health_file);
     
-    let full_report = build_full_report(&now, &all_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
-    let summary_report = build_summary_report(&now, &bucket_a, &bucket_b, &bucket_c, &filtered_out, &errors, leads_file.leads.len());
-    let markdown_report = build_markdown_report(&now, &all_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
-    let html_report = build_html_report(&now, &all_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile);
+    let full_report = build_full_report(&now, &all_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile, &dedup_stats_for_report);
+    let summary_report = build_summary_report(&now, &bucket_a, &bucket_b, &bucket_c, &filtered_out, &errors, leads_file.leads.len(), &dedup_stats_for_report);
+    let markdown_report = build_markdown_report(&now, &all_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile, &dedup_stats_for_report);
+    let html_report = build_html_report(&now, &all_leads, &filtered_out, &errors, leads_file.leads.len(), &criteria.profile, &dedup_stats_for_report);
     
     // Save reports
     fs::write(report_dir.join("triage.md"), &triage_md)?;
@@ -535,6 +539,7 @@ fn build_full_report(
     errors: &[String], 
     total_leads: usize,
     profile: &Option<Profile>,
+    dedup_stats: &normalize::DeduplicationStats,
 ) -> String {
     let mut report = format!("🔍 **ScholarshipOps Search Report**\n📅 {}\n\n", timestamp);
     
@@ -551,7 +556,9 @@ fn build_full_report(
     let bucket_b: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::B)).collect();
     let bucket_c: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::C) || l.bucket.is_none()).collect();
     
-    report.push_str(&format!("📊 **Results:** A={} | B={} | C={}\n\n", bucket_a.len(), bucket_b.len(), bucket_c.len()));
+    report.push_str(&format!("📊 **Results:** A={} | B={} | C={}\n", bucket_a.len(), bucket_b.len(), bucket_c.len()));
+    report.push_str(&format!("🔄 **Deduplication:** {} duplicates removed ({} unique keys with duplicates)\n\n", 
+        dedup_stats.duplicates_removed, dedup_stats.dup_count_by_key.len()));
     
     if !bucket_a.is_empty() {
         report.push_str("## 🎯 Bucket A (主攻)\n\n");
@@ -594,10 +601,12 @@ fn build_summary_report(
     filtered_out: &[(String, Vec<String>)],
     errors: &[String],
     total_leads: usize,
+    dedup_stats: &normalize::DeduplicationStats,
 ) -> String {
     let mut report = format!("🔍 **ScholarshipOps Triage**\n📅 {}\n\n", timestamp);
     
-    report.push_str(&format!("📊 A={} | B={} | C={}\n\n", bucket_a.len(), bucket_b.len(), bucket_c.len()));
+    report.push_str(&format!("📊 A={} | B={} | C={}\n", bucket_a.len(), bucket_b.len(), bucket_c.len()));
+    report.push_str(&format!("🔄 Dedup: {} removed\n\n", dedup_stats.duplicates_removed));
     
     if !bucket_a.is_empty() {
         report.push_str("🎯 **Top Picks:**\n");
@@ -631,6 +640,7 @@ fn build_markdown_report(
     errors: &[String],
     total_leads: usize,
     profile: &Option<Profile>,
+    dedup_stats: &normalize::DeduplicationStats,
 ) -> String {
     let mut report = format!("# ScholarshipOps Search Report\n\n**Date:** {}\n\n", timestamp);
     
@@ -650,6 +660,8 @@ fn build_markdown_report(
     report.push_str(&format!("- **Bucket A (主攻):** {} scholarships\n", bucket_a.len()));
     report.push_str(&format!("- **Bucket B (備援):** {} scholarships\n", bucket_b.len()));
     report.push_str(&format!("- **Filtered out:** {} scholarships\n", filtered_out.len()));
+    report.push_str(&format!("- **Duplicates removed:** {} ({} unique keys with duplicates)\n", 
+        dedup_stats.duplicates_removed, dedup_stats.dup_count_by_key.len()));
     report.push_str("\n");
     
     if !bucket_a.is_empty() {
@@ -705,6 +717,7 @@ fn build_html_report(
     _errors: &[String],
     total_leads: usize,
     profile: &Option<Profile>,
+    dedup_stats: &normalize::DeduplicationStats,
 ) -> String {
     let bucket_a: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::A)).collect();
     let bucket_b: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::B)).collect();
@@ -845,8 +858,11 @@ a { color: #3498db; }
         }
     }
     
-    html.push_str(&format!("<h2>📊 Statistics</h2>\n<p><strong>Total leads in database:</strong> {}</p>\n", 
+    html.push_str(&format!("<h2>📊 Statistics</h2>\n"));
+    html.push_str(&format!("<p><strong>Total leads in database:</strong> {}</p>\n", 
         total_leads + bucket_a.len() + bucket_b.len()));
+    html.push_str(&format!("<p><strong>Duplicates removed:</strong> {} ({} unique keys with duplicates)</p>\n", 
+        dedup_stats.duplicates_removed, dedup_stats.dup_count_by_key.len()));
     
     html.push_str("</div>\n</body>\n</html>");
     

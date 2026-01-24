@@ -617,21 +617,13 @@ pub fn update_dedup_info(lead: &mut Lead) {
 }
 
 /// Generate deduplication key for a lead
+/// 
+/// Uses entity-level deduplication: provider + title + deadline + award + level
+/// This is more robust than URL-based deduplication for cases where
+/// the same scholarship appears on multiple pages or domains
 pub fn generate_dedup_key(lead: &Lead) -> String {
-    let canonical = lead.canonical_url.as_ref()
-        .map(|s| s.as_str())
-        .unwrap_or(&lead.url);
-    
-    // Use canonical URL + normalized name as key
-    let name_normalized = lead.name.to_lowercase()
-        .chars()
-        .filter(|c| c.is_alphanumeric() || c.is_whitespace())
-        .collect::<String>()
-        .split_whitespace()
-        .collect::<Vec<_>>()
-        .join(" ");
-    
-    format!("{}|{}", canonical, name_normalized)
+    use crate::normalize::generate_entity_dedup_key;
+    generate_entity_dedup_key(lead)
 }
 
 /// Detect if a single source URL produced too many leads (indicates directory page)
