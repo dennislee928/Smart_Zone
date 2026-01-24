@@ -187,7 +187,7 @@ fn is_watchlist_candidate(lead: &Lead) -> bool {
         (dl.is_empty() || dl.contains("check") || dl.contains("tbd") || dl.contains("annual") || dl.contains("rolling"))
 }
 
-/// Parse deadline string to NaiveDate
+/// Parse deadline string to NaiveDate with validation
 fn parse_deadline_date(deadline: &str) -> Option<NaiveDate> {
     let formats = [
         "%Y-%m-%d",
@@ -200,7 +200,10 @@ fn parse_deadline_date(deadline: &str) -> Option<NaiveDate> {
     
     for fmt in &formats {
         if let Ok(date) = NaiveDate::parse_from_str(deadline, fmt) {
-            return Some(date);
+            // Validate date: year must be 2020-2100, month 1-12
+            if date.year() >= 2020 && date.year() <= 2100 && date.month() >= 1 && date.month() <= 12 {
+                return Some(date);
+            }
         }
     }
     
@@ -210,7 +213,18 @@ fn parse_deadline_date(deadline: &str) -> Option<NaiveDate> {
             let year: i32 = caps[1].parse().ok()?;
             let month: u32 = caps[2].parse().ok()?;
             let day: u32 = caps[3].parse().ok()?;
-            return NaiveDate::from_ymd_opt(year, month, day);
+            
+            // Validate before creating date
+            if year < 2020 || year > 2100 || month < 1 || month > 12 {
+                return None;
+            }
+            
+            if let Some(date) = NaiveDate::from_ymd_opt(year, month, day) {
+                // Double-check validation (from_ymd_opt handles invalid days)
+                if date.year() >= 2020 && date.year() <= 2100 && date.month() >= 1 && date.month() <= 12 {
+                    return Some(date);
+                }
+            }
         }
     }
     

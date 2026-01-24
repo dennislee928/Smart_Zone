@@ -312,10 +312,23 @@ pub fn deduplicate_leads_with_stats(leads: Vec<Lead>) -> (Vec<Lead>, Deduplicati
     let mut dedup_map: HashMap<String, Lead> = HashMap::new();
     let mut dup_count: HashMap<String, usize> = HashMap::new();
     let mut seen_signatures: HashSet<String> = HashSet::new();
+    let mut content_hash_map: HashMap<String, String> = HashMap::new(); // content_hash -> entity_key
     
     for mut lead in leads {
         // Use entity-level deduplication key
         let key = generate_entity_dedup_key(&lead);
+        
+        // Calculate content hash for second-level deduplication
+        let content_hash = calculate_lead_content_hash(&lead);
+        
+        // Check if content-hash already exists (different entity_key but same content)
+        if let Some(existing_key) = content_hash_map.get(&content_hash) {
+            if existing_key != &key {
+                // Content same but entity_key different - treat as duplicate, skip
+                *dup_count.entry(key.clone()).or_insert(0) += 1;
+                continue;
+            }
+        }
         
         // Track duplicate count
         *dup_count.entry(key.clone()).or_insert(0) += 1;
@@ -337,13 +350,22 @@ pub fn deduplicate_leads_with_stats(leads: Vec<Lead>) -> (Vec<Lead>, Deduplicati
         }
         
         if let Some(existing) = dedup_map.get(&key) {
-            // Keep the better quality lead
-            if is_better_quality(&lead, existing) {
-                dedup_map.insert(key.clone(), lead);
+            // Entity key matches - check if content-hash differs (different version)
+            let existing_hash = calculate_lead_content_hash(existing);
+            if content_hash != existing_hash {
+                // Same entity but different content - update if new is better quality
+                if is_better_quality(&lead, existing) {
+                    dedup_map.insert(key.clone(), lead);
+                    content_hash_map.insert(content_hash, key.clone());
+                }
+            } else {
+                // Same entity and same content - keep existing (already better quality)
             }
         } else {
+            // New entity key
             seen_signatures.insert(content_sig);
-            dedup_map.insert(key, lead);
+            dedup_map.insert(key.clone(), lead);
+            content_hash_map.insert(content_hash, key.clone());
         }
     }
     
@@ -361,6 +383,17 @@ pub fn deduplicate_leads_with_stats(leads: Vec<Lead>) -> (Vec<Lead>, Deduplicati
     };
     
     (dedup_map.into_values().collect(), stats)
+}
+
+/// Calculate content hash for a lead
+fn calculate_lead_content_hash(lead: &Lead) -> String {
+    let content = format!("{}|{}|{}|{}", 
+        normalize_text(&lead.name),
+        normalize_text(&lead.amount),
+        normalize_text(&lead.deadline),
+        lead.eligibility.iter().map(|e| normalize_text(e)).collect::<Vec<_>>().join(",")
+    );
+    crate::url_state::UrlStateStorage::calculate_content_hash(content.as_bytes())
 }
 
 /// Compare two leads and determine if the new one is better quality

@@ -159,7 +159,7 @@ fn extract_number(text: &str) -> f64 {
     0.0
 }
 
-/// Parse deadline string to NaiveDate
+/// Parse deadline string to NaiveDate with validation
 fn parse_deadline(deadline: &str) -> Result<NaiveDate, ()> {
     let formats = [
         "%Y-%m-%d",
@@ -172,7 +172,10 @@ fn parse_deadline(deadline: &str) -> Result<NaiveDate, ()> {
     
     for fmt in &formats {
         if let Ok(date) = NaiveDate::parse_from_str(deadline, fmt) {
-            return Ok(date);
+            // Validate date: year must be 2020-2100, month 1-12
+            if date.year() >= 2020 && date.year() <= 2100 && date.month() >= 1 && date.month() <= 12 {
+                return Ok(date);
+            }
         }
     }
     
@@ -182,8 +185,17 @@ fn parse_deadline(deadline: &str) -> Result<NaiveDate, ()> {
             let year: i32 = caps[1].parse().unwrap_or(2026);
             let month: u32 = caps[2].parse().unwrap_or(1);
             let day: u32 = caps[3].parse().unwrap_or(1);
+            
+            // Validate before creating date
+            if year < 2020 || year > 2100 || month < 1 || month > 12 {
+                return Err(());
+            }
+            
             if let Some(date) = NaiveDate::from_ymd_opt(year, month, day) {
-                return Ok(date);
+                // Double-check validation (from_ymd_opt handles invalid days)
+                if date.year() >= 2020 && date.year() <= 2100 && date.month() >= 1 && date.month() <= 12 {
+                    return Ok(date);
+                }
             }
         }
     }

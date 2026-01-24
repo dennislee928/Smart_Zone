@@ -352,14 +352,30 @@ fn normalize_date(date_str: &str) -> Option<String> {
     
     for fmt in &formats {
         if let Ok(date) = NaiveDate::parse_from_str(date_str, fmt) {
-            return Some(date.format("%Y-%m-%d").to_string());
+            // Validate date: check if year is in valid range by formatting and re-parsing
+            let formatted = date.format("%Y-%m-%d").to_string();
+            if let Some(parsed_year) = formatted.split('-').next().and_then(|s| s.parse::<i32>().ok()) {
+                if parsed_year >= 2020 && parsed_year <= 2100 {
+                    return Some(formatted);
+                }
+            }
         }
     }
     
     // Try to extract year-month-day from string
     if let Ok(re) = regex::Regex::new(r"(\d{4})-(\d{2})-(\d{2})") {
         if let Some(caps) = re.captures(date_str) {
-            return Some(format!("{}-{}-{}", &caps[1], &caps[2], &caps[3]));
+            let year: i32 = caps[1].parse().ok()?;
+            let month: u32 = caps[2].parse().ok()?;
+            let day: u32 = caps[3].parse().ok()?;
+            
+            // Validate before creating date
+            if year >= 2020 && year <= 2100 && month >= 1 && month <= 12 {
+                if let Some(date) = NaiveDate::from_ymd_opt(year, month, day) {
+                    // from_ymd_opt validates the date, so if it returns Some, the date is valid
+                    return Some(date.format("%Y-%m-%d").to_string());
+                }
+            }
         }
     }
     
@@ -441,12 +457,23 @@ pub fn update_structured_dates(lead: &mut Lead) {
             if lead.deadline_label.is_none() {
                 lead.deadline_label = Some(lead.deadline.clone());
             }
-        } else if let Some(iso_date) = normalize_date(&lead.deadline) {
-            // Only parse if it's not TBD
-            lead.deadline_date = Some(iso_date);
-            lead.deadline_confidence = Some("inferred".to_string());
         } else {
-            lead.deadline_confidence = Some("unknown".to_string());
+            // Try to parse deadline - check if it's a valid date format first
+            if parse_deadline(&lead.deadline).is_ok() {
+                // Valid date format, use normalize_date
+                if let Some(iso_date) = normalize_date(&lead.deadline) {
+                    lead.deadline_date = Some(iso_date);
+                    lead.deadline_confidence = Some("inferred".to_string());
+                } else {
+                    lead.deadline_confidence = Some("unknown".to_string());
+                }
+            } else {
+                // Invalid date format (e.g., 68-58-58) - mark as risk
+                lead.deadline_confidence = Some("invalid_format".to_string());
+                if !lead.risk_flags.contains(&"invalid_deadline_format".to_string()) {
+                    lead.risk_flags.push("invalid_deadline_format".to_string());
+                }
+            }
         }
     }
 }
@@ -1090,7 +1117,7 @@ pub fn filter_by_profile(lead: &mut Lead, profile: &Profile) -> bool {
     score > 0
 }
 
-/// Parse various deadline formats
+/// Parse various deadline formats with validation
 fn parse_deadline(deadline: &str) -> Result<NaiveDate, ()> {
     let formats = [
         "%Y-%m-%d",
@@ -1103,7 +1130,13 @@ fn parse_deadline(deadline: &str) -> Result<NaiveDate, ()> {
     
     for fmt in &formats {
         if let Ok(date) = NaiveDate::parse_from_str(deadline, fmt) {
-            return Ok(date);
+            // Validate date: check if year is in valid range by formatting and re-parsing
+            let formatted = date.format("%Y-%m-%d").to_string();
+            if let Some(parsed_year) = formatted.split('-').next().and_then(|s| s.parse::<i32>().ok()) {
+                if parsed_year >= 2020 && parsed_year <= 2100 {
+                    return Ok(date);
+                }
+            }
         }
     }
     
@@ -1113,7 +1146,14 @@ fn parse_deadline(deadline: &str) -> Result<NaiveDate, ()> {
             let year: i32 = caps[1].parse().unwrap_or(2026);
             let month: u32 = caps[2].parse().unwrap_or(1);
             let day: u32 = caps[3].parse().unwrap_or(1);
+            
+            // Validate before creating date
+            if year < 2020 || year > 2100 || month < 1 || month > 12 {
+                return Err(());
+            }
+            
             if let Some(date) = NaiveDate::from_ymd_opt(year, month, day) {
+                // from_ymd_opt validates the date, so if it returns Some, the date is valid
                 return Ok(date);
             }
         }

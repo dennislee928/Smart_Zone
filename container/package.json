@@ -10,7 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 migrations apply scholarshipops-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply scholarshipops-db --remote",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:check-auth": "wrangler whoami"
   },
   "dependencies": {
     "hono": "^4.11.3",
