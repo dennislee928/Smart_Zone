@@ -3,6 +3,8 @@ use crate::normalize;
 use anyhow::Result;
 use scraper::{Html, Selector};
 use std::collections::{HashSet, VecDeque};
+use regex::Regex;
+use reqwest::blocking::Client;
 
 /// Returns true if url is a Glasgow directory/list page (not a single scholarship detail page).
 fn is_glasgow_directory_url(url: &str) -> bool {
@@ -51,6 +53,102 @@ fn resolve_url(base: &str, href: &str) -> Option<String> {
         format!("{}{}/{}{}", scheme, host, path_dir.trim_start_matches('/'), href)
     };
     Some(resolved)
+}
+
+/// Discover URLs from index pages using BFS
+/// 
+/// Extracts scholarship links from index pages, following links up to max_depth.
+/// Filters URLs using detail_url_regex if provided.
+pub fn discover_from_index_pages(
+    client: &Client,
+    index_urls: &[String],
+    detail_url_regex: Option<&Regex>,
+    max_depth: u32,
+) -> Result<Vec<String>> {
+    let mut discovered_urls = Vec::new();
+    let mut visited = HashSet::new();
+    let mut queue = VecDeque::new();
+    
+    // Initialize queue with index URLs
+    for index_url in index_urls {
+        let normalized = normalize::normalize_url(index_url);
+        if visited.insert(normalized.clone()) {
+            queue.push_back((index_url.clone(), 0));
+        }
+    }
+    
+    while let Some((url, depth)) = queue.pop_front() {
+        if depth > max_depth {
+            continue;
+        }
+        
+        let normalized = normalize::normalize_url(&url);
+        if !visited.insert(normalized) {
+            continue;
+        }
+        
+        // Fetch HTML
+        let html = match client.get(&url).send() {
+            Ok(resp) => {
+                if !resp.status().is_success() {
+                    continue;
+                }
+                match resp.text() {
+                    Ok(h) if !h.is_empty() => h,
+                    _ => continue,
+                }
+            }
+            Err(_) => continue,
+        };
+        
+        let document = Html::parse_document(&html);
+        let base_url = base_url_for_resolve(&url);
+        
+        // Extract scholarship links
+        if let Ok(selector) = Selector::parse("a[href*='/scholarships/'], a[href*='/funding/'], a[href*='/bursary/'], a[href*='/award/']") {
+            for element in document.select(&selector) {
+                if let Some(href) = element.value().attr("href") {
+                    if let Some(resolved_url) = resolve_url(&url, href) {
+                        let normalized_resolved = normalize::normalize_url(&resolved_url);
+                        
+                        // Skip if already visited
+                        if visited.contains(&normalized_resolved) {
+                            continue;
+                        }
+                        
+                        // Apply detail_url_regex filter if provided
+                        if let Some(regex) = detail_url_regex {
+                            if !regex.is_match(&resolved_url) {
+                                continue;
+                            }
+                        }
+                        
+                        // Add to discovered URLs if it's a detail page (not another index)
+                        let url_lower = resolved_url.to_lowercase();
+                        let is_index = url_lower.ends_with("/scholarships") || 
+                                      url_lower.ends_with("/scholarships/") ||
+                                      url_lower.contains("/scholarships/search") ||
+                                      url_lower.contains("/scholarships/all");
+                        
+                        if !is_index {
+                            discovered_urls.push(resolved_url.clone());
+                        }
+                        
+                        // Add to queue for further discovery if within depth limit
+                        if depth < max_depth && is_index {
+                            visited.insert(normalized_resolved);
+                            queue.push_back((resolved_url, depth + 1));
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Rate limiting
+        std::thread::sleep(std::time::Duration::from_millis(500));
+    }
+    
+    Ok(discovered_urls)
 }
 
 /// Extract absolute gla.ac.uk links from HTML that match whitelist.

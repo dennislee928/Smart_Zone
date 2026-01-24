@@ -172,9 +172,12 @@ fn parse_deadline(deadline: &str) -> Result<NaiveDate, ()> {
     
     for fmt in &formats {
         if let Ok(date) = NaiveDate::parse_from_str(deadline, fmt) {
-            // Validate date: year must be 2020-2100, month 1-12
-            if date.year() >= 2020 && date.year() <= 2100 && date.month() >= 1 && date.month() <= 12 {
-                return Ok(date);
+            // Validate date: check if year is in valid range by formatting and re-parsing
+            let formatted = date.format("%Y-%m-%d").to_string();
+            if let Some(parsed_year) = formatted.split('-').next().and_then(|s| s.parse::<i32>().ok()) {
+                if parsed_year >= 2020 && parsed_year <= 2100 {
+                    return Ok(date);
+                }
             }
         }
     }
@@ -192,10 +195,8 @@ fn parse_deadline(deadline: &str) -> Result<NaiveDate, ()> {
             }
             
             if let Some(date) = NaiveDate::from_ymd_opt(year, month, day) {
-                // Double-check validation (from_ymd_opt handles invalid days)
-                if date.year() >= 2020 && date.year() <= 2100 && date.month() >= 1 && date.month() <= 12 {
-                    return Ok(date);
-                }
+                // from_ymd_opt validates the date, so if it returns Some, the date is valid
+                return Ok(date);
             }
         }
     }
