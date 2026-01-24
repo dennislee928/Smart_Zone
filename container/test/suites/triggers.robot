@@ -2,7 +2,7 @@
 Documentation    Triggers API 測試套件
 Resource          ../resources/api_keywords.robot
 Resource          ../resources/validators.robot
-Variables         variables/config.robot
+Variables         ${EXECDIR}/variables/config.robot
 Suite Setup       Create Session    api
 Suite Teardown    Delete All Sessions
 

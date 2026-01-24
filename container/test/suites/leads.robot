@@ -3,7 +3,7 @@ Documentation    Leads API 測試套件 - 完整 CRUD 操作和邊界情況
 Resource          ../resources/api_keywords.robot
 Resource          ../resources/validators.robot
 Resource          ../resources/fixtures.robot
-Variables         variables/config.robot
+Variables         ${EXECDIR}/variables/config.robot
 Suite Setup       Setup Test Database
 Suite Teardown    Teardown Test Database
 Test Setup        Create Session    api

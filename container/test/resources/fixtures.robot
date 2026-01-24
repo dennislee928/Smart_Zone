@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    測試資料設置和清理
 Resource          api_keywords.robot
-Variables         variables/config.robot
+Variables         ${EXECDIR}/variables/config.robot
 
 *** Variables ***
 @{CREATED_LEAD_IDS}    
