@@ -2,11 +2,14 @@
 //!
 //! Provides functions to:
 //! - Normalize URLs (https, lowercase host, remove tracking params)
+//! - Resolve canonical URLs from HTML <link rel="canonical">
 //! - Deduplicate leads based on canonical URL or content signature
 //! - Follow redirects to get final canonical URLs
 
 use crate::types::Lead;
 use std::collections::{HashMap, HashSet};
+use reqwest::Client;
+use scraper::{Html, Selector};
 
 /// Tracking parameters to remove from URLs
 const TRACKING_PARAMS: &[&str] = &[
