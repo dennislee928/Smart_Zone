@@ -81,6 +81,96 @@ content: 分兩段 Workflow（替代方案）：實作 discovery job（只抓 in
 
 status: pending
 
+    - id: p0-diagnosis-schedule-branch
+
+content: 問題診斷：確認 GitHub Actions schedule 是否在 default branch 上執行，若在 feature branch 則 schedule 不會觸發
+
+status: pending
+
+    - id: p0-diagnosis-glasgow-js
+
+content: 問題診斷：確認 Glasgow /scholarships/all/ 是否為 JS-templated 頁面（{{scholar.title}}），需要瀏覽器渲染
+
+status: pending
+
+    - id: p0-diagnosis-runner-time-limit
+
+content: 問題診斷：確認 GitHub-hosted runner 執行時間上限（通常 6 小時），規劃 matrix sharding 策略
+
+status: pending
+
+    - id: p0-sources-glasgow-selenium
+
+content: Sources v2：將 Glasgow /scholarships/all/ 和 /scholarships/search/ 改為 selenium scraper（JS-templated）
+
+status: pending
+
+    - id: p0-sources-glasgow-landing
+
+content: Sources v2：新增 Glasgow /scholarships/ landing 頁作為額外 seed
+
+status: pending
+
+    - id: p0-sources-disable-saltire-saas
+
+content: Sources v2：將 Saltire 和 SAAS 預設 disabled（台灣不符合資格）
+
+status: pending
+
+    - id: p0-sources-great-selenium
+
+content: Sources v2：將 GREAT Scholarships 和 British Council Study UK 改為 selenium scraper（避免 403）
+
+status: pending
+
+    - id: p0-criteria-required-minimal
+
+content: Criteria v2：將 required keywords 減到最小集合（scholarship|funding|bursary|award），其餘移到 preferred
+
+status: pending
+
+    - id: p0-criteria-gpa-degree-aware
+
+content: Criteria v2：GPA 判斷改為 degree-aware（undergrad vs postgrad），max_gpa_requirement 改為 4.0
+
+status: pending
+
+    - id: p0-rules-intl-fee-status
+
+content: Rules v2：新增 P-INTL-FEE-002 規則，匹配 "international fee status" / "overseas fee status" 語句
+
+status: pending
+
+    - id: p0-rules-scam-allowlist
+
+content: Rules v2：修正 S-SCAM-001，加入官方網域 allowlist（gla.ac.uk, gov.uk 等），避免誤判 hardship fund
+
+status: pending
+
+    - id: p0-rules-nontarget-source-type
+
+content: Rules v2：修正 E-NONTARGET-001，只套用在 university sources，不套用在 foundation/government sources
+
+status: pending
+
+    - id: p0-workflow-mode-wide
+
+content: Workflow v2：新增 mode=wide|focused 選項，wide 模式啟用 discovery + matrix sharding
+
+status: pending
+
+    - id: p0-workflow-prepare-matrix
+
+content: Workflow v2：新增 prepare job 產生 shard matrix，支援 SHARD_INDEX/SHARD_TOTAL 環境變數
+
+status: pending
+
+    - id: p0-workflow-timeout-340min
+
+content: Workflow v2：設定 timeout-minutes: 340，確保在 GitHub-hosted runner 限制內
+
+status: pending
+
 isProject: false
 
 ---
