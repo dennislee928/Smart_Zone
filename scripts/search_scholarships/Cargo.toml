@@ -19,3 +19,6 @@ anyhow = "1.0"
 chrono = "0.4"
 thirtyfour = "0.31"
 futures = "0.3"
+rustls = "0.21"
+rusqlite = { version = "0.30", features = ["bundled", "chrono"] }
+sha2 = "0.10"

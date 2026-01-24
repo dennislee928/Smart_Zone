@@ -14,6 +14,9 @@ mod triage;
 mod effort;
 mod source_health;
 mod normalize;
+mod discovery;
+mod url_state;
+mod extraction_fallbacks;
 
 pub use types::*;
 

@@ -96,6 +96,10 @@ pub struct Lead {
     pub source_seed: Option<String>,        // Seed URL for discovery path
     #[serde(default)]
     pub check_count: Option<u32>,
+    
+    // Evidence fields for extracted attributes (M3)
+    #[serde(default)]
+    pub extraction_evidence: Vec<ExtractionEvidence>, // Evidence for extracted attributes
 }
 
 // ============================================
@@ -386,6 +390,15 @@ pub struct RuleHitCount {
     pub rule_id: String,
     pub rule_name: String,
     pub hit_count: usize,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ExtractionEvidence {
+    pub attribute: String,        // "name", "amount", "deadline", etc.
+    pub snippet: String,          // Text snippet extracted
+    pub selector: Option<String>, // CSS selector or XPath
+    pub url: String,              // Source URL
+    pub method: String,           // "json-ld", "schema.org", "regex", "html-selector"
 }
 
 #[derive(Debug, Deserialize, Serialize)]
