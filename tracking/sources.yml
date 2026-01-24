@@ -342,6 +342,140 @@ sources:
       - "sfc.ac.uk"
 
   # ============================================
+  # TIER 4: UK Government & Public Agencies
+  # ============================================
+
+  - name: "UKRI - UK Research and Innovation"
+    type: "government"
+    url: "https://www.ukri.org/opportunity/"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  - name: "Scottish Funding Council"
+    type: "government"
+    url: "https://www.sfc.ac.uk/"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  - name: "GOV.UK Postgraduate Scholarships"
+    type: "government"
+    url: "https://www.gov.uk/browse/education/student-finance"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  - name: "Research Councils UK"
+    type: "government"
+    url: "https://www.ukri.org/apply-for-funding/"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  - name: "Arts and Humanities Research Council"
+    type: "government"
+    url: "https://ahrc.ukri.org/funding/"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  - name: "Engineering and Physical Sciences Research Council"
+    type: "government"
+    url: "https://epsrc.ukri.org/funding/"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  - name: "Economic and Social Research Council"
+    type: "government"
+    url: "https://esrc.ukri.org/funding/"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  - name: "Medical Research Council"
+    type: "government"
+    url: "https://www.ukri.org/councils/mrc/"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  # ============================================
+  # TIER 5: Foundations & Industry Scholarships
+  # ============================================
+
+  - name: "IEEE Foundation"
+    type: "foundation"
+    url: "https://www.ieee.org/about/foundation/"
+    enabled: true
+    priority: 2
+    scraper: "foundation"
+
+  - name: "Google Scholarships"
+    type: "foundation"
+    url: "https://edu.google.com/scholarships/"
+    enabled: true
+    priority: 2
+    scraper: "foundation"
+
+  - name: "Microsoft Scholarships"
+    type: "foundation"
+    url: "https://www.microsoft.com/en-us/education/scholarships"
+    enabled: true
+    priority: 2
+    scraper: "foundation"
+
+  - name: "Fulbright Commission UK"
+    type: "foundation"
+    url: "https://www.fulbright.org.uk/"
+    enabled: true
+    priority: 2
+    scraper: "foundation"
+
+  - name: "Rhodes Scholarship"
+    type: "foundation"
+    url: "https://www.rhodeshouse.ox.ac.uk/scholarships/"
+    enabled: true
+    priority: 2
+    scraper: "foundation"
+
+  - name: "Fulbright UK Awards"
+    type: "foundation"
+    url: "https://www.fulbright.org.uk/fulbright-awards/"
+    enabled: true
+    priority: 2
+    scraper: "foundation"
+
+  - name: "Wellcome Trust"
+    type: "foundation"
+    url: "https://wellcome.org/grant-funding"
+    enabled: true
+    priority: 2
+    scraper: "foundation"
+
+  - name: "Leverhulme Trust"
+    type: "foundation"
+    url: "https://www.leverhulme.ac.uk/"
+    enabled: true
+    priority: 2
+    scraper: "foundation"
+
+  - name: "Wolfson Foundation"
+    type: "foundation"
+    url: "https://www.wolfson.org.uk/"
+    enabled: true
+    priority: 2
+    scraper: "foundation"
+
+  - name: "British Council Scholarships"
+    type: "foundation"
+    url: "https://www.britishcouncil.org/study-work-abroad/in-uk/scholarship-programmes"
+    enabled: true
+    priority: 2
+    scraper: "foundation"
+
+  # ============================================
   # DISABLED: Research-only aggregators
   # Use generate_sources_complete.py for research mode
   # ============================================
