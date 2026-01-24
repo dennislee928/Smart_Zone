@@ -1,0 +1,23 @@
+🔍 **ScholarshipOps Search Report**
+📅 2026-01-24 14:46 UTC
+
+👤 **Your Profile:**
+• Nationality: Taiwan
+• Target: University of Glasgow (2026-09-14)
+• Level: master
+
+📊 **Results:** A=0 | B=6 | C=3
+🔄 **Deduplication:** 0 duplicates removed (0 unique keys with duplicates)
+
+## 📋 Bucket B (備援)
+
+1. Glasgow College of Science & Engineering Excellence Scholarship - £5,000 - £10,000 tuition fee discount (Score: 245)
+2. Glasgow Global Leadership Scholarship 2026 - £10,000 tuition fee discount (Score: 205)
+3. Chevening Scholarships 2027/28 - Full tuition + living costs + flights (Score: 110)
+4. GREAT Scholarships - £10,000 minimum (Score: 60)
+5. Rotary Foundation Global Grant Scholarship - $30,000+ (varies by district) (Score: 65)
+6. Masters degree scholarships 2025 - £370 (Score: 50)
+
+⏭️ **Filtered out:** 3 scholarships
+
+📁 **Total in database:** 15
