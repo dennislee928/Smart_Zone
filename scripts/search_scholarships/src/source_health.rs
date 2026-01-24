@@ -1,17 +1,84 @@
 //! Source Health Tracking Module
 //! 
 //! Tracks the health status of each source URL across runs.
-//! Auto-disables sources that fail consecutively.
+//! Auto-disables sources that fail consecutively with cooldown mechanism.
+//! Per-domain politeness controls and error taxonomy.
 
 use std::fs;
 use std::path::PathBuf;
 use std::collections::HashMap;
 use anyhow::{Result, Context};
-use chrono::Utc;
+use chrono::{Utc, DateTime, Duration};
 
 use crate::types::{SourceHealth, SourceHealthFile, SourceStatus, Source, SourceFilterConfig, ScrapeResult};
 
 const HEALTH_FILE: &str = "tracking/source_health.json";
+const COOLDOWN_HOURS: i64 = 24; // 24-hour cooldown after auto-disable
+
+/// Error taxonomy for source health tracking
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum ErrorCategory {
+    Blocked,          // 403 Forbidden
+    RateLimited,      // 429 Too Many Requests
+    Timeout,          // Request timeout
+    ParseError,       // HTML parsing failed
+    RobotsDisallow,   // robots.txt disallows
+    ServerError,      // 5xx errors
+    NotFound,         // 404 Not Found
+    NetworkError,     // Network/connection errors
+    Unknown,          // Unknown error
+}
+
+impl ErrorCategory {
+    pub fn from_status(status: SourceStatus) -> Self {
+        match status {
+            SourceStatus::Forbidden => ErrorCategory::Blocked,
+            SourceStatus::RateLimited => ErrorCategory::RateLimited,
+            SourceStatus::Timeout => ErrorCategory::Timeout,
+            SourceStatus::ServerError => ErrorCategory::ServerError,
+            SourceStatus::NotFound => ErrorCategory::NotFound,
+            SourceStatus::NetworkError => ErrorCategory::NetworkError,
+            SourceStatus::Unknown => ErrorCategory::Unknown,
+            SourceStatus::Ok => ErrorCategory::Unknown, // Should not happen
+            SourceStatus::SslError => ErrorCategory::NetworkError,
+            SourceStatus::TooManyRedirects => ErrorCategory::NetworkError,
+        }
+    }
+}
+
+/// Per-domain politeness configuration
+#[derive(Debug, Clone)]
+pub struct DomainPoliteness {
+    pub domain: String,
+    pub min_delay_ms: u64,
+    pub max_concurrency: usize,
+    pub retry_backoff_ms: u64,
+    pub max_retries: u32,
+}
+
+impl Default for DomainPoliteness {
+    fn default() -> Self {
+        Self {
+            domain: String::new(),
+            min_delay_ms: 1000,      // 1 second default delay
+            max_concurrency: 2,      // Max 2 concurrent requests per domain
+            retry_backoff_ms: 2000,  // 2 seconds backoff
+            max_retries: 3,
+        }
+    }
+}
+
+/// Source health statistics for dashboard
+#[derive(Debug, Clone, Default)]
+pub struct SourceHealthStats {
+    pub unique_found: usize,
+    pub dup_rate: f32,
+    pub missing_deadline_rate: f32,
+    pub blocked_rate: f32,
+    pub total_attempts: u32,
+    pub total_successes: u32,
+    pub error_counts: HashMap<ErrorCategory, u32>,
+}
 
 /// Load source health data from file
 pub fn load_health(root: &str) -> Result<SourceHealthFile> {
@@ -45,23 +112,45 @@ pub fn save_health(root: &str, health: &SourceHealthFile) -> Result<()> {
     Ok(())
 }
 
-/// Update health record for a source after scraping
+/// Update health record for a source after scraping with cooldown support
 pub fn update_health(
     health_file: &mut SourceHealthFile,
     source: &Source,
     result: &ScrapeResult,
     max_failures: u32,
 ) {
-    let now = Utc::now().to_rfc3339();
+    let now = Utc::now();
+    let now_str = now.to_rfc3339();
     
     // Find or create health record
     let health = health_file.sources.iter_mut()
         .find(|h| h.url == source.url);
     
     if let Some(h) = health {
+        // Check if source is in cooldown period
+        if h.auto_disabled {
+            if let Some(disabled_time_str) = &h.disabled_reason {
+                // Try to extract timestamp from disabled_reason or use last_checked
+                if let Ok(disabled_time) = DateTime::parse_from_rfc3339(&h.last_checked) {
+                    let disabled_time_utc = disabled_time.with_timezone(&Utc);
+                    let cooldown_end = disabled_time_utc + Duration::hours(COOLDOWN_HOURS);
+                    
+                    if now < cooldown_end {
+                        // Still in cooldown, skip update
+                        return;
+                    } else {
+                        // Cooldown expired, re-enable
+                        h.auto_disabled = false;
+                        h.disabled_reason = None;
+                        h.consecutive_failures = 0;
+                    }
+                }
+            }
+        }
+        
         // Update existing record
         h.total_attempts += 1;
-        h.last_checked = now.clone();
+        h.last_checked = now_str.clone();
         h.last_status = result.status;
         h.last_http_code = result.http_code;
         h.last_error = result.error_message.clone();
@@ -77,10 +166,12 @@ pub fn update_health(
             // Auto-disable if too many consecutive failures
             if h.consecutive_failures >= max_failures && !h.auto_disabled {
                 h.auto_disabled = true;
+                let error_cat = ErrorCategory::from_status(result.status);
                 h.disabled_reason = Some(format!(
-                    "Auto-disabled after {} consecutive failures. Last error: {}",
+                    "Auto-disabled after {} consecutive failures. Error: {:?}. Cooldown: {} hours",
                     h.consecutive_failures,
-                    result.status
+                    error_cat,
+                    COOLDOWN_HOURS
                 ));
             }
         }
@@ -100,10 +191,11 @@ pub fn update_health(
             last_status: result.status,
             last_http_code: result.http_code,
             last_error: result.error_message.clone(),
-            last_checked: now,
+            last_checked: now_str,
             auto_disabled,
             disabled_reason: if auto_disabled {
-                Some(format!("Auto-disabled on first failure: {}", result.status))
+                let error_cat = ErrorCategory::from_status(result.status);
+                Some(format!("Auto-disabled on first failure: {:?}. Cooldown: {} hours", error_cat, COOLDOWN_HOURS))
             } else {
                 None
             },
@@ -111,6 +203,75 @@ pub fn update_health(
     }
     
     health_file.last_updated = Utc::now().to_rfc3339();
+}
+
+/// Get per-domain politeness configuration
+pub fn get_domain_politeness(domain: &str) -> DomainPoliteness {
+    // Default politeness settings per domain
+    match domain {
+        "gla.ac.uk" | "glasgow.ac.uk" => DomainPoliteness {
+            domain: domain.to_string(),
+            min_delay_ms: 500,      // Faster for trusted sources
+            max_concurrency: 3,
+            retry_backoff_ms: 1000,
+            max_retries: 5,
+        },
+        "gov.uk" | "ukri.org" => DomainPoliteness {
+            domain: domain.to_string(),
+            min_delay_ms: 2000,     // More conservative for government sites
+            max_concurrency: 1,
+            retry_backoff_ms: 5000,
+            max_retries: 3,
+        },
+        _ => DomainPoliteness {
+            domain: domain.to_string(),
+            min_delay_ms: 1000,     // Default: 1 second
+            max_concurrency: 2,
+            retry_backoff_ms: 2000,
+            max_retries: 3,
+        },
+    }
+}
+
+/// Calculate source health statistics for dashboard
+pub fn calculate_source_stats(
+    health_file: &SourceHealthFile,
+    source_url: &str,
+    leads_found: usize,
+    duplicates: usize,
+    missing_deadline: usize,
+) -> SourceHealthStats {
+    let mut stats = SourceHealthStats::default();
+    
+    if let Some(health) = health_file.sources.iter().find(|h| h.url == source_url) {
+        stats.total_attempts = health.total_attempts;
+        stats.total_successes = health.total_successes;
+        
+        // Calculate rates
+        if leads_found > 0 {
+            stats.dup_rate = (duplicates as f32) / (leads_found as f32) * 100.0;
+            stats.missing_deadline_rate = (missing_deadline as f32) / (leads_found as f32) * 100.0;
+        }
+        
+        stats.unique_found = leads_found - duplicates;
+        
+        // Calculate blocked rate
+        if health.total_attempts > 0 {
+            let blocked_count = if health.last_status == SourceStatus::Forbidden || 
+                                  health.last_status == SourceStatus::RateLimited {
+                1
+            } else {
+                0
+            };
+            stats.blocked_rate = (blocked_count as f32) / (health.total_attempts as f32) * 100.0;
+        }
+        
+        // Error counts by category
+        let error_cat = ErrorCategory::from_status(health.last_status);
+        *stats.error_counts.entry(error_cat).or_insert(0) += 1;
+    }
+    
+    stats
 }
 
 /// Check if a source should be skipped based on health and filter config
@@ -143,7 +304,7 @@ pub fn should_skip_source(
     None
 }
 
-/// Generate health report markdown
+/// Generate enhanced health report with dashboard summary
 pub fn generate_health_report(health_file: &SourceHealthFile) -> String {
     let mut report = String::from("# Source Health Report\n\n");
     report.push_str(&format!("**Last Updated:** {}\n\n", health_file.last_updated));
@@ -154,6 +315,15 @@ pub fn generate_health_report(health_file: &SourceHealthFile) -> String {
     let disabled = health_file.sources.iter().filter(|h| h.auto_disabled).count();
     let failing = health_file.sources.iter().filter(|h| h.consecutive_failures > 0 && !h.auto_disabled).count();
     
+    // Error taxonomy counts
+    let mut error_counts: HashMap<ErrorCategory, usize> = HashMap::new();
+    for h in &health_file.sources {
+        if h.last_status != SourceStatus::Ok {
+            let cat = ErrorCategory::from_status(h.last_status);
+            *error_counts.entry(cat).or_insert(0) += 1;
+        }
+    }
+    
     report.push_str("## Summary\n\n");
     report.push_str(&format!("| Status | Count |\n"));
     report.push_str(&format!("|--------|-------|\n"));
@@ -162,6 +332,17 @@ pub fn generate_health_report(health_file: &SourceHealthFile) -> String {
     report.push_str(&format!("| Failing | {} |\n", failing));
     report.push_str(&format!("| Auto-Disabled | {} |\n", disabled));
     report.push_str("\n");
+    
+    // Error taxonomy
+    if !error_counts.is_empty() {
+        report.push_str("## Error Taxonomy\n\n");
+        report.push_str("| Error Type | Count |\n");
+        report.push_str("|------------|-------|\n");
+        for (cat, count) in error_counts.iter() {
+            report.push_str(&format!("| {:?} | {} |\n", cat, count));
+        }
+        report.push_str("\n");
+    }
     
     // Group by status
     let mut by_status: HashMap<SourceStatus, Vec<&SourceHealth>> = HashMap::new();

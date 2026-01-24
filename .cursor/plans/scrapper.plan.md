@@ -28,40 +28,40 @@ todos:
     status: completed
   - id: m3-url-state-storage
     content: "Add url_state storage (SQLite preferred): etag, last_modified, content_hash, last_seen, status"
-    status: pending
+    status: completed
   - id: m3-conditional-get
     content: Support conditional GET (If-None-Match / If-Modified-Since)
-    status: pending
+    status: completed
   - id: m3-evidence-fields
     content: "Evidence fields for extracted attributes: snippet + selector/xpath + url"
-    status: pending
+    status: completed
   - id: m3-extraction-fallbacks
     content: "Extraction fallbacks: JSON-LD / schema.org parsing, regex fallback for deadline/award with locale-aware parsing"
-    status: pending
+    status: completed
   - id: m4-matrix-sharding
     content: Split sources into domain-based shards (10–30 shards)
-    status: pending
+    status: completed
   - id: m4-matrix-config
     content: Use jobs.<job_id>.strategy.matrix with max-parallel control
-    status: pending
+    status: completed
   - id: m4-separate-workflows
     content: "Separate workflows: incremental.yml (daily/weekly), deepcrawl.yml (weekly)"
-    status: pending
+    status: completed
   - id: m4-schedule-default-branch
     content: Ensure schedule workflows exist on default branch
-    status: pending
+    status: completed
   - id: m5-error-taxonomy
     content: "Error taxonomy: blocked(403/429), timeout, parse_error, robots_disallow"
-    status: pending
+    status: completed
   - id: m5-cooldown-auto-disable
     content: Cooldown-based auto-disable (e.g., disable 24h after N consecutive blocked)
-    status: pending
+    status: completed
   - id: m5-per-domain-politeness
     content: "Per-domain politeness: min_delay_ms, max_concurrency, retry/backoff policy"
-    status: pending
+    status: completed
   - id: m5-dashboard-summary
     content: "Dashboard summary: unique_found, dup_rate, missing_deadline_rate, blocked_rate per source"
-    status: pending
+    status: completed
 isProject: false
 ---
 

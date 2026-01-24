@@ -178,49 +178,6 @@ fn extract_scholarship_from_page(html: &str, page_url: &str, source_url: &str) -
         check_count: None,
         extraction_evidence: vec![],
     };
-        name: title,
-        amount,
-        deadline,
-        source: source_url.to_string(),
-        source_type: "university".to_string(),
-        status: "new".to_string(),
-        eligibility: if eligibility.is_empty() { vec!["See website".to_string()] } else { eligibility },
-        notes: String::new(),
-        added_date: String::new(),
-        url: page_url.to_string(),
-        match_score: 0,
-        match_reasons: vec![],
-        hard_fail_reasons: vec![],
-        soft_flags: vec![],
-        bucket: None,
-        http_status: None,
-        effort_score: None,
-        trust_tier: Some("S".to_string()),
-        risk_flags: vec![],
-        matched_rule_ids: vec![],
-        eligible_countries: vec![],
-        is_taiwan_eligible: None,
-        taiwan_eligibility_confidence: None,
-        deadline_date: None,
-        deadline_label: None,
-        intake_year: None,
-        study_start: None,
-        deadline_confidence: Some("unknown".to_string()),
-        canonical_url: Some(canonical),
-        is_directory_page: false,
-        official_source_url: Some(page_url.to_string()),
-        source_domain: Some("gla.ac.uk".to_string()),
-        confidence: None,
-        eligibility_confidence: None,
-        tags: vec!["glasgow".to_string(), "bfs".to_string()],
-        is_index_only: false,
-        first_seen_at: None,
-        last_checked_at: None,
-        next_check_at: None,
-        persistence_status: None,
-        source_seed: None,
-        check_count: None,
-    };
     if lead.deadline.to_lowercase().contains("tbd") || lead.deadline.to_lowercase().contains("check") {
         lead.deadline_confidence = Some("TBD".to_string());
     }
@@ -460,6 +417,7 @@ fn parse_university_html(html: &str, base_url: &str) -> Vec<Lead> {
                         persistence_status: None,
                         source_seed: None,
                         check_count: None,
+        extraction_evidence: vec![],
                     });
                 }
             }
@@ -613,6 +571,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
         // Glasgow GREAT Scholarships 2026
         Lead {
@@ -665,6 +624,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
         // Adam Smith Business School Scholarships
         Lead {
@@ -713,6 +673,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
         // MSc International & Comparative Education Scholarship
         Lead {
@@ -762,6 +723,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
         // College of Science and Engineering Excellence Scholarship
         Lead {
@@ -811,6 +773,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
     ]
 }

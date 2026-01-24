@@ -171,7 +171,8 @@ fn extract_deadline_regex(html: &str, url: &str, lead: &mut Lead) {
                     let deadline_str = matched.as_str();
                     if lead.deadline.is_empty() || lead.deadline == "Check website" {
                         lead.deadline = deadline_str.to_string();
-                        add_evidence(lead, "deadline", deadline_str, Some(pattern.to_string()), url, format!("regex-{}", format_desc));
+                        let method = format!("regex-{}", format_desc);
+                        add_evidence(lead, "deadline", deadline_str, Some(pattern.to_string()), url, &method);
                         break;
                     }
                 }
@@ -211,7 +212,8 @@ fn extract_award_regex(html: &str, url: &str, lead: &mut Lead) {
                                 amount_str
                             );
                             lead.amount = formatted.clone();
-                            add_evidence(lead, "amount", &formatted, Some(pattern.to_string()), url, format!("regex-{}", currency));
+                            let method = format!("regex-{}", currency);
+                            add_evidence(lead, "amount", &formatted, Some(pattern.to_string()), url, &method);
                             return;
                         }
                     }

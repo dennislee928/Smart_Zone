@@ -75,6 +75,7 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
         Lead {
             name: "Commonwealth Scholarships (Taught Masters)".to_string(),
@@ -129,6 +130,7 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
         Lead {
             name: "GREAT Scholarships".to_string(),
@@ -176,6 +178,7 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
         Lead {
             name: "Marshall Scholarships".to_string(),
@@ -223,6 +226,7 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
     ]
 }

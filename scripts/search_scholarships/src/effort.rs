@@ -228,6 +228,7 @@ mod tests {
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         }
     }
     

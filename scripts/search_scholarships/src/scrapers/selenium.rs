@@ -160,6 +160,7 @@ fn parse_dynamic_html(html: &str, base_url: &str) -> Vec<Lead> {
                         persistence_status: None,
                         source_seed: None,
                         check_count: None,
+        extraction_evidence: vec![],
                     });
                 }
             }

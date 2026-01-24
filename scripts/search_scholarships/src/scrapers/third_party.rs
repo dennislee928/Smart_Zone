@@ -140,6 +140,7 @@ fn minimal_lead(name: &str, source: &str, url: &str) -> Lead {
         persistence_status: None,
         source_seed: None,
         check_count: None,
+        extraction_evidence: vec![],
     }
 }
 
@@ -388,6 +389,7 @@ fn parse_third_party_html(html: &str, base_url: &str) -> Vec<Lead> {
                             persistence_status: None,
                             source_seed: None,
                             check_count: None,
+        extraction_evidence: vec![],
                         });
                     }
                 }
@@ -530,6 +532,7 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
                 persistence_status: None,
                 source_seed: None,
                 check_count: None,
+        extraction_evidence: vec![],
             },
         ];
     }
@@ -584,6 +587,7 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
                 persistence_status: None,
                 source_seed: None,
                 check_count: None,
+        extraction_evidence: vec![],
             },
         ];
     }
@@ -638,6 +642,7 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
                 persistence_status: None,
                 source_seed: None,
                 check_count: None,
+        extraction_evidence: vec![],
             },
         ];
     }
@@ -697,6 +702,7 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
         Lead {
             name: "Rhodes Scholarship (Oxford)".to_string(),
@@ -745,6 +751,7 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
         Lead {
             name: "Clarendon Scholarship (Oxford)".to_string(),
@@ -792,6 +799,7 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
         Lead {
             name: "Wellcome Trust PhD Programmes".to_string(),
@@ -839,6 +847,7 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             persistence_status: None,
             source_seed: None,
             check_count: None,
+        extraction_evidence: vec![],
         },
     ]
 }

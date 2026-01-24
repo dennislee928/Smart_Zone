@@ -1,0 +1,107 @@
+name: ScholarshipOps - Incremental Search
+
+on:
+  schedule:
+    - cron: "10 13 * * *"   # Daily at 21:10 Asia/Taipei (UTC+8)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: scholarshipops-incremental
+  cancel-in-progress: false
+
+jobs:
+  incremental-search:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+      max-parallel: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Chrome and ChromeDriver
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+
+      - name: Start ChromeDriver
+        run: |
+          chromedriver --port=9515 &
+          sleep 3
+          echo "ChromeDriver started on port 9515"
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "scripts/search_scholarships -> target"
+
+      - name: Build Rust project
+        working-directory: scripts/search_scholarships
+        run: cargo build --release
+
+      - name: Run incremental search (shard ${{ matrix.shard }})
+        working-directory: scripts/search_scholarships
+        env:
+          TZ: Asia/Taipei
+          ROOT: ${{ github.workspace }}
+          SHARD_ID: ${{ matrix.shard }}
+          TOTAL_SHARDS: 20
+          MODE: incremental
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SOURCE_EXCLUDE_TYPES: "web3"
+          SOURCE_MAX_FAILURES: "3"
+          SOURCE_SKIP_DISABLED: "true"
+        run: ./target/release/search_scholarships
+      
+      - name: Upload search reports (shard ${{ matrix.shard }})
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: incremental-report-shard-${{ matrix.shard }}-${{ github.run_number }}
+          path: |
+            scripts/productions/**/*
+            scripts/search_scholarships/summary.txt
+          retention-days: 30
+
+      - name: Commit reports (shard ${{ matrix.shard }})
+        if: always()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          REPORT_DIR=$(find scripts/productions -type d -name "20*_*" | sort | tail -1)
+          HAS_CHANGES=false
+          
+          if [ -n "$REPORT_DIR" ] && [ -d "$REPORT_DIR" ]; then
+            git add "$REPORT_DIR" || true
+            HAS_CHANGES=true
+          fi
+          
+          if [ -f tracking/leads.json ] || [ -f tracking/source_health.json ]; then
+            git add tracking/leads.json tracking/source_health.json || true
+            if ! git diff --staged --quiet; then
+              HAS_CHANGES=true
+            fi
+          fi
+          
+          if [ "$HAS_CHANGES" = true ]; then
+            git fetch origin || true
+            BRANCH=$(git rev-parse --abbrev-ref HEAD)
+            git pull --rebase origin "$BRANCH" || git pull origin "$BRANCH" || true
+            
+            COMMIT_MSG="Incremental search (shard ${{ matrix.shard }}): $(basename $REPORT_DIR 2>/dev/null || echo 'updates')"
+            git commit -m "$COMMIT_MSG" || true
+            git push origin "$BRANCH" || true
+          fi
