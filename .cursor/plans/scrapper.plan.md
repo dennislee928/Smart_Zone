@@ -4,28 +4,28 @@ overview: ""
 todos:
   - id: m1-url-normalization
     content: Implement URL normalization + canonical URL resolution
-    status: pending
+    status: completed
   - id: m1-entity-dedupe
     content: Add entity-level dedupe key (provider+title+deadline+award+level)
-    status: pending
+    status: completed
   - id: m1-directory-detection
     content: "Move 'directory page' detection to pipeline pre-triage: directory pages ONLY emit outbound/detail links; detail pages eligible for extraction + scoring"
-    status: pending
+    status: completed
   - id: m1-report-generator
     content: Update report generator to only print unique entities + include dup_count
-    status: pending
+    status: completed
   - id: m2-discovery-strategy
     content: "Per-source discovery strategy: robots.txt -> sitemap URLs, sitemap index traversal (with size limits), RSS/Atom feeds if present, site internal search endpoints (keyword templates)"
-    status: pending
+    status: completed
   - id: m2-candidate-url-queue
     content: "Build a unified CandidateUrl queue: url, source_id, discovered_from, confidence, discovered_at"
-    status: pending
+    status: completed
   - id: m2-allowlist-path-regex
     content: Add allowlist path regex per source (e.g., /scholarship|/funding|/bursary)
-    status: pending
+    status: completed
   - id: m2-content-type-gates
     content: Add content-type gates (skip large binaries; handle PDFs explicitly)
-    status: pending
+    status: completed
   - id: m3-url-state-storage
     content: "Add url_state storage (SQLite preferred): etag, last_modified, content_hash, last_seen, status"
     status: pending
