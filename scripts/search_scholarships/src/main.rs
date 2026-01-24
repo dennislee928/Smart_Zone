@@ -208,9 +208,12 @@ async fn main() -> Result<()> {
         
         // Check if source has fallback strategies
         let mut fallback_leads: Vec<Lead> = Vec::new();
+        let mut use_fallback = false;
+        
         if let Some(health) = health_file.sources.iter().find(|h| h.url == source.url) {
             if !health.fallback_strategies.is_empty() {
                 println!("    Source has fallback strategies: {:?}", health.fallback_strategies);
+                use_fallback = true;
                 
                 let base_url = if let Some(pos) = source.url.find("://") {
                     let rest = &source.url[pos + 3..];
@@ -241,9 +244,62 @@ async fn main() -> Result<()> {
                             for sitemap_url in common_sitemaps {
                                 if let Ok(sitemap_candidates) = discovery::parse_sitemap(&discovery_client, &sitemap_url, &discovery_config).await {
                                     println!("        Found {} URLs from sitemap", sitemap_candidates.len());
-                                    // Process sitemap URLs as discovered sources
-                                    // For now, we'll add them to a list to scrape later
-                                    // In a full implementation, we'd scrape these URLs directly
+                                    
+                                    // Filter and create leads from sitemap URLs
+                                    for candidate in sitemap_candidates {
+                                        let url_lower = candidate.url.to_lowercase();
+                                        if url_lower.contains("scholarship") || 
+                                           url_lower.contains("funding") || 
+                                           url_lower.contains("bursary") || 
+                                           url_lower.contains("award") {
+                                            // Create discovery lead
+                                            fallback_leads.push(Lead {
+                                                name: format!("Discovered from sitemap: {}", candidate.url),
+                                                amount: String::new(),
+                                                deadline: String::new(),
+                                                source: source.url.clone(),
+                                                source_type: source.source_type.clone(),
+                                                status: "discovered".to_string(),
+                                                eligibility: vec![],
+                                                notes: format!("Discovered via sitemap fallback from {}", source.name),
+                                                added_date: chrono::Utc::now().format("%Y-%m-%d").to_string(),
+                                                url: candidate.url.clone(),
+                                                match_score: 0,
+                                                match_reasons: vec![],
+                                                hard_fail_reasons: vec![],
+                                                soft_flags: vec![],
+                                                bucket: None,
+                                                http_status: None,
+                                                effort_score: None,
+                                                trust_tier: Some("B".to_string()),
+                                                risk_flags: vec!["sitemap_fallback".to_string()],
+                                                matched_rule_ids: vec![],
+                                                eligible_countries: vec![],
+                                                is_taiwan_eligible: None,
+                                                taiwan_eligibility_confidence: None,
+                                                deadline_date: None,
+                                                deadline_label: None,
+                                                intake_year: None,
+                                                study_start: None,
+                                                deadline_confidence: None,
+                                                canonical_url: None,
+                                                is_directory_page: false,
+                                                official_source_url: Some(candidate.url.clone()),
+                                                source_domain: None,
+                                                confidence: Some(0.7),
+                                                eligibility_confidence: None,
+                                                tags: vec!["sitemap_discovery".to_string(), "needs_scraping".to_string()],
+                                                is_index_only: true,
+                                                first_seen_at: Some(chrono::Utc::now().to_rfc3339()),
+                                                last_checked_at: Some(chrono::Utc::now().to_rfc3339()),
+                                                next_check_at: None,
+                                                persistence_status: Some("new".to_string()),
+                                                source_seed: Some(source.url.clone()),
+                                                check_count: Some(0),
+                                                extraction_evidence: vec![],
+                                            });
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -251,8 +307,8 @@ async fn main() -> Result<()> {
                             println!("      Trying RSS fallback...");
                             if let Ok(feed_urls) = discovery::discover_feeds_public(&discovery_client, &base_url).await {
                                 println!("        Found {} RSS feeds", feed_urls.len());
-                                // Process RSS feeds
-                                // In a full implementation, we'd parse RSS feeds and extract scholarship URLs
+                                // RSS feed parsing would be implemented here
+                                // For now, we'll rely on sitemap fallback
                             }
                         }
                         "head_request" => {
@@ -260,11 +316,16 @@ async fn main() -> Result<()> {
                             // Try HEAD request first, then GET if successful
                             if let Ok(resp) = discovery_client.head(&source.url).send().await {
                                 if resp.status().is_success() {
-                                    // HEAD succeeded, try GET
-                                    if let Ok(get_resp) = discovery_client.get(&source.url).send().await {
+                                    // HEAD succeeded, try GET with longer timeout
+                                    let get_client = reqwest::Client::builder()
+                                        .timeout(std::time::Duration::from_secs(30))
+                                        .build()
+                                        .context("Failed to create HTTP client for HEAD->GET")?;
+                                    
+                                    if let Ok(get_resp) = get_client.get(&source.url).send().await {
                                         if get_resp.status().is_success() {
-                                            // Try scraping with longer timeout
-                                            println!("        HEAD->GET succeeded, retrying scrape...");
+                                            println!("        HEAD->GET succeeded, will retry scrape...");
+                                            // The normal scrape will proceed below
                                         }
                                     }
                                 }
@@ -274,6 +335,12 @@ async fn main() -> Result<()> {
                     }
                 }
             }
+        }
+        
+        // If we have fallback leads, add them to all_leads before normal scraping
+        if !fallback_leads.is_empty() {
+            println!("    Adding {} leads from fallback strategies", fallback_leads.len());
+            // These will be processed in the normal lead processing loop below
         }
         
         match scrapers::scrape_source(source).await {
