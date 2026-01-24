@@ -28,6 +28,7 @@ cp .env.example .env
 ```
 
 編輯 `.env` 檔案，填入：
+
 - `CLOUDFLARE_ACCOUNT_ID` - 您的 Cloudflare 帳號 ID
 - `CLOUDFLARE_API_TOKEN` - API Token
 - `D1_DATABASE_ID` - D1 資料庫 ID（執行 `wrangler d1 create scholarshipops-db` 取得）
@@ -161,19 +162,20 @@ container/
 ## 注意事項
 
 1. **D1 資料庫限制**：
+
    - 不支援 SQL `BEGIN TRANSACTION`，需使用 `db.batch()`（Drizzle）
    - 使用 `integer` 搭配 `mode: 'timestamp'` 儲存日期
    - 避免超過 100 個參數的查詢
-
 2. **Workers 執行時間限制**：
+
    - 免費版：10 秒 CPU 時間
    - 付費版：30 秒 CPU 時間
    - 長時間腳本應使用 Cloudflare Queues
-
 3. **Export 語法**：
-   - **必須**使用 `export default app`，**不要**使用 `{ fetch: app.fetch }`
 
+   - **必須**使用 `export default app`，**不要**使用 `{ fetch: app.fetch }`
 4. **Wrangler 配置**：
+
    - 使用 `wrangler.jsonc` 而非 `wrangler.toml`
    - 設定 `run_worker_first: ["/api/*"]` 防止 SPA fallback 攔截 API 路由
 
@@ -187,6 +189,7 @@ container/
 - `hono-routing` - Hono 路由與驗證
 
 調用方式：
+
 ```bash
 npx openskills read cloudflare-worker-base,cloudflare-d1,drizzle-orm-d1,hono-routing
 ```

@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    可重用的 API 請求關鍵字庫
 Library           RequestsLibrary
-Variables         ${EXECDIR}/variables/config.robot
+Variables         ${EXECDIR}/variables/config.py
 
 *** Keywords ***
 GET Request
