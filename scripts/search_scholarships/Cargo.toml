@@ -22,3 +22,4 @@ futures = "0.3"
 rustls = "0.21"
 rusqlite = { version = "0.30", features = ["bundled", "chrono"] }
 sha2 = "0.10"
+url = "2.5"

@@ -1502,6 +1502,7 @@ dependencies = [
  "sha2",
  "thirtyfour",
  "tokio",
+ "url",
 ]
 
 [[package]]

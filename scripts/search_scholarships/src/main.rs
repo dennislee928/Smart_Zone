@@ -17,10 +17,13 @@ mod normalize;
 mod discovery;
 mod url_state;
 mod extraction_fallbacks;
+mod js_detector;
+mod browser_queue;
+mod api_discovery;
 
 pub use types::*;
 
-use anyhow::Result;
+use anyhow::{Result, Context};
 use std::fs;
 use std::path::PathBuf;
 use std::collections::HashSet;
@@ -266,6 +269,59 @@ async fn main() -> Result<()> {
     let dedup_stats_for_report = dedup_stats;
     
     // ==========================================
+    // Stage 1.55: JS-Heavy Detection & Browser Queue
+    // ==========================================
+    println!("Stage 1.55: Detecting JS-heavy pages and queuing for browser extraction...");
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(10))
+        .build()
+        .context("Failed to create HTTP client")?;
+    
+    let mut browser_queue_count = 0;
+    let mut browser_detection_reasons: std::collections::HashMap<String, u32> = std::collections::HashMap::new();
+    
+    for lead in &mut all_leads {
+        // Skip if already marked for browser or if URL is invalid
+        if lead.tags.contains(&"pending_browser".to_string()) || lead.url.is_empty() {
+            continue;
+        }
+        
+        // Fetch HTML for JS-heavy detection
+        let html_content = match client.get(&lead.url).send().await {
+            Ok(resp) => {
+                if resp.status().is_success() {
+                    resp.text().await.unwrap_or_default()
+                } else {
+                    continue; // Skip if HTTP request failed
+                }
+            }
+            Err(_) => continue, // Skip on error
+        };
+        
+        // Check if page needs browser rendering
+        let detection = js_detector::needs_browser(&html_content, &lead.url, Some(lead));
+        
+        if detection.needs_browser {
+            // Write to browser queue
+            if let Err(e) = browser_queue::write_to_browser_queue(&root, lead, &detection) {
+                eprintln!("  Warning: Failed to write {} to browser queue: {}", lead.url, e);
+            } else {
+                lead.tags.push("pending_browser".to_string());
+                browser_queue_count += 1;
+                
+                let reason_str = format!("{:?}", detection.reason);
+                *browser_detection_reasons.entry(reason_str).or_insert(0) += 1;
+            }
+        }
+    }
+    
+    println!("  Queued {} URLs for browser extraction", browser_queue_count);
+    for (reason, count) in &browser_detection_reasons {
+        println!("    {}: {}", reason, count);
+    }
+    println!();
+    
+    // ==========================================
     // Stage 1.6: Link Validation
     // ==========================================
     println!("Stage 1.6: Validating scholarship links...");
@@ -273,6 +329,47 @@ async fn main() -> Result<()> {
     println!("  Found {} leads with invalid links (pointing to homepages)", invalid_links);
     println!();
 
+    // ==========================================
+    // Stage 1.62: Merge Browser Results
+    // ==========================================
+    println!("Stage 1.62: Merging browser extraction results...");
+    match browser_queue::read_browser_results(&root) {
+        Ok(browser_results) => {
+            let mut merged_count = 0;
+            let mut new_from_browser = 0;
+            
+            for result in browser_results {
+                let before_count = all_leads.len();
+                browser_queue::merge_browser_result(&mut all_leads, result);
+                
+                if all_leads.len() > before_count {
+                    new_from_browser += all_leads.len() - before_count;
+                } else {
+                    merged_count += 1;
+                }
+            }
+            
+            println!("  Merged {} browser results ({} updated, {} new)", 
+                merged_count + new_from_browser, merged_count, new_from_browser);
+            
+            // Register detected API endpoints
+            for result in browser_queue::read_browser_results(&root)? {
+                for api_endpoint in &result.detected_api_endpoints {
+                    // Extract domain from URL using simple string parsing
+                    if let Some(domain) = filter::extract_domain_from_url(&api_endpoint.url) {
+                        if let Err(e) = api_discovery::register_api_endpoint(&root, &domain, &api_endpoint.url) {
+                            eprintln!("  Warning: Failed to register API endpoint {}: {}", api_endpoint.url, e);
+                        }
+                    }
+                }
+            }
+        }
+        Err(e) => {
+            println!("  No browser results found or error reading: {}", e);
+        }
+    }
+    println!();
+    
     // ==========================================
     // Stage 1.65: Enrich index-only leads (two-hop to official)
     // ==========================================
