@@ -2,20 +2,23 @@
 name: ScholarshipOps Backend API and React UI
 overview: 建立 Cloudflare Workers + Hono 後端 API（使用 D1 資料庫）和 React UI，整合現有的 Rust 爬蟲與 Go 應用程式，並提供 Docker 容器化部署方案。
 todos:
+  - id: skills-backend
+    content: 調用後端相關 Agent Skills：npx openskills read cloudflare-worker-base,cloudflare-d1,drizzle-orm-d1,hono-routing
+    status: pending
   - id: backend-setup
-    content: 建立 container/ 目錄結構，初始化 Cloudflare Workers + Hono 專案，設定 package.json、tsconfig.json、wrangler.toml
+    content: 建立 container/ 目錄結構，初始化 Cloudflare Workers + Hono 專案（參考 cloudflare-worker-base skill），設定 package.json、tsconfig.json、wrangler.jsonc
     status: pending
   - id: d1-schema
-    content: 設計並實作 D1 資料庫 schema（leads, applications, criteria, sources, source_health 表），建立 migrations/0001_init.sql
+    content: 設計並實作 D1 資料庫 schema（參考 drizzle-orm-d1 或 cloudflare-d1 skill），建立 schema.ts 或 migrations/0001_init.sql
     status: pending
   - id: api-routes
-    content: 實作 Hono API 路由：leads, applications, criteria, stats, triggers 端點，加入 CORS middleware
+    content: 實作 Hono API 路由（參考 hono-routing skill）：leads, applications, criteria, stats, triggers 端點，加入 CORS middleware 和 Zod 驗證
     status: pending
   - id: db-layer
-    content: 實作 D1 資料庫操作層（db/leads.ts, db/applications.ts, db/criteria.ts），提供 CRUD 函數
+    content: 實作 D1 資料庫操作層（參考 drizzle-orm-d1 或 cloudflare-d1 skill）：db/leads.ts, db/applications.ts, db/criteria.ts，提供 CRUD 函數
     status: pending
   - id: script-triggers
-    content: 實作腳本觸發器（scripts/rust-scraper.ts, go-scheduler.ts, go-tracker.ts），整合 Rust/Go 二進位檔
+    content: 實作腳本觸發器（可選用 cloudflare-queues skill）：scripts/rust-scraper.ts, go-scheduler.ts, go-tracker.ts，整合 Rust/Go 二進位檔
     status: pending
   - id: dockerfile
     content: 建立多階段 Dockerfile，建置 Rust/Go 專案，設定 Node.js runtime，安裝 wrangler，暴露端口 8787
@@ -23,26 +26,35 @@ todos:
   - id: env-example
     content: 建立 container/.env.example，包含 Cloudflare 帳號、D1 資料庫、CORS 等環境變數
     status: pending
+  - id: skills-frontend
+    content: 調用前端相關 Agent Skills：npx openskills read tanstack-query,tailwind-v4-shadcn
+    status: pending
   - id: react-setup
-    content: 初始化 web-UI/ React + Vite + TypeScript 專案，設定 Tailwind CSS（可選）
+    content: 初始化 web-UI/ React + Vite + TypeScript 專案（參考 tailwind-v4-shadcn skill），設定 Tailwind CSS v4 和 shadcn/ui（可選）
     status: pending
   - id: api-client
-    content: 建立 React API 客戶端（api/client.ts, leads.ts, applications.ts, criteria.ts, stats.ts, triggers.ts）
+    content: 建立 React API 客戶端（參考 tanstack-query skill）：api/client.ts, leads.ts, applications.ts, criteria.ts, stats.ts, triggers.ts，使用 TanStack Query hooks
     status: pending
   - id: typescript-types
     content: 定義 TypeScript 型別（types/lead.ts, application.ts, criteria.ts, stats.ts），對應後端資料結構
     status: pending
   - id: ui-components
-    content: 建立主要 UI 元件：Dashboard, LeadsList, LeadCard, ApplicationsList, ApplicationForm, CriteriaEditor
+    content: 建立主要 UI 元件：Dashboard, LeadsList, LeadCard, ApplicationsList, ApplicationForm, CriteriaEditor（可選用 shadcn/ui 元件）
     status: pending
   - id: routing
     content: 設定 React Router，建立主要路由：/, /leads, /applications, /criteria
     status: pending
+  - id: state-management
+    content: 實作狀態管理（參考 tanstack-query 和 zustand-state-management skills）：TanStack Query 用於 API 資料，Zustand 用於 UI 狀態（可選）
+    status: pending
   - id: data-migration
     content: 建立資料遷移腳本（scripts/migrate-data.ts），從 JSON/YAML 檔案匯入資料到 D1
     status: pending
+  - id: skills-testing
+    content: 調用測試相關 Agent Skills：npx openskills read test-driven-development,verification-before-completion
+    status: pending
   - id: testing
-    content: 測試 API 端點、React UI 功能、Docker 容器執行
+    content: 測試 API 端點、React UI 功能、Docker 容器執行（參考 verification-before-completion skill 進行驗證）
     status: pending
 isProject: false
 ---
@@ -367,16 +379,19 @@ app.post('/api/leads', zValidator('json', leadSchema), async (c) => {
 **執行方式選擇**：
 
 **選項 A：直接執行（適合短時間腳本）**
+
 - 在 Worker 中直接執行子進程（使用 `Deno.Command` 或類似 API）
 - **限制**：Workers 有執行時間限制（免費版 10 秒，付費版 30 秒）
 
 **選項 B：使用 Cloudflare Queues（推薦，適合長時間腳本）**
+
 - 參考 `cloudflare-queues` skill
 - 將腳本執行任務放入 Queue
 - Queue consumer 執行腳本並更新資料庫
 - **優點**：避免 Workers 超時，支援重試機制
 
 **實作範例（直接執行）**：
+
 ```typescript
 // container/src/scripts/rust-scraper.ts
 export async function runRustScraper(env: Env): Promise<void> {
@@ -393,6 +408,7 @@ export async function runRustScraper(env: Env): Promise<void> {
 ```
 
 **實作範例（使用 Queue）**：
+
 ```typescript
 // 參考 cloudflare-queues skill
 // 將任務放入 Queue，由 consumer 處理
@@ -427,6 +443,7 @@ export async function runRustScraper(env: Env): Promise<void> {
 **使用的 Agent Skills**: `tanstack-query`, `tailwind-v4-shadcn`（可選）, `zustand-state-management`（可選）
 
 **開始前調用**:
+
 ```bash
 npx openskills read tanstack-query,tailwind-v4-shadcn
 ```
@@ -459,6 +476,7 @@ npx openskills read tanstack-query,tailwind-v4-shadcn
 - `triggers.ts` - 腳本觸發 API 函數
 
 **TanStack Query 設定**（參考 `tanstack-query` skill）：
+
 ```typescript
 // web-UI/src/main.tsx
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -525,11 +543,49 @@ const mutation = useMutation({
 - `/applications/:id` - 申請詳情
 - `/criteria` - 搜尋條件設定
 
-#### 2.6 實作狀態管理（可選）
+#### 2.6 實作狀態管理
 
-- 使用 React Context 或 Zustand 管理全域狀態
-- 快取 API 回應
-- 實作樂觀更新
+**使用 Skills**: `tanstack-query`, `zustand-state-management`
+
+**TanStack Query 已提供**：
+
+- API 回應快取（自動處理）
+- 樂觀更新（使用 `onMutate` 和 `onError`）
+- 自動重新獲取（stale-while-revalidate 策略）
+
+**Zustand 用於**（參考 `zustand-state-management` skill）：
+
+- UI 狀態（側邊欄開關、主題設定等）
+- 使用者偏好設定
+- 非 API 相關的全域狀態
+
+**樂觀更新範例**（參考 `tanstack-query` skill）：
+
+```typescript
+const mutation = useMutation({
+  mutationFn: updateLead,
+  onMutate: async (newLead) => {
+    // 取消進行中的查詢
+    await queryClient.cancelQueries({ queryKey: ['leads'] })
+    
+    // 快照目前資料
+    const previousLeads = queryClient.getQueryData(['leads'])
+    
+    // 樂觀更新
+    queryClient.setQueryData(['leads'], (old) => [...old, newLead])
+    
+    return { previousLeads }
+  },
+  onError: (err, newLead, context) => {
+    // 發生錯誤時回復
+    queryClient.setQueryData(['leads'], context.previousLeads)
+  },
+  onSettled: () => {
+    // 重新獲取確保資料一致
+    queryClient.invalidateQueries({ queryKey: ['leads'] })
+  },
+})
+```
 
 #### 2.7 建立環境設定
 
@@ -538,6 +594,14 @@ const mutation = useMutation({
 - `VITE_API_URL` - 後端 API URL（預設 `http://localhost:8787`）
 
 ### Phase 3: 整合與測試
+
+**使用的 Agent Skills**: `test-driven-development`, `verification-before-completion`
+
+**開始前調用**:
+
+```bash
+npx openskills read test-driven-development,verification-before-completion
+```
 
 #### 3.1 資料遷移腳本
 
@@ -549,21 +613,47 @@ const mutation = useMutation({
 
 #### 3.2 測試 API 端點
 
+**使用 Skill**: `verification-before-completion`
+
 - 使用 curl 或 Postman 測試所有端點
-- 驗證 CORS 設定
+- 驗證 CORS 設定（確認 React UI 可以存取）
 - 測試腳本觸發功能
+- **驗證清單**（參考 `verification-before-completion` skill）：
+  - [ ] 所有 GET 端點回傳正確資料
+  - [ ] POST/PUT 端點正確建立/更新資料
+  - [ ] DELETE 端點正確刪除資料
+  - [ ] 錯誤處理正確（404, 400, 500 等）
+  - [ ] CORS headers 正確設定
 
 #### 3.3 測試 React UI
+
+**使用 Skill**: `verification-before-completion`
 
 - 驗證所有頁面正常載入
 - 測試 CRUD 操作
 - 測試腳本觸發按鈕
+- 測試 TanStack Query 快取和重新獲取
+- **驗證清單**：
+  - [ ] 所有路由正常運作
+  - [ ] 表單驗證正確
+  - [ ] 錯誤訊息正確顯示
+  - [ ] 載入狀態正確顯示
+  - [ ] 樂觀更新正常運作
 
 #### 3.4 Docker 整合測試
+
+**使用 Skill**: `verification-before-completion`
 
 - 建置 Docker 映像
 - 執行容器並測試 API
 - 驗證 Rust/Go 腳本可在容器內執行
+- **驗證清單**：
+  - [ ] Docker 映像成功建置
+  - [ ] 容器正常啟動
+  - [ ] API 端點在容器內可存取
+  - [ ] Rust 爬蟲可在容器內執行
+  - [ ] Go 腳本可在容器內執行
+  - [ ] 環境變數正確載入
 
 ## 檔案結構
 
@@ -616,18 +706,28 @@ Smart_Zone/
 ### 後端
 
 - **Runtime**: Cloudflare Workers
-- **Framework**: Hono
+- **Framework**: Hono 4.11.3+（參考 `hono-routing` skill）
 - **Database**: Cloudflare D1 (SQLite)
+  - **ORM**: Drizzle ORM（推薦，參考 `drizzle-orm-d1` skill）
+  - **Migration**: Drizzle Kit 或 Wrangler migrations（參考 `cloudflare-d1` skill）
 - **Language**: TypeScript
-- **Deployment**: Docker + Wrangler
+- **Build Tool**: Vite 7.3.1+（參考 `cloudflare-worker-base` skill）
+- **Deployment**: Docker + Wrangler 4.54.0+
+- **非同步任務**（可選）: Cloudflare Queues（參考 `cloudflare-queues` skill）
 
 ### 前端
 
 - **Framework**: React 18+
 - **Build Tool**: Vite
 - **Language**: TypeScript
-- **HTTP Client**: Fetch API 或 Axios
+- **資料獲取**: TanStack Query 5+（參考 `tanstack-query` skill）
+- **HTTP Client**: Fetch API（TanStack Query 內建）或 Axios
 - **Routing**: React Router
+- **狀態管理**: 
+  - TanStack Query（API 資料）
+  - Zustand（可選，UI 狀態，參考 `zustand-state-management` skill）
+- **樣式**: Tailwind CSS v4+（可選，參考 `tailwind-v4-shadcn` skill）
+- **UI 元件庫**: shadcn/ui（可選，參考 `tailwind-v4-shadcn` skill）
 
 ### 腳本整合
 
@@ -636,12 +736,51 @@ Smart_Zone/
 
 ## 注意事項
 
-1. **D1 資料庫限制**：D1 是 SQLite，不支援某些進階 SQL 功能，需注意查詢語法
-2. **Workers 執行時間限制**：腳本觸發可能需要非同步處理或使用 Queue
-3. **CORS 設定**：確保後端正確設定 CORS 允許 React UI 存取
-4. **環境變數**：所有敏感資訊應透過環境變數管理
-5. **資料遷移**：首次部署需執行資料遷移腳本
-6. **Docker 建置**：Rust 和 Go 建置可能較慢，考慮使用建置快取
+1. **D1 資料庫限制**（參考 `cloudflare-d1` skill）：
+
+   - D1 是 SQLite，不支援某些進階 SQL 功能
+   - 不支援 SQL `BEGIN TRANSACTION`，需使用 `db.batch()`（Drizzle）或 `env.DB.batch()`（原生）
+   - 使用 `integer` 搭配 `mode: 'timestamp'` 儲存日期
+   - 避免超過 100 個參數的查詢
+
+2. **Workers 執行時間限制**（參考 `cloudflare-queues` skill）：
+
+   - 免費版：10 秒 CPU 時間
+   - 付費版：30 秒 CPU 時間
+   - 長時間腳本應使用 Cloudflare Queues 進行非同步處理
+
+3. **CORS 設定**（參考 `hono-routing` skill）：
+
+   - 確保後端正確設定 CORS 允許 React UI 存取
+   - 使用 `hono/cors` middleware
+   - 設定正確的 `origin`、`allowMethods`、`allowHeaders`
+
+4. **環境變數**：
+
+   - 所有敏感資訊應透過環境變數管理
+   - 使用 `wrangler secret put` 設定生產環境 secrets
+   - 本地開發使用 `.env` 檔案（不要 commit）
+
+5. **資料遷移**（參考 `cloudflare-d1` skill）：
+
+   - 首次部署需執行資料遷移腳本
+   - 先使用 `--local` 測試，再使用 `--remote` 部署
+   - 使用 Drizzle 時，先 `generate` 再 `apply`
+
+6. **Docker 建置**：
+
+   - Rust 和 Go 建置可能較慢，考慮使用建置快取
+   - 使用多階段建置減少最終映像大小
+
+7. **Export 語法**（參考 `cloudflare-worker-base` skill）：
+
+   - **必須**使用 `export default app`，**不要**使用 `{ fetch: app.fetch }`
+   - 避免 "Cannot read properties of undefined" 錯誤
+
+8. **Wrangler 配置**（參考 `cloudflare-worker-base` skill）：
+
+   - 使用 `wrangler.jsonc` 而非 `wrangler.toml`
+   - 設定 `run_worker_first: ["/api/*"]` 防止 SPA fallback 攔截 API 路由
 
 ## 後續優化
 
