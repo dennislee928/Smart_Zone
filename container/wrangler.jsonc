@@ -1,0 +1,31 @@
+{
+	"name": "scholarshipops-api",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-11-11",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "scholarshipops-db",
+			"database_id": "928a9935-35fc-4895-887b-f828ea078c91",
+			"preview_database_id": "local-db",
+			"migrations_dir": "./migrations"
+		},
+		{
+			"binding": "scholarshipops_db",
+			"database_name": "scholarshipops-db",
+			"database_id": "928a9935-35fc-4895-887b-f828ea078c91",
+			"remote": true
+		}
+	],
+	"assets": {
+		"directory": "./public/",
+		"binding": "ASSETS",
+		"not_found_handling": "single-page-application",
+		"run_worker_first": [
+			"/api/*"
+		]
+	}
+}

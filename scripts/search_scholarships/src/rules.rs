@@ -401,7 +401,9 @@ fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &st
     has_any_condition && all_passed
 }
 
-/// Parse deadline string to NaiveDate
+/// Parse deadline string to NaiveDate with validation
+/// Parse deadline string with validation
+/// Rejects invalid dates like "68-58-58" by validating year (2020-2100), month (1-12), and day validity
 fn parse_deadline(deadline: &str) -> Option<NaiveDate> {
     let formats = [
         "%Y-%m-%d",
@@ -414,17 +416,56 @@ fn parse_deadline(deadline: &str) -> Option<NaiveDate> {
     
     for fmt in &formats {
         if let Ok(date) = NaiveDate::parse_from_str(deadline, fmt) {
-            return Some(date);
+            // Validate date: check year, month, and day validity using format
+            let formatted = date.format("%Y-%m-%d").to_string();
+            let parts: Vec<&str> = formatted.split('-').collect();
+            if parts.len() == 3 {
+                if let (Ok(year), Ok(month), Ok(day)) = (
+                    parts[0].parse::<i32>(),
+                    parts[1].parse::<u32>(),
+                    parts[2].parse::<u32>(),
+                ) {
+                    // Validate year range (2020-2100)
+                    if year < 2020 || year > 2100 {
+                        continue; // Try next format
+                    }
+                    
+                    // Validate month range (1-12)
+                    if month < 1 || month > 12 {
+                        continue; // Try next format
+                    }
+                    
+                    // Validate day - from_ymd_opt would have failed if invalid, but double-check
+                    if NaiveDate::from_ymd_opt(year, month, day).is_some() {
+                        return Some(date);
+                    }
+                }
+            }
         }
     }
     
-    // Try to extract year-month-day from string
-    if let Ok(re) = Regex::new(r"(\d{4})-(\d{2})-(\d{2})") {
+    // Try to extract year-month-day from string using regex
+    // This handles cases like "68-58-58" which should be rejected
+    if let Ok(re) = Regex::new(r"(\d{1,4})-(\d{1,2})-(\d{1,2})") {
         if let Some(caps) = re.captures(deadline) {
             let year: i32 = caps[1].parse().ok()?;
             let month: u32 = caps[2].parse().ok()?;
             let day: u32 = caps[3].parse().ok()?;
-            return NaiveDate::from_ymd_opt(year, month, day);
+            
+            // Validate year range (2020-2100)
+            if year < 2020 || year > 2100 {
+                return None;
+            }
+            
+            // Validate month range (1-12)
+            if month < 1 || month > 12 {
+                return None;
+            }
+            
+            // Validate day - from_ymd_opt will return None for invalid dates (e.g., Feb 30)
+            if let Some(date) = NaiveDate::from_ymd_opt(year, month, day) {
+                return Some(date);
+            }
         }
     }
     

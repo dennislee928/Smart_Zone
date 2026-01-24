@@ -1,0 +1,39 @@
+{
+  "name": "scholarshipops-api",
+  "version": "0.1.0",
+  "description": "ScholarshipOps Backend API - Cloudflare Workers + Hono + D1",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply scholarshipops-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply scholarshipops-db --remote",
+    "db:studio": "drizzle-kit studio",
+    "db:check-auth": "wrangler whoami",
+    "test:setup": "cd test && python3 -m venv venv && venv/bin/pip install -r requirements.txt",
+    "test": "cd test && (test -f venv/bin/robot && venv/bin/robot --outputdir output suites/ || robot --outputdir output suites/)",
+    "test:health": "cd test && (test -f venv/bin/robot && venv/bin/robot --outputdir output suites/health_check.robot || robot --outputdir output suites/health_check.robot)",
+    "test:leads": "cd test && (test -f venv/bin/robot && venv/bin/robot --outputdir output suites/leads.robot || robot --outputdir output suites/leads.robot)",
+    "test:applications": "cd test && (test -f venv/bin/robot && venv/bin/robot --outputdir output suites/applications.robot || robot --outputdir output suites/applications.robot)",
+    "test:criteria": "cd test && (test -f venv/bin/robot && venv/bin/robot --outputdir output suites/criteria.robot || robot --outputdir output suites/criteria.robot)",
+    "test:stats": "cd test && (test -f venv/bin/robot && venv/bin/robot --outputdir output suites/stats.robot || robot --outputdir output suites/stats.robot)",
+    "test:triggers": "cd test && (test -f venv/bin/robot && venv/bin/robot --outputdir output suites/triggers.robot || robot --outputdir output suites/triggers.robot)",
+    "test:report": "cd test && (test -f venv/bin/robot && venv/bin/robot --outputdir output --report report.html --log log.html suites/ || robot --outputdir output --report report.html --log log.html suites/)"
+  },
+  "dependencies": {
+    "hono": "^4.11.3",
+    "drizzle-orm": "^0.45.1",
+    "zod": "^4.3.5",
+    "@hono/zod-validator": "^0.7.6"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260109.0",
+    "@cloudflare/vite-plugin": "^1.17.1",
+    "vite": "^7.3.1",
+    "wrangler": "^4.54.0",
+    "drizzle-kit": "^0.31.8",
+    "typescript": "^5.7.2"
+  }
+}

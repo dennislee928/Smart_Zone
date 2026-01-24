@@ -460,6 +460,10 @@ pub struct Source {
     pub scraper: String,
     #[serde(default)]
     pub priority: Option<u8>,  // 1 = highest priority (Glasgow), None = default
+    #[serde(default)]
+    pub discovery_mode: Option<String>,  // "external_links_only", "full", None
+    #[serde(default)]
+    pub allow_domains_outbound: Option<Vec<String>>,  // Whitelist of external domains to crawl
 }
 
 // ============================================
@@ -486,6 +490,8 @@ pub struct SourceHealth {
     pub last_checked: String,
     pub auto_disabled: bool,
     pub disabled_reason: Option<String>,
+    #[serde(default)]
+    pub fallback_strategies: Vec<String>, // "sitemap", "rss", "head_request"
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
@@ -534,6 +540,7 @@ impl Default for SourceHealth {
             last_checked: String::new(),
             auto_disabled: false,
             disabled_reason: None,
+            fallback_strategies: vec![],
         }
     }
 }

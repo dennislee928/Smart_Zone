@@ -93,6 +93,77 @@ async fn main() -> Result<()> {
     println!();
     
     // ==========================================
+    // Stage 0.5: Discovery (sitemap/RSS)
+    // ==========================================
+    println!("Stage 0.5: Discovering URLs from sitemaps/RSS...");
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(10))
+        .build()
+        .context("Failed to create HTTP client for discovery")?;
+    
+    let mut discovered_urls: Vec<discovery::CandidateUrl> = Vec::new();
+    let discovery_config = discovery::DiscoveryConfig::default();
+    
+    for source in &enabled_sources {
+        // Try discovery from robots.txt -> sitemap
+        if let Ok(candidates) = discovery::discover_urls(&client, source, &discovery_config).await {
+            for candidate in candidates {
+                // Filter by keywords
+                let url_lower = candidate.url.to_lowercase();
+                if url_lower.contains("scholarship") || 
+                   url_lower.contains("funding") || 
+                   url_lower.contains("bursary") || 
+                   url_lower.contains("award") ||
+                   url_lower.contains("grant") {
+                    discovered_urls.push(candidate);
+                }
+            }
+        }
+        
+        // Try parsing sitemap directly
+        let base_url = if let Some(pos) = source.url.find("://") {
+            let rest = &source.url[pos + 3..];
+            if let Some(path_pos) = rest.find('/') {
+                format!("{}://{}", &source.url[..pos + 3], &rest[..path_pos])
+            } else {
+                source.url.clone()
+            }
+        } else {
+            source.url.clone()
+        };
+        
+        let common_sitemaps = vec![
+            format!("{}/sitemap.xml", base_url),
+            format!("{}/sitemap_index.xml", base_url),
+        ];
+        
+        for sitemap_url in common_sitemaps {
+            if let Ok(sitemap_candidates) = discovery::parse_sitemap(&client, &sitemap_url, &discovery_config).await {
+                for candidate in sitemap_candidates {
+                    // Filter by keywords
+                    let url_lower = candidate.url.to_lowercase();
+                    if url_lower.contains("scholarship") || 
+                       url_lower.contains("funding") || 
+                       url_lower.contains("bursary") || 
+                       url_lower.contains("award") ||
+                       url_lower.contains("grant") {
+                        discovered_urls.push(candidate);
+                    }
+                }
+            }
+        }
+    }
+    
+    println!("  Discovered {} candidate URLs from sitemaps/RSS", discovered_urls.len());
+    if !discovered_urls.is_empty() {
+        println!("  Sample discovered URLs:");
+        for (idx, candidate) in discovered_urls.iter().take(5).enumerate() {
+            println!("    {}. {} ({:?})", idx + 1, candidate.url, candidate.discovered_from);
+        }
+    }
+    println!();
+    
+    // ==========================================
     // Stage 1: Scrape Sources (with health tracking)
     // ==========================================
     let mut skipped_sources: Vec<(String, String)> = Vec::new();
@@ -135,6 +206,135 @@ async fn main() -> Result<()> {
     for source in sources_to_scrape {
         println!("  Scraping: {} ({})", source.name, source.url);
         
+        // Check if source has fallback strategies
+        let mut fallback_leads: Vec<Lead> = Vec::new();
+        
+        if let Some(health) = health_file.sources.iter().find(|h| h.url == source.url) {
+            if !health.fallback_strategies.is_empty() {
+                println!("    Source has fallback strategies: {:?}", health.fallback_strategies);
+                
+                let base_url = if let Some(pos) = source.url.find("://") {
+                    let rest = &source.url[pos + 3..];
+                    if let Some(path_pos) = rest.find('/') {
+                        format!("{}://{}", &source.url[..pos + 3], &rest[..path_pos])
+                    } else {
+                        source.url.clone()
+                    }
+                } else {
+                    source.url.clone()
+                };
+                
+                let discovery_config = discovery::DiscoveryConfig::default();
+                let discovery_client = reqwest::Client::builder()
+                    .timeout(std::time::Duration::from_secs(10))
+                    .build()
+                    .context("Failed to create HTTP client for fallback")?;
+                
+                for strategy in &health.fallback_strategies {
+                    match strategy.as_str() {
+                        "sitemap" => {
+                            println!("      Trying sitemap fallback...");
+                            let common_sitemaps = vec![
+                                format!("{}/sitemap.xml", base_url),
+                                format!("{}/sitemap_index.xml", base_url),
+                            ];
+                            
+                            for sitemap_url in common_sitemaps {
+                                if let Ok(sitemap_candidates) = discovery::parse_sitemap(&discovery_client, &sitemap_url, &discovery_config).await {
+                                    println!("        Found {} URLs from sitemap", sitemap_candidates.len());
+                                    
+                                    // Filter and create leads from sitemap URLs
+                                    for candidate in sitemap_candidates {
+                                        let url_lower = candidate.url.to_lowercase();
+                                        if url_lower.contains("scholarship") || 
+                                           url_lower.contains("funding") || 
+                                           url_lower.contains("bursary") || 
+                                           url_lower.contains("award") {
+                                            // Create discovery lead
+                                            fallback_leads.push(Lead {
+                                                name: format!("Discovered from sitemap: {}", candidate.url),
+                                                amount: String::new(),
+                                                deadline: String::new(),
+                                                source: source.url.clone(),
+                                                source_type: source.source_type.clone(),
+                                                status: "discovered".to_string(),
+                                                eligibility: vec![],
+                                                notes: format!("Discovered via sitemap fallback from {}", source.name),
+                                                added_date: chrono::Utc::now().format("%Y-%m-%d").to_string(),
+                                                url: candidate.url.clone(),
+                                                match_score: 0,
+                                                match_reasons: vec![],
+                                                hard_fail_reasons: vec![],
+                                                soft_flags: vec![],
+                                                bucket: None,
+                                                http_status: None,
+                                                effort_score: None,
+                                                trust_tier: Some("B".to_string()),
+                                                risk_flags: vec!["sitemap_fallback".to_string()],
+                                                matched_rule_ids: vec![],
+                                                eligible_countries: vec![],
+                                                is_taiwan_eligible: None,
+                                                taiwan_eligibility_confidence: None,
+                                                deadline_date: None,
+                                                deadline_label: None,
+                                                intake_year: None,
+                                                study_start: None,
+                                                deadline_confidence: None,
+                                                canonical_url: None,
+                                                is_directory_page: false,
+                                                official_source_url: Some(candidate.url.clone()),
+                                                source_domain: None,
+                                                confidence: Some(0.7),
+                                                eligibility_confidence: None,
+                                                tags: vec!["sitemap_discovery".to_string(), "needs_scraping".to_string()],
+                                                is_index_only: true,
+                                                first_seen_at: Some(chrono::Utc::now().to_rfc3339()),
+                                                last_checked_at: Some(chrono::Utc::now().to_rfc3339()),
+                                                next_check_at: None,
+                                                persistence_status: Some("new".to_string()),
+                                                source_seed: Some(source.url.clone()),
+                                                check_count: Some(0),
+                                                extraction_evidence: vec![],
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        "rss" => {
+                            println!("      Trying RSS fallback...");
+                            if let Ok(feed_urls) = discovery::discover_feeds_public(&discovery_client, &base_url).await {
+                                println!("        Found {} RSS feeds", feed_urls.len());
+                                // RSS feed parsing would be implemented here
+                                // For now, we'll rely on sitemap fallback
+                            }
+                        }
+                        "head_request" => {
+                            println!("      Trying HEAD request fallback...");
+                            // Try HEAD request first, then GET if successful
+                            if let Ok(resp) = discovery_client.head(&source.url).send().await {
+                                if resp.status().is_success() {
+                                    // HEAD succeeded, try GET with longer timeout
+                                    let get_client = reqwest::Client::builder()
+                                        .timeout(std::time::Duration::from_secs(30))
+                                        .build()
+                                        .context("Failed to create HTTP client for HEAD->GET")?;
+                                    
+                                    if let Ok(get_resp) = get_client.get(&source.url).send().await {
+                                        if get_resp.status().is_success() {
+                                            println!("        HEAD->GET succeeded, will retry scrape...");
+                                            // The normal scrape will proceed below
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+        
         match scrapers::scrape_source(source).await {
             Ok(result) => {
                 // Update health tracking
@@ -146,9 +346,11 @@ async fn main() -> Result<()> {
                 );
                 
                 // Track stats
-                if result.status == SourceStatus::Ok {
-                    source_stats.success += 1;
-                    println!("    Found {} raw leads", result.leads.len());
+                if result.status == SourceStatus::Ok || !fallback_leads.is_empty() {
+                    if result.status == SourceStatus::Ok {
+                        source_stats.success += 1;
+                        println!("    Found {} raw leads", result.leads.len());
+                    }
                 } else {
                     source_stats.failed += 1;
                     println!("    Failed: {}", result.status);
@@ -162,7 +364,14 @@ async fn main() -> Result<()> {
                 let mut skipped_directory = 0;
                 let mut skipped_insufficient = 0;
                 
-                for mut lead in result.leads {
+                // Process both normal leads and fallback leads
+                let mut all_result_leads = result.leads;
+                if !fallback_leads.is_empty() {
+                    println!("    Adding {} leads from fallback strategies", fallback_leads.len());
+                    all_result_leads.extend(fallback_leads);
+                }
+                
+                for mut lead in all_result_leads {
                     // Update deduplication info first
                     filter::update_dedup_info(&mut lead);
                     
@@ -286,19 +495,57 @@ async fn main() -> Result<()> {
             continue;
         }
         
+        // Check if lead has complete data - if yes, skip browser queue
+        let has_complete_data = !lead.name.is_empty() && 
+            (!lead.amount.is_empty() && lead.amount != "See website") &&
+            (!lead.deadline.is_empty() && lead.deadline != "Check website" && lead.deadline != "TBD");
+        
+        if has_complete_data {
+            // Lead has complete data from HTTP scraping, skip browser queue
+            continue;
+        }
+        
         // Fetch HTML for JS-heavy detection
         let html_content = match client.get(&lead.url).send().await {
             Ok(resp) => {
                 if resp.status().is_success() {
                     resp.text().await.unwrap_or_default()
                 } else {
-                    continue; // Skip if HTTP request failed
+                    // HTTP request failed - mark for browser
+                    let detection = js_detector::BrowserDetectionResult {
+                        needs_browser: true,
+                        reason: js_detector::BrowserReason::ExtractionFailedWithApi,
+                        confidence: 0.8,
+                        detected_api_endpoints: vec![],
+                    };
+                    if let Err(e) = browser_queue::write_to_browser_queue(&root, lead, &detection) {
+                        eprintln!("  Warning: Failed to write {} to browser queue: {}", lead.url, e);
+                    } else {
+                        lead.tags.push("pending_browser".to_string());
+                        browser_queue_count += 1;
+                    }
+                    continue;
                 }
             }
-            Err(_) => continue, // Skip on error
+            Err(_) => {
+                // Network error - mark for browser
+                let detection = js_detector::BrowserDetectionResult {
+                    needs_browser: true,
+                    reason: js_detector::BrowserReason::ExtractionFailedWithApi,
+                    confidence: 0.7,
+                    detected_api_endpoints: vec![],
+                };
+                if let Err(e) = browser_queue::write_to_browser_queue(&root, lead, &detection) {
+                    eprintln!("  Warning: Failed to write {} to browser queue: {}", lead.url, e);
+                } else {
+                    lead.tags.push("pending_browser".to_string());
+                    browser_queue_count += 1;
+                }
+                continue;
+            }
         };
         
-        // Check if page needs browser rendering
+        // Check if page needs browser rendering (only if extraction failed or incomplete)
         let detection = js_detector::needs_browser(&html_content, &lead.url, Some(lead));
         
         if detection.needs_browser {

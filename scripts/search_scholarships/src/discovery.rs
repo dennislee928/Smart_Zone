@@ -191,6 +191,12 @@ struct FeedInfo {
     source: DiscoverySource,
 }
 
+/// Discover RSS/Atom feeds from HTML (public wrapper)
+pub async fn discover_feeds_public(client: &Client, base_url: &str) -> Result<Vec<String>> {
+    let feeds = discover_feeds(client, base_url).await?;
+    Ok(feeds.into_iter().map(|f| f.url).collect())
+}
+
 /// Discover RSS/Atom feeds from HTML
 async fn discover_feeds(client: &Client, base_url: &str) -> Result<Vec<FeedInfo>> {
     let response = client.get(base_url).send().await?;

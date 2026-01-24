@@ -1,8 +1,15 @@
-The run effectively produced one “lead” in the database and it’s Chevening 2027/28 with a deadline 2026-11-03. 
+---
+name: ""
+overview: ""
+todos: []
+isProject: false
+---
+
+The run effectively produced one “lead” in the database and it’s Chevening 2027/28 with a deadline 2026-11-03.
 
 report
 
-The rules audit shows only 3 items were processed, and 2 were rejected by “Taiwan Not Eligible”. 
+The rules audit shows only 3 items were processed, and 2 were rejected by “Taiwan Not Eligible”.
 
 rules.audit
 
@@ -14,11 +21,12 @@ The crawler is skipping/losing most sources upstream (timeouts, JS-only pages, 4
 
 Your filter gates are overly aggressive early in the pipeline, so leads are eliminated before they reach triage.
 
-Your “target intake” rule is missing, so irrelevant-cycle scholarships (Chevening 2027/28) slip through while relevant Glasgow 2026/27 items never appear. (Chevening for 2027/28 is not actionable for starting Glasgow in Sep 2026.) 
+Your “target intake” rule is missing, so irrelevant-cycle scholarships (Chevening 2027/28) slip through while relevant Glasgow 2026/27 items never appear. (Chevening for 2027/28 is not actionable for starting Glasgow in Sep 2026.)
 
 report
 
 How to expand high-quality scholarship resources (without exploding noise)
+
 Principle 1: Separate “Discovery Sources” from “Canonical Sources”
 
 Discovery sources are databases/index pages (FindAMasters, Study UK, Prospects, etc.). They are useful to find names and links, but not authoritative.
@@ -34,6 +42,7 @@ Crawl canonical → extract structured fields + score/triage
 This avoids ranking directory pages as if they were scholarships.
 
 Tiered expansion strategy (high signal first)
+
 Tier 0 — Always-on “must crawl” (Glasgow + your exact target)
 
 Add these first. They should dominate your recall and they are stable:
@@ -104,14 +113,14 @@ mode=balanced: + discovery_databases
 
 mode=explore: + uk_uni_shortlist (capped, throttled)
 
-
 ___
+
 You are not “resource-poor”; you are **being filtered/collapsing upstream**.
 
 From what you shared:
 
-* `sources.yml` already has a reasonable Tier-1/Tier-2 set. 
-* `rules.yaml` contains **two hard-reject rules that will aggressively wipe out most candidates** unless your extractor populates fields perfectly. 
+- `sources.yml` already has a reasonable Tier-1/Tier-2 set. 
+- `rules.yaml` contains **two hard-reject rules that will aggressively wipe out most candidates** unless your extractor populates fields perfectly. 
 
 That is why you end up with **A=0 / B=1 / C=2**: you are not expanding into “high-quality scholarships”; you are **not converting pages → valid lead objects**, and then your rules hard-reject “unknowns”.
 
@@ -132,7 +141,7 @@ Below is a concrete plan: fix the two rule pitfalls, then expand *high-quality* 
 
 This assumes your pipeline sets `is_taiwan_eligible` correctly.
 
-In practice, most scholarships **do not list eligible countries**, or your parser fails to extract the list. If your default value is `false`, you will hard-reject almost everything. 
+In practice, most scholarships **do not list eligible countries**, or your parser fails to extract the list. If your default value is `false`, you will hard-reject almost everything.
 
 **Fix:** Make `is_taiwan_eligible` tri-state: `true | false | null`. Only hard-reject when it’s explicitly `false`.
 
@@ -145,7 +154,7 @@ In practice, most scholarships **do not list eligible countries**, or your parse
   action: bucket "C"
 ```
 
-If this rule runs on *raw page text* (or a lead assembled from a page that doesn’t mention “Glasgow” in the body), it will classify “non-target” too early and kill leads before they are fully extracted. 
+If this rule runs on *raw page text* (or a lead assembled from a page that doesn’t mention “Glasgow” in the body), it will classify “non-target” too early and kill leads before they are fully extracted.
 
 **Fix:** Apply “non-target” only when you have a **final scholarship detail lead** (e.g., `lead.type == scholarship_detail`), not on index/discovery pages.
 
@@ -185,7 +194,7 @@ Replace `E-COUNTRY-001` with two rules:
     reason: "Eligible countries not stated/extracted; needs manual verification."
 ```
 
-This single change typically converts “almost everything rejected” into “Bucket B watchlist”, which is what you want for exploration. 
+This single change typically converts “almost everything rejected” into “Bucket B watchlist”, which is what you want for exploration.
 
 ---
 
@@ -200,25 +209,26 @@ Add a condition like `lead_kind: scholarship_detail` (or equivalent field), and 
   when:
     lead_kind: "scholarship_detail"
     not_any_regex:
-      - "(?i)gla\\.ac\\.uk"
-      - "(?i)University\\s*of\\s*Glasgow"
-      - "(?i)any\\s*(UK|British)\\s*university"
-      - "(?i)tenable\\s+at\\s+any\\s+UK"
-      - "(?i)\\bChevening\\b"
-      - "(?i)\\bRotary\\b"
-      - "(?i)\\bFulbright\\b"
+   - "(?i)gla\\.ac\\.uk"
+   - "(?i)University\\s*of\\s*Glasgow"
+   - "(?i)any\\s*(UK|British)\\s*university"
+   - "(?i)tenable\\s+at\\s+any\\s+UK"
+   - "(?i)\\bChevening\\b"
+   - "(?i)\\bRotary\\b"
+   - "(?i)\\bFulbright\\b"
   action:
     bucket: "C"
     reason: "Not Glasgow and not portable to UK universities."
 ```
 
-If you can’t add `lead_kind`, then implement the same effect in code: **skip E-NONTARGET for sources with `type=university_index` or `type=discovery`**. 
+If you can’t add `lead_kind`, then implement the same effect in code: **skip E-NONTARGET for sources with `type=university_index` or `type=discovery`**.
 
 ---
 
 ### Change 3 — Lower Bucket A threshold temporarily while you stabilize extraction
 
-Your `A` requires `min_final_score: 100` plus trust tier and effort constraints. 
+Your `A` requires `min_final_score: 100` plus trust tier and effort constraints.
+
 While you’re still fixing extraction, temporarily reduce:
 
 ```yaml
@@ -239,12 +249,12 @@ Once your pipeline is healthy, raise it again.
 
 It is: **expand depth on the Glasgow domain + official hubs, then extract scholarship detail pages**.
 
-You already have these Tier-1 seeds enabled: 
+You already have these Tier-1 seeds enabled:
 
-* `https://www.gla.ac.uk/scholarships/all/`
-* `https://www.gla.ac.uk/scholarships/search/`
-* `https://www.gla.ac.uk/scholarships/globalleadershipscholarship/`
-* plus the portal
+- `https://www.gla.ac.uk/scholarships/all/`
+- `https://www.gla.ac.uk/scholarships/search/`
+- `https://www.gla.ac.uk/scholarships/globalleadershipscholarship/`
+- plus the portal
 
 **What’s missing is a “link frontier” step:**
 
@@ -260,7 +270,7 @@ This yields **dozens of real scholarships** with near-zero noise, without adding
 
 ## 4) Curated source expansion that stays high-quality (if you still want more breadth)
 
-Your Tier-2 already includes British Council Study UK, FindAMasters funding, Prospects, Saltire, SAAS. 
+Your Tier-2 already includes British Council Study UK, FindAMasters funding, Prospects, Saltire, SAAS.
 
 Two expansions that remain high signal:
 
@@ -268,15 +278,16 @@ Two expansions that remain high signal:
 
 These are “single source, many opportunities” without becoming noisy:
 
-* Large professional bodies (discipline-linked scholarships)
-* Major education providers (IELTS/IDP awards)
-* Large philanthropic funds with clear UK applicability
+- Large professional bodies (discipline-linked scholarships)
+- Major education providers (IELTS/IDP awards)
+- Large philanthropic funds with clear UK applicability
 
 Add only **official pages**, not random listicles.
 
 ### B. Add a short UK-university shortlist as **disabled-by-default** (Tier-3)
 
-You already have Edinburgh/St Andrews/Strathclyde disabled. That’s correct. 
+You already have Edinburgh/St Andrews/Strathclyde disabled. That’s correct.
+
 When Tier-1/Tier-2 is stable, add 10–15 universities *as index pages only*, and keep them disabled until needed.
 
 ---
@@ -290,6 +301,7 @@ When Tier-1/Tier-2 is stable, add 10–15 universities *as index pages only*, an
 5. Only after 1–4 are working, expand sources.
 
 ---
+
 You are getting **A=0 / B=1 / C=2** primarily because your current **hard-reject rules are being applied to “discovery/index” pages**, and because your country-eligibility signal is treated as **binary** even when the page does not explicitly provide an eligible-country list.
 
 The good news: with the code you shared, you can fix this without “adding noisy sources.” You need to (1) **stop hard-rejecting discovery/index pages**, and (2) **treat Taiwan eligibility as tri-state** using `eligible_countries.len()` as the “explicit list exists” signal.
@@ -304,10 +316,10 @@ Below is a concrete, minimal set of changes.
 
 In `rules.yaml`, `E-NONTARGET-001` triggers when **none** of the “portable/Glasgow” allowlist terms appear. That is fine for *final scholarship detail pages*, but it is catastrophic for:
 
-* British Council hub pages
-* FindAMasters funding index pages
-* Prospects funding guide pages
-* Government landing pages
+- British Council hub pages
+- FindAMasters funding index pages
+- Prospects funding guide pages
+- Government landing pages
 
 Those pages often do **not** contain “University of Glasgow” or the portable keywords in the body text you build in `build_search_text()`. So they get hard-rejected early, before they can yield outbound links to real scholarships.
 
@@ -412,7 +424,7 @@ if let Some(expected) = condition.is_directory_page {
 
 ### Step 2.3 — Modify `E-NONTARGET-001` in `rules.yaml`
 
-Make it only apply to **non-directory** pages:
+Make it only apply to **non-directory** pages :
 
 ```yaml
 - id: "E-NONTARGET-001"
@@ -421,12 +433,12 @@ Make it only apply to **non-directory** pages:
   when:
     is_directory_page: false
     not_any_regex:
-      - "(?i)gla\\.ac\\.uk"
-      - "(?i)University\\s*of\\s*Glasgow"
-      - "(?i)any\\s*(UK|British)\\s*university"
-      - "(?i)\\bChevening\\b"
-      - "(?i)\\bRotary\\s*Foundation\\b"
-      - "(?i)\\bFulbright\\b"
+   - "(?i)gla\\.ac\\.uk"
+   - "(?i)University\\s*of\\s*Glasgow"
+   - "(?i)any\\s*(UK|British)\\s*university"
+   - "(?i)\\bChevening\\b"
+   - "(?i)\\bRotary\\s*Foundation\\b"
+   - "(?i)\\bFulbright\\b"
   action:
     bucket: "C"
     reason: "Not from Glasgow and not portable to UK universities"
@@ -452,9 +464,9 @@ But in `rules.rs`, you only check `min_final_score`. You never enforce trust tie
 
 **Fix (small):** in the “Determine final bucket” section, add checks:
 
-* parse `lead.trust_tier` into `TrustTier`
-* require `>= min_trust_tier`
-* require `effort_score <= max_effort_score` (if present)
+- parse `lead.trust_tier` into `TrustTier`
+- require `>= min_trust_tier`
+- require `effort_score <= max_effort_score` (if present)
 
 This won’t increase count, but it will increase correctness once your A bucket starts filling.
 
@@ -474,9 +486,10 @@ What you need is a **frontier miner**:
 2. Extract all internal links matching `https://www.gla.ac.uk/scholarships/…/`
 3. Mark those extracted links as:
 
-   * `source_type = "university"`
-   * `is_directory_page = false`
-   * `official_source_url = original index page`
+      - `source_type = "university"`
+      - `is_directory_page = false`
+      - `official_source_url = original index page`
+
 4. Crawl those detail links and parse fields.
 
 **This alone** typically turns 1–3 “Glasgow pages” into **dozens of real scholarship items**.
@@ -485,9 +498,9 @@ What you need is a **frontier miner**:
 
 For sources like British Council / Prospects / FindAMasters:
 
-* Treat the page itself as `is_directory_page=true`
-* Extract outbound links to official scholarship pages
-* Only score/triage the official pages
+- Treat the page itself as `is_directory_page=true`
+- Extract outbound links to official scholarship pages
+- Only score/triage the official pages
 
 This is exactly how you increase count **while staying high-quality**.
 
@@ -499,9 +512,9 @@ Reason: index pages are stable and high-signal; your frontier miner can extract 
 
 Suggested pack criteria:
 
-* Russell Group + Scotland focus
-* “International postgraduate scholarships” index pages only
-* No random departments, no “news posts”
+- Russell Group + Scotland focus
+- “International postgraduate scholarships” index pages only
+- No random departments, no “news posts”
 
 ---
 
@@ -509,9 +522,9 @@ Suggested pack criteria:
 
 If your scraper successfully marks index pages as `is_directory_page=true` and extracts detail links:
 
-* Bucket A: **2–10** (real apply-now items when open)
-* Bucket B: **20–80** (watchlist + upcoming deadlines + needs verification)
-* Bucket C/X: remainder
+- Bucket A: **2–10** (real apply-now items when open)
+- Bucket B: **20–80** (watchlist + upcoming deadlines + needs verification)
+- Bucket C/X: remainder
 
 If you still see “items_processed=3” after this, the next bottleneck is not rules—it’s **your scraping stage not emitting multiple Lead objects per source**. In that case, the next file to inspect is `scrapers/university.rs` and `triage.rs` (how many leads you actually store per fetched page).
 
@@ -521,14 +534,14 @@ If you still see “items_processed=3” after this, the next bottleneck is not 
 
 Please paste these two files (or upload them):
 
-* `scripts/search_scholarships/src/scrapers/university.rs`
-* `scripts/search_scholarships/src/triage.rs`
+- `scripts/search_scholarships/src/scrapers/university.rs`
+- `scripts/search_scholarships/src/triage.rs`
 
 Then I can tell you exactly:
 
-* where to set `is_directory_page=true`
-* where to extract scholarship detail URLs from Glasgow index pages
-* how to emit N leads per source instead of 1 placeholder lead
+- where to set `is_directory_page=true`
+- where to extract scholarship detail URLs from Glasgow index pages
+- how to emit N leads per source instead of 1 placeholder lead
 
 You are not primarily “short on sources.” You are failing to convert high-quality sources into many scholarship-detail leads, so triage only sees 1–3 items and cannot populate Bucket A/B.
 
@@ -541,6 +554,7 @@ Breadth expansion (curated, authoritative sources only): add a small set of trus
 Below is an implementation-oriented plan, plus a copy/paste sources.yml expansion pack.
 
 1) Depth expansion (highest ROI): mine Glasgow into dozens of scholarship-detail pages
+
 Why this works
 
 Glasgow’s official scholarship indexes are designed to be crawled into many detail pages:
@@ -619,83 +633,138 @@ This stays high signal and is small enough that your crawler health won’t coll
 
 # Add these to tracking/sources.yml
 
-  # ============================================
-  # TIER 1+: Glasgow depth mining (authoritative)
-  # ============================================
-  - name: "Glasgow All Scholarships (Index)"
-    type: "university"
-    url: "https://www.gla.ac.uk/scholarships/all/"
-    enabled: true
-    priority: 1
-    scraper: "university"
+# ============================================
 
-  - name: "Glasgow Scholarships & Funding (Hub)"
-    type: "university"
-    url: "https://www.gla.ac.uk/scholarships/"
-    enabled: true
-    priority: 1
-    scraper: "university"
+# TIER 1+: Glasgow depth mining (authoritative)
 
-  # If you keep this, use Selenium (JS-heavy)
-  - name: "Glasgow Scholarship Search (JS)"
-    type: "university"
-    url: "https://www.gla.ac.uk/scholarships/search/"
-    enabled: true
-    priority: 1
-    scraper: "selenium"
+# ============================================
 
-  # ============================================
-  # TIER 2: Authoritative UK scholarship gateways
-  # ============================================
-  - name: "British Council - Study UK Scholarships & Funding"
-    type: "third_party"
-    url: "https://study-uk.britishcouncil.org/scholarships-funding"
-    enabled: true
-    priority: 2
-    scraper: "third_party"
+    - name: "Glasgow All Scholarships (Index)"
 
-  - name: "British Council - GREAT Scholarships Hub"
-    type: "third_party"
-    url: "https://study-uk.britishcouncil.org/scholarships-funding/great-scholarships"
-    enabled: true
-    priority: 2
-    scraper: "third_party"
+type: "university"
 
-  - name: "ScholarshipScanner - UK Scholarship Search"
-    type: "third_party"
-    url: "https://www.scholarshipscanner.com/scholarships"
-    enabled: true
-    priority: 2
-    scraper: "third_party"
+url: "https://www.gla.ac.uk/scholarships/all/"
 
-  - name: "UKCISA - Funding & Finances Guidance"
-    type: "third_party"
-    url: "https://www.ukcisa.org.uk/student-advice/finances/"
-    enabled: true
-    priority: 2
-    scraper: "third_party"
+enabled: true
 
-  # ============================================
-  # TIER 3 (optional): Country-specific backups
-  # ============================================
-  - name: "University of Birmingham - Taiwan Chancellor's Scholarship"
-    type: "university"
-    url: "https://www.birmingham.ac.uk/study/scholarships-funding/taiwan-japan-and-south-korea-postgraduate-chancellors-scholarships"
-    enabled: false
-    priority: 3
-    scraper: "university"
+priority: 1
 
-  - name: "University of Manchester - Taiwan Scholarships"
-    type: "university"
-    url: "https://www.manchester.ac.uk/study/international/country-specific-information/taiwan/scholarships/"
-    enabled: false
-    priority: 3
-    scraper: "university"
+scraper: "university"
 
+    - name: "Glasgow Scholarships & Funding (Hub)"
+
+type: "university"
+
+url: "https://www.gla.ac.uk/scholarships/"
+
+enabled: true
+
+priority: 1
+
+scraper: "university"
+
+# If you keep this, use Selenium (JS-heavy)
+
+    - name: "Glasgow Scholarship Search (JS)"
+
+type: "university"
+
+url: "https://www.gla.ac.uk/scholarships/search/"
+
+enabled: true
+
+priority: 1
+
+scraper: "selenium"
+
+# ============================================
+
+# TIER 2: Authoritative UK scholarship gateways
+
+# ============================================
+
+    - name: "British Council - Study UK Scholarships & Funding"
+
+type: "third_party"
+
+url: "https://study-uk.britishcouncil.org/scholarships-funding"
+
+enabled: true
+
+priority: 2
+
+scraper: "third_party"
+
+    - name: "British Council - GREAT Scholarships Hub"
+
+type: "third_party"
+
+url: "https://study-uk.britishcouncil.org/scholarships-funding/great-scholarships"
+
+enabled: true
+
+priority: 2
+
+scraper: "third_party"
+
+    - name: "ScholarshipScanner - UK Scholarship Search"
+
+type: "third_party"
+
+url: "https://www.scholarshipscanner.com/scholarships"
+
+enabled: true
+
+priority: 2
+
+scraper: "third_party"
+
+    - name: "UKCISA - Funding & Finances Guidance"
+
+type: "third_party"
+
+url: "https://www.ukcisa.org.uk/student-advice/finances/"
+
+enabled: true
+
+priority: 2
+
+scraper: "third_party"
+
+# ============================================
+
+# TIER 3 (optional): Country-specific backups
+
+# ============================================
+
+    - name: "University of Birmingham - Taiwan Chancellor's Scholarship"
+
+type: "university"
+
+url: "https://www.birmingham.ac.uk/study/scholarships-funding/taiwan-japan-and-south-korea-postgraduate-chancellors-scholarships"
+
+enabled: false
+
+priority: 3
+
+scraper: "university"
+
+    - name: "University of Manchester - Taiwan Scholarships"
+
+type: "university"
+
+url: "https://www.manchester.ac.uk/study/international/country-specific-information/taiwan/scholarships/"
+
+enabled: false
+
+priority: 3
+
+scraper: "university"
 
 (Each of these links is stable and authoritative. )
 
 4) Guardrails to keep expansion “high-quality” (so B doesn’t become garbage)
+
 A. Treat discovery pages as “frontiers,” not scholarships
 
 Policy:
@@ -741,4 +810,3 @@ selenium.rs: fix source_type and ensure extracted URLs are preserved
 A small change to rules.yaml so discovery/index pages are not bucketed as “non-target”
 
 If you want this, tell me which mode you prefer:
-

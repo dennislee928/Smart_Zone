@@ -1,8 +1,10 @@
-use crate::types::{Lead, ScrapeResult, SourceStatus};
+use crate::types::{Lead, ScrapeResult, SourceStatus, Source};
 use crate::normalize;
 use anyhow::Result;
 use scraper::{Html, Selector};
 use std::collections::{HashSet, VecDeque};
+use regex::Regex;
+use reqwest::blocking::Client;
 
 /// Returns true if url is a Glasgow directory/list page (not a single scholarship detail page).
 fn is_glasgow_directory_url(url: &str) -> bool {
@@ -51,6 +53,169 @@ fn resolve_url(base: &str, href: &str) -> Option<String> {
         format!("{}{}/{}{}", scheme, host, path_dir.trim_start_matches('/'), href)
     };
     Some(resolved)
+}
+
+/// Discover URLs from index pages using BFS
+/// 
+/// Extracts scholarship links from index pages, following links up to max_depth.
+/// Filters URLs using detail_url_regex if provided.
+pub fn discover_from_index_pages(
+    client: &Client,
+    index_urls: &[String],
+    detail_url_regex: Option<&Regex>,
+    max_depth: u32,
+) -> Result<Vec<String>> {
+    let mut discovered_urls = Vec::new();
+    let mut visited = HashSet::new();
+    let mut queue = VecDeque::new();
+    
+    // Initialize queue with index URLs
+    for index_url in index_urls {
+        let normalized = normalize::normalize_url(index_url);
+        if visited.insert(normalized.clone()) {
+            queue.push_back((index_url.clone(), 0));
+        }
+    }
+    
+    while let Some((url, depth)) = queue.pop_front() {
+        if depth > max_depth {
+            continue;
+        }
+        
+        let normalized = normalize::normalize_url(&url);
+        if !visited.insert(normalized) {
+            continue;
+        }
+        
+        // Fetch HTML
+        let html = match client.get(&url).send() {
+            Ok(resp) => {
+                if !resp.status().is_success() {
+                    continue;
+                }
+                match resp.text() {
+                    Ok(h) if !h.is_empty() => h,
+                    _ => continue,
+                }
+            }
+            Err(_) => continue,
+        };
+        
+        let document = Html::parse_document(&html);
+        let base_url = base_url_for_resolve(&url);
+        
+        // Extract scholarship links
+        if let Ok(selector) = Selector::parse("a[href*='/scholarships/'], a[href*='/funding/'], a[href*='/bursary/'], a[href*='/award/']") {
+            for element in document.select(&selector) {
+                if let Some(href) = element.value().attr("href") {
+                    if let Some(resolved_url) = resolve_url(&url, href) {
+                        let normalized_resolved = normalize::normalize_url(&resolved_url);
+                        
+                        // Skip if already visited
+                        if visited.contains(&normalized_resolved) {
+                            continue;
+                        }
+                        
+                        // Apply detail_url_regex filter if provided
+                        if let Some(regex) = detail_url_regex {
+                            if !regex.is_match(&resolved_url) {
+                                continue;
+                            }
+                        }
+                        
+                        // Add to discovered URLs if it's a detail page (not another index)
+                        let url_lower = resolved_url.to_lowercase();
+                        let is_index = url_lower.ends_with("/scholarships") || 
+                                      url_lower.ends_with("/scholarships/") ||
+                                      url_lower.contains("/scholarships/search") ||
+                                      url_lower.contains("/scholarships/all");
+                        
+                        if !is_index {
+                            discovered_urls.push(resolved_url.clone());
+                        }
+                        
+                        // Add to queue for further discovery if within depth limit
+                        if depth < max_depth && is_index {
+                            visited.insert(normalized_resolved);
+                            queue.push_back((resolved_url, depth + 1));
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Rate limiting
+        std::thread::sleep(std::time::Duration::from_millis(500));
+    }
+    
+    Ok(discovered_urls)
+}
+
+/// Extract external links from HTML based on allow_domains_outbound whitelist
+/// Used for discovery_mode: external_links_only to find external funding sources
+pub fn extract_external_links(
+    html: &str,
+    base_url: &str,
+    allow_domains: &[String],
+) -> Vec<String> {
+    let document = Html::parse_document(html);
+    let mut external_links = Vec::new();
+    let mut seen = HashSet::new();
+    
+    // Extract base domain for exclusion
+    let base_domain = if let Some(pos) = base_url.find("://") {
+        let rest = &base_url[pos + 3..];
+        if let Some(path_pos) = rest.find('/') {
+            &rest[..path_pos]
+        } else {
+            rest
+        }
+    } else {
+        base_url
+    };
+    
+    // Extract all links
+    if let Ok(selector) = Selector::parse("a[href]") {
+        for element in document.select(&selector) {
+            if let Some(href) = element.value().attr("href") {
+                let resolved_url = match resolve_url(base_url, href) {
+                    Some(url) => url,
+                    None => continue,
+                };
+                
+                // Parse URL to check domain - use manual parsing instead of url crate
+                let domain = if let Some(pos) = resolved_url.find("://") {
+                    let rest = &resolved_url[pos + 3..];
+                    if let Some(path_pos) = rest.find('/') {
+                        &rest[..path_pos]
+                    } else if let Some(query_pos) = rest.find('?') {
+                        &rest[..query_pos]
+                    } else {
+                        rest
+                    }
+                } else {
+                    continue;
+                };
+                
+                // Check if domain matches any allowed domain
+                let matches_allowed = allow_domains.iter().any(|allowed| {
+                    domain.contains(allowed) || domain.ends_with(&format!(".{}", allowed))
+                });
+                
+                // Exclude the source's own domain
+                let is_external = !domain.contains(base_domain);
+                
+                if matches_allowed && is_external {
+                    let normalized = normalize::normalize_url(&resolved_url);
+                    if seen.insert(normalized.clone()) {
+                        external_links.push(resolved_url);
+                    }
+                }
+            }
+        }
+    }
+    
+    external_links
 }
 
 /// Extract absolute gla.ac.uk links from HTML that match whitelist.
@@ -238,6 +403,11 @@ pub fn crawl_glasgow_scholarships(client: &reqwest::blocking::Client, seed_url: 
 
 /// Scrape a university source and return detailed result for health tracking
 pub fn scrape(url: &str) -> Result<ScrapeResult> {
+    scrape_with_source(url, None)
+}
+
+/// Scrape a university source with optional Source config for discovery_mode
+pub fn scrape_with_source(url: &str, source: Option<&Source>) -> Result<ScrapeResult> {
     println!("Scraping university website: {}", url);
 
     let client = reqwest::blocking::Client::builder()
@@ -245,6 +415,107 @@ pub fn scrape(url: &str) -> Result<ScrapeResult> {
         .timeout(std::time::Duration::from_secs(30))
         .redirect(reqwest::redirect::Policy::limited(5))
         .build()?;
+
+    // Handle external_links_only mode
+    if let Some(src) = source {
+        if src.discovery_mode.as_deref() == Some("external_links_only") {
+            if let Some(ref allow_domains) = src.allow_domains_outbound {
+                println!("  Mode: external_links_only - extracting external links only");
+                let response = client.get(url).send();
+                
+                match response {
+                    Ok(resp) if resp.status().is_success() => {
+                        let html = resp.text()?;
+                        let external_links = extract_external_links(&html, url, allow_domains);
+                        
+                        println!("  Found {} external links", external_links.len());
+                        
+                        // Create leads from external links (these will be discovered sources, not scholarships)
+                        let mut leads = Vec::new();
+                        for ext_url in external_links {
+                            let ext_url_clone = ext_url.clone();
+                            // Create a discovery lead - will be processed as a new source candidate
+                            leads.push(Lead {
+                                name: format!("External funding source: {}", ext_url_clone),
+                                amount: String::new(),
+                                deadline: String::new(),
+                                source: url.to_string(),
+                                source_type: "discovered".to_string(),
+                                status: "discovered".to_string(),
+                                eligibility: vec![],
+                                notes: format!("Discovered from {} (external_links_only mode)", src.name),
+                                added_date: chrono::Utc::now().format("%Y-%m-%d").to_string(),
+                                url: ext_url_clone.clone(),
+                                match_score: 0,
+                                match_reasons: vec![],
+                                hard_fail_reasons: vec![],
+                                soft_flags: vec![],
+                                bucket: None,
+                                http_status: Some(200),
+                                effort_score: None,
+                                trust_tier: Some("B".to_string()), // External links are less trusted
+                                risk_flags: vec!["external_link_discovery".to_string()],
+                                matched_rule_ids: vec![],
+                                eligible_countries: vec![],
+                                is_taiwan_eligible: None,
+                                taiwan_eligibility_confidence: None,
+                                deadline_date: None,
+                                deadline_label: None,
+                                intake_year: None,
+                                study_start: None,
+                                deadline_confidence: None,
+                                canonical_url: None,
+                                is_directory_page: false,
+                                official_source_url: Some(ext_url_clone),
+                                source_domain: None,
+                                confidence: Some(0.5), // Lower confidence for discovered links
+                                eligibility_confidence: None,
+                                tags: vec!["external_discovery".to_string(), "needs_scraping".to_string()],
+                                is_index_only: true, // Mark as index-only, needs two-hop scraping
+                                first_seen_at: Some(chrono::Utc::now().to_rfc3339()),
+                                last_checked_at: Some(chrono::Utc::now().to_rfc3339()),
+                                next_check_at: None,
+                                persistence_status: Some("new".to_string()),
+                                source_seed: Some(url.to_string()),
+                                check_count: Some(0),
+                                extraction_evidence: vec![],
+                            });
+                        }
+                        
+                        return Ok(ScrapeResult {
+                            leads,
+                            status: SourceStatus::Ok,
+                            http_code: Some(200),
+                            error_message: None,
+                        });
+                    }
+                    Ok(resp) => {
+                        let status = match resp.status().as_u16() {
+                            404 => SourceStatus::NotFound,
+                            403 => SourceStatus::Forbidden,
+                            429 => SourceStatus::RateLimited,
+                            500..=599 => SourceStatus::ServerError,
+                            _ => SourceStatus::Unknown,
+                        };
+                        return Ok(ScrapeResult {
+                            leads: vec![],
+                            status,
+                            http_code: Some(resp.status().as_u16()),
+                            error_message: Some(format!("HTTP {}", resp.status().as_u16())),
+                        });
+                    }
+                    Err(e) => {
+                        return Ok(ScrapeResult {
+                            leads: vec![],
+                            status: SourceStatus::NetworkError,
+                            http_code: None,
+                            error_message: Some(e.to_string()),
+                        });
+                    }
+                }
+            }
+        }
+    }
 
     if is_glasgow_directory_url(url) {
         match crawl_glasgow_scholarships(&client, url) {
