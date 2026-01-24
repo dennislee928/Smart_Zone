@@ -1,44 +1,88 @@
 ---
-name: ScholarshipOps 範圍擴張與品質提升
-overview: 實作三層式 Discovery 策略、修復日期解析與 dedupe、對 403/timeout 做分流、擴張來源池，並優化 GitHub Actions workflow
-todos:
-  - id: p1-date-validation
-    content: 修復日期解析驗證：在 parse_deadline 函數中加入合法性驗證（年份 2020-2100，月份 1-12，日期有效），拒絕 68-58-58 等無效日期
-    status: in_progress
-  - id: p1-dedup-content-hash
-    content: 強化 Deduplication：在 deduplicate_leads_with_stats 中加入 content-hash 作為第二層去重，使用 url_state::UrlStateStorage::calculate_content_hash
-    status: pending
-  - id: p2-layer1-index-pages
-    content: Layer 1 官方清單：在 university.rs 實作 discover_from_index_pages，從索引頁提取 /scholarships/ links，整合到 scrape 函數
-    status: pending
-  - id: p2-layer2-sitemap-integration
-    content: Layer 2 Sitemap/RSS 整合：在 main.rs 新增 Stage 0.5 Discovery，對每個 source 嘗試 discovery::discover_urls 和 discovery::parse_sitemap
-    status: pending
-  - id: p2-layer3-browser-optimization
-    content: Layer 3 Browser 優化：確保 js_detector::needs_browser 只在 HTTP 抓取失敗或欄位不完整時觸發
-    status: pending
-  - id: p3-fallback-strategies
-    content: 403/Timeout 分流：在 SourceHealth 新增 fallback_strategies 欄位，修改 update_health 邏輯，不立即 auto-disable，而是嘗試 sitemap/rss fallback
-    status: pending
-  - id: p3-fallback-execution
-    content: Fallback 策略執行：在 main.rs Stage 1 中，若 source 有 fallback_strategies，執行對應的 discovery 策略
-    status: pending
-  - id: p4-uk-universities
-    content: 新增 UK 大學來源：在 sources.yml 新增 Russell Group 大學的 scholarships index pages（Edinburgh, St Andrews, Strathclyde, Manchester 等 10-15 個）
-    status: pending
-  - id: p4-government-agencies
-    content: 新增 UK 政府/公共機構：在 sources.yml 新增 UKRI, Scottish Funding Council 等 5-8 個政府機構來源
-    status: pending
-  - id: p4-foundations
-    content: 新增基金會/產業獎學金：在 sources.yml 新增科技/工程向基金會（IEEE, Google, Microsoft 等 5-10 個）
-    status: pending
-  - id: p5-matrix-strategy
-    content: GitHub Actions Matrix 分片：修改 search.yml，將 sources 分成 10 片，每片產生 leads.part-*.jsonl，最後 merge job 合併
-    status: pending
-  - id: p5-two-stage-workflow
-    content: 分兩段 Workflow（替代方案）：實作 discovery job（只抓 index/sitemap）和 fetch_extract job（處理 queue）
-    status: pending
+name: ""
+overview: ""
+todos: []
 isProject: false
+---
+
+---
+
+name: ScholarshipOps 範圍擴張與品質提升
+
+overview: 實作三層式 Discovery 策略、修復日期解析與 dedupe、對 403/timeout 做分流、擴張來源池，並優化 GitHub Actions workflow
+
+todos:
+
+    - id: p1-date-validation
+
+content: 修復日期解析驗證：在 parse_deadline 函數中加入合法性驗證（年份 2020-2100，月份 1-12，日期有效），拒絕 68-58-58 等無效日期
+
+status: in_progress
+
+    - id: p1-dedup-content-hash
+
+content: 強化 Deduplication：在 deduplicate_leads_with_stats 中加入 content-hash 作為第二層去重，使用 url_state::UrlStateStorage::calculate_content_hash
+
+status: pending
+
+    - id: p2-layer1-index-pages
+
+content: Layer 1 官方清單：在 university.rs 實作 discover_from_index_pages，從索引頁提取 /scholarships/ links，整合到 scrape 函數
+
+status: pending
+
+    - id: p2-layer2-sitemap-integration
+
+content: Layer 2 Sitemap/RSS 整合：在 main.rs 新增 Stage 0.5 Discovery，對每個 source 嘗試 discovery::discover_urls 和 discovery::parse_sitemap
+
+status: pending
+
+    - id: p2-layer3-browser-optimization
+
+content: Layer 3 Browser 優化：確保 js_detector::needs_browser 只在 HTTP 抓取失敗或欄位不完整時觸發
+
+status: pending
+
+    - id: p3-fallback-strategies
+
+content: 403/Timeout 分流：在 SourceHealth 新增 fallback_strategies 欄位，修改 update_health 邏輯，不立即 auto-disable，而是嘗試 sitemap/rss fallback
+
+status: pending
+
+    - id: p3-fallback-execution
+
+content: Fallback 策略執行：在 main.rs Stage 1 中，若 source 有 fallback_strategies，執行對應的 discovery 策略
+
+status: pending
+
+status: pending
+
+    - id: p4-government-agencies
+
+content: 新增 UK 政府/公共機構：在 sources.yml 新增 UKRI, Scottish Funding Council 等 5-8 個政府機構來源
+
+status: pending
+
+    - id: p4-foundations
+
+content: 新增基金會/產業獎學金：在 sources.yml 新增科技/工程向基金會（IEEE, Google, Microsoft 等 5-10 個）
+
+status: pending
+
+    - id: p5-matrix-strategy
+
+content: GitHub Actions Matrix 分片：修改 search.yml，將 sources 分成 10 片，每片產生 leads.part-*.jsonl，最後 merge job 合併
+
+status: pending
+
+    - id: p5-two-stage-workflow
+
+content: 分兩段 Workflow（替代方案）：實作 discovery job（只抓 index/sitemap）和 fetch_extract job（處理 queue）
+
+status: pending
+
+isProject: false
+
 ---
 
 # ScholarshipOps 範圍擴張與品質提升計劃
@@ -62,10 +106,10 @@ isProject: false
 
 - 在 `parse_deadline` 函數中加入日期合法性驗證
 - 驗證規則：
-    - 年份必須在 2020-2100 範圍內
-    - 月份必須在 1-12 範圍內
-    - 日期必須符合該月份的有效天數
-    - 拒絕明顯無效的日期（如 68-58-58）
+                - 年份必須在 2020-2100 範圍內
+                - 月份必須在 1-12 範圍內
+                - 日期必須符合該月份的有效天數
+                - 拒絕明顯無效的日期（如 68-58-58）
 - 若解析失敗或驗證失敗，返回 `None` 並記錄到 `risk_flags`（如 "invalid_deadline_format"）
 
 **實作細節**：
@@ -141,9 +185,9 @@ fn calculate_lead_content_hash(lead: &Lead) -> String {
 
 - 為每個 university source 新增 `index_urls[]` 配置（在 `sources.yml` 中）
 - 實作 `discover_from_index_pages` 函數：
-    - 從索引頁 HTML 提取所有 `/scholarships/` 內的 links
-    - 使用 `detail_url_regex` 過濾允許深入的 URL pattern
-    - 限制 `max_depth`（通常 2 層）
+                - 從索引頁 HTML 提取所有 `/scholarships/` 內的 links
+                - 使用 `detail_url_regex` 過濾允許深入的 URL pattern
+                - 限制 `max_depth`（通常 2 層）
 - 整合到 `scrape` 函數：先 discovery，再 scrape detail pages
 
 **實作細節**：
@@ -210,10 +254,10 @@ pub async fn discover_from_index_pages(
 - 在 Stage 1（Scrape Sources）之前新增 **Stage 0.5: Discovery**
 - 對每個 source 嘗試：
 
-    1. `discovery::discover_urls`（robots.txt -> sitemap）
-    2. `discovery::parse_sitemap`（解析 sitemap XML）
-    3. 從 sitemap 提取的 URLs 過濾（含 `scholarship|funding|bursary|award` 關鍵字）
-    4. 將候選 URLs 加入 `sources_to_scrape` 或建立新的 `discovered_sources` 列表
+                1. `discovery::discover_urls`（robots.txt -> sitemap）
+                2. `discovery::parse_sitemap`（解析 sitemap XML）
+                3. 從 sitemap 提取的 URLs 過濾（含 `scholarship|funding|bursary|award` 關鍵字）
+                4. 將候選 URLs 加入 `sources_to_scrape` 或建立新的 `discovered_sources` 列表
 
 **實作細節**：
 
@@ -256,8 +300,8 @@ println!("  Discovered {} candidate URLs", discovered_urls.len());
 
 - 確保 Stage 1.55（JS-Heavy Detection）只在 HTTP 抓取失敗或頁面是 SPA 時才觸發
 - 優化 `js_detector::needs_browser` 的觸發條件：
-    - 只有在 `extraction_result` 為 `None` 或欄位不完整時才標記為需要 browser
-    - 若 HTTP 抓取成功且有完整欄位，跳過 browser queue
+                - 只有在 `extraction_result` 為 `None` 或欄位不完整時才標記為需要 browser
+                - 若 HTTP 抓取成功且有完整欄位，跳過 browser queue
 
 ### Phase 3: 403/Timeout 分流策略
 
@@ -269,9 +313,9 @@ println!("  Discovered {} candidate URLs", discovered_urls.len());
 
 - 在 `SourceHealth` 結構中新增 `fallback_strategies: Vec<String>` 欄位（如 `["sitemap", "rss"]`）
 - 修改 `update_health` 函數：
-    - 若遇到 403，不立即 auto-disable，而是標記 `fallback_strategies = ["sitemap", "rss"]`
-    - 若遇到 timeout，標記 `fallback_strategies = ["sitemap", "rss", "head_request"]`
-    - 只有在所有 fallback 策略都失敗後才 auto-disable
+                - 若遇到 403，不立即 auto-disable，而是標記 `fallback_strategies = ["sitemap", "rss"]`
+                - 若遇到 timeout，標記 `fallback_strategies = ["sitemap", "rss", "head_request"]`
+                - 只有在所有 fallback 策略都失敗後才 auto-disable
 
 **實作細節**：
 
@@ -301,9 +345,9 @@ pub fn update_health(...) {
 **變更**：
 
 - 在 Stage 1 中，若 source 有 `fallback_strategies`，嘗試執行：
-    - `sitemap`：使用 `discovery::parse_sitemap`
-    - `rss`：使用 `discovery::discover_feeds`
-    - `head_request`：先 HEAD 請求，再 GET
+                - `sitemap`：使用 `discovery::parse_sitemap`
+                - `rss`：使用 `discovery::discover_feeds`
+                - `head_request`：先 HEAD 請求，再 GET
 
 **實作細節**：
 
@@ -343,11 +387,11 @@ if let Some(health) = health_file.sources.iter().find(|h| h.url == source.url) {
 **變更**：
 
 - 新增 Russell Group 大學的 scholarships index pages：
-    - Edinburgh: `https://www.ed.ac.uk/student-funding/postgraduate/international`
-    - St Andrews: `https://www.st-andrews.ac.uk/study/fees-and-funding/postgraduate/`
-    - Strathclyde: `https://www.strath.ac.uk/studywithus/scholarships/`
-    - Manchester: `https://www.manchester.ac.uk/study/international/finance/scholarships/`
-    - 等（共 10-15 個）
+                - Edinburgh: `https://www.ed.ac.uk/student-funding/postgraduate/international`
+                - St Andrews: `https://www.st-andrews.ac.uk/study/fees-and-funding/postgraduate/`
+                - Strathclyde: `https://www.strath.ac.uk/studywithus/scholarships/`
+                - Manchester: `https://www.manchester.ac.uk/study/international/finance/scholarships/`
+                - 等（共 10-15 個）
 - 每個 source 配置 `index_urls` 和 `detail_url_regex`
 
 #### 4.2 新增 UK 政府/公共機構
@@ -367,10 +411,10 @@ if let Some(health) = health_file.sources.iter().find(|h| h.url == source.url) {
 **變更**：
 
 - 科技/工程向基金會（以官方頁為主，避免第三方 403）：
-    - IEEE Foundation
-    - Google Scholarships
-    - Microsoft Scholarships
-    - 等（共 5-10 個）
+                - IEEE Foundation
+                - Google Scholarships
+                - Microsoft Scholarships
+                - 等（共 5-10 個）
 
 ### Phase 5: GitHub Actions 優化
 
@@ -426,6 +470,8 @@ jobs:
 **實作細節**：
 
 ```yaml
+
+
 jobs:
   discovery:
     runs-on: ubuntu-latest

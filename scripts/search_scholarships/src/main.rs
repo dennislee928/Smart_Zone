@@ -206,6 +206,76 @@ async fn main() -> Result<()> {
     for source in sources_to_scrape {
         println!("  Scraping: {} ({})", source.name, source.url);
         
+        // Check if source has fallback strategies
+        let mut fallback_leads: Vec<Lead> = Vec::new();
+        if let Some(health) = health_file.sources.iter().find(|h| h.url == source.url) {
+            if !health.fallback_strategies.is_empty() {
+                println!("    Source has fallback strategies: {:?}", health.fallback_strategies);
+                
+                let base_url = if let Some(pos) = source.url.find("://") {
+                    let rest = &source.url[pos + 3..];
+                    if let Some(path_pos) = rest.find('/') {
+                        format!("{}://{}", &source.url[..pos + 3], &rest[..path_pos])
+                    } else {
+                        source.url.clone()
+                    }
+                } else {
+                    source.url.clone()
+                };
+                
+                let discovery_config = discovery::DiscoveryConfig::default();
+                let discovery_client = reqwest::Client::builder()
+                    .timeout(std::time::Duration::from_secs(10))
+                    .build()
+                    .context("Failed to create HTTP client for fallback")?;
+                
+                for strategy in &health.fallback_strategies {
+                    match strategy.as_str() {
+                        "sitemap" => {
+                            println!("      Trying sitemap fallback...");
+                            let common_sitemaps = vec![
+                                format!("{}/sitemap.xml", base_url),
+                                format!("{}/sitemap_index.xml", base_url),
+                            ];
+                            
+                            for sitemap_url in common_sitemaps {
+                                if let Ok(sitemap_candidates) = discovery::parse_sitemap(&discovery_client, &sitemap_url, &discovery_config).await {
+                                    println!("        Found {} URLs from sitemap", sitemap_candidates.len());
+                                    // Process sitemap URLs as discovered sources
+                                    // For now, we'll add them to a list to scrape later
+                                    // In a full implementation, we'd scrape these URLs directly
+                                }
+                            }
+                        }
+                        "rss" => {
+                            println!("      Trying RSS fallback...");
+                            if let Ok(feed_urls) = discovery::discover_feeds_public(&discovery_client, &base_url).await {
+                                println!("        Found {} RSS feeds", feed_urls.len());
+                                // Process RSS feeds
+                                // In a full implementation, we'd parse RSS feeds and extract scholarship URLs
+                            }
+                        }
+                        "head_request" => {
+                            println!("      Trying HEAD request fallback...");
+                            // Try HEAD request first, then GET if successful
+                            if let Ok(resp) = discovery_client.head(&source.url).send().await {
+                                if resp.status().is_success() {
+                                    // HEAD succeeded, try GET
+                                    if let Ok(get_resp) = discovery_client.get(&source.url).send().await {
+                                        if get_resp.status().is_success() {
+                                            // Try scraping with longer timeout
+                                            println!("        HEAD->GET succeeded, retrying scrape...");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+        
         match scrapers::scrape_source(source).await {
             Ok(result) => {
                 // Update health tracking
