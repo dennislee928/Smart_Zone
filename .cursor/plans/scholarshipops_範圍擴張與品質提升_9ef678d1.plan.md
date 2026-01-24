@@ -529,13 +529,11 @@ if let Some(health) = health_file.sources.iter().find(|h| h.url == source.url) {
 對 Tier 3 的 UK universities 設定：
 
 1. **`discovery_mode: external_links_only`**
-
-                        - 只抽「外部連結」：gov.uk、fcdo、chevening、cscuk、rotary、britishcouncil、charity/foundation 等
-                        - 不追該校內部 scholarship detail pages（或追了也直接標記為 non-portable → C，且不輸出到主要報表）
+   - 只抽「外部連結」：gov.uk、fcdo、chevening、cscuk、rotary、britishcouncil、charity/foundation 等
+   - 不追該校內部 scholarship detail pages（或追了也直接標記為 non-portable → C，且不輸出到主要報表）
 
 2. **`allow_domains_outbound: [...]`**
-
-                        - 白名單外部域名，避免 crawler 任意發散
+   - 白名單外部域名，避免 crawler 任意發散
 
 這樣你就能回答你自己問的那句話：
 
