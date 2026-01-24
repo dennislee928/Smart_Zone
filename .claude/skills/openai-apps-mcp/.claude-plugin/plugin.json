@@ -1,0 +1,12 @@
+{
+  "name": "openai-apps-mcp",
+  "description": "Build ChatGPT apps with MCP servers on Cloudflare Workers. Extend ChatGPT with custom tools and interactive widgets (HTML/JS UI). Use when: developing ChatGPT extensions, implementing MCP servers, or troubleshooting CORS, widget 404s, MIME types, or ASSETS binding errors.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeremy Dawes",
+    "email": "jeremy@jezweb.net"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/jezweb/claude-skills",
+  "keywords": []
+}

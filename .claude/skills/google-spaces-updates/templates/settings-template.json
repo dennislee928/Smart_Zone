@@ -1,0 +1,19 @@
+{
+  "project": {
+    "name": "PROJECT_NAME",
+    "repo": "owner/repo-name",
+    "production_url": "https://your-app.vercel.app",
+    "staging_url": "https://staging.your-app.vercel.app"
+  },
+  "team": {
+    "chat_webhook": "https://chat.googleapis.com/v1/spaces/SPACE_ID/messages?key=API_KEY&token=TOKEN",
+    "members": {
+      "project_manager": "Name",
+      "developers": ["Dev1", "Dev2"]
+    }
+  },
+  "notifications": {
+    "post_on": ["deployments", "major_changes", "bug_fixes", "feature_completions", "questions"],
+    "mention_on_questions": true
+  }
+}

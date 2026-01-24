@@ -1,0 +1,12 @@
+{
+  "name": "clerk-auth",
+  "description": "Clerk auth with API Keys beta (Dec 2025), Next.js 16 proxy.ts, API version 2025-11-10 breaking changes, clerkMiddleware() options, webhooks, and component reference. Use when: API keys for users/orgs, Next.js 16 middleware filename, troubleshooting JWKS/CSRF/JWT errors, webhook verification, or testing with 424242 OTP. return ( <div> <h2>API Keys</h2> <APIKeys /> {/* Full CRUD UI for users API keys */} </div> ) secretKey: process.env.CLERK_SECRET_KEY, authorizedParties: [https://yourdomain.com],",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeremy Dawes",
+    "email": "jeremy@jezweb.net"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/jezweb/claude-skills",
+  "keywords": []
+}

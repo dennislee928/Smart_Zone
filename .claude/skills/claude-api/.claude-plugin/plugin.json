@@ -1,0 +1,12 @@
+{
+  "name": "claude-api",
+  "description": "Build with Claude Messages API using structured outputs for guaranteed JSON schema validation. Covers prompt caching (90% savings), streaming SSE, tool use, and model deprecations. Prevents 12 documented errors. Use when: building chatbots/agents, troubleshooting rate_limit_error, prompt caching issues, or streaming SSE parsing errors.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeremy Dawes",
+    "email": "jeremy@jezweb.net"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/jezweb/claude-skills",
+  "keywords": []
+}
