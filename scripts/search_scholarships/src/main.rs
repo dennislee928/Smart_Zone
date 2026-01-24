@@ -357,19 +357,57 @@ async fn main() -> Result<()> {
             continue;
         }
         
+        // Check if lead has complete data - if yes, skip browser queue
+        let has_complete_data = !lead.name.is_empty() && 
+            (!lead.amount.is_empty() && lead.amount != "See website") &&
+            (!lead.deadline.is_empty() && lead.deadline != "Check website" && lead.deadline != "TBD");
+        
+        if has_complete_data {
+            // Lead has complete data from HTTP scraping, skip browser queue
+            continue;
+        }
+        
         // Fetch HTML for JS-heavy detection
         let html_content = match client.get(&lead.url).send().await {
             Ok(resp) => {
                 if resp.status().is_success() {
                     resp.text().await.unwrap_or_default()
                 } else {
-                    continue; // Skip if HTTP request failed
+                    // HTTP request failed - mark for browser
+                    let detection = js_detector::BrowserDetectionResult {
+                        needs_browser: true,
+                        reason: js_detector::BrowserReason::ExtractionFailedWithApi,
+                        confidence: 0.8,
+                        detected_api_endpoints: vec![],
+                    };
+                    if let Err(e) = browser_queue::write_to_browser_queue(&root, lead, &detection) {
+                        eprintln!("  Warning: Failed to write {} to browser queue: {}", lead.url, e);
+                    } else {
+                        lead.tags.push("pending_browser".to_string());
+                        browser_queue_count += 1;
+                    }
+                    continue;
                 }
             }
-            Err(_) => continue, // Skip on error
+            Err(_) => {
+                // Network error - mark for browser
+                let detection = js_detector::BrowserDetectionResult {
+                    needs_browser: true,
+                    reason: js_detector::BrowserReason::ExtractionFailedWithApi,
+                    confidence: 0.7,
+                    detected_api_endpoints: vec![],
+                };
+                if let Err(e) = browser_queue::write_to_browser_queue(&root, lead, &detection) {
+                    eprintln!("  Warning: Failed to write {} to browser queue: {}", lead.url, e);
+                } else {
+                    lead.tags.push("pending_browser".to_string());
+                    browser_queue_count += 1;
+                }
+                continue;
+            }
         };
         
-        // Check if page needs browser rendering
+        // Check if page needs browser rendering (only if extraction failed or incomplete)
         let detection = js_detector::needs_browser(&html_content, &lead.url, Some(lead));
         
         if detection.needs_browser {

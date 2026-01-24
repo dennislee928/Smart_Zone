@@ -486,6 +486,8 @@ pub struct SourceHealth {
     pub last_checked: String,
     pub auto_disabled: bool,
     pub disabled_reason: Option<String>,
+    #[serde(default)]
+    pub fallback_strategies: Vec<String>, // "sitemap", "rss", "head_request"
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Serialize)]
@@ -534,6 +536,7 @@ impl Default for SourceHealth {
             last_checked: String::new(),
             auto_disabled: false,
             disabled_reason: None,
+            fallback_strategies: vec![],
         }
     }
 }

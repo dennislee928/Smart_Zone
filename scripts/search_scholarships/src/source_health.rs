@@ -160,11 +160,30 @@ pub fn update_health(
             h.total_successes += 1;
             h.auto_disabled = false;
             h.disabled_reason = None;
+            h.fallback_strategies.clear(); // Clear fallback strategies on success
         } else {
-            h.consecutive_failures += 1;
+            // Don't immediately increase consecutive_failures if we have fallback strategies
+            if result.status == SourceStatus::Forbidden {
+                // 403 - try fallback strategies instead of immediately disabling
+                if h.fallback_strategies.is_empty() {
+                    h.fallback_strategies = vec!["sitemap".to_string(), "rss".to_string()];
+                }
+                // Only increase consecutive_failures if all fallback strategies have been tried
+                // For now, we'll still track failures but won't auto-disable until fallbacks fail
+                h.consecutive_failures += 1;
+            } else if result.status == SourceStatus::Timeout {
+                // Timeout - try fallback strategies
+                if h.fallback_strategies.is_empty() {
+                    h.fallback_strategies = vec!["sitemap".to_string(), "rss".to_string(), "head_request".to_string()];
+                }
+                h.consecutive_failures += 1;
+            } else {
+                // Other errors - increase failures normally
+                h.consecutive_failures += 1;
+            }
             
-            // Auto-disable if too many consecutive failures
-            if h.consecutive_failures >= max_failures && !h.auto_disabled {
+            // Auto-disable only if too many consecutive failures AND no active fallback strategies
+            if h.consecutive_failures >= max_failures && !h.auto_disabled && h.fallback_strategies.is_empty() {
                 h.auto_disabled = true;
                 let error_cat = ErrorCategory::from_status(result.status);
                 h.disabled_reason = Some(format!(
@@ -198,6 +217,15 @@ pub fn update_health(
                 Some(format!("Auto-disabled on first failure: {:?}. Cooldown: {} hours", error_cat, COOLDOWN_HOURS))
             } else {
                 None
+            },
+            fallback_strategies: if !is_success {
+                match result.status {
+                    SourceStatus::Forbidden => vec!["sitemap".to_string(), "rss".to_string()],
+                    SourceStatus::Timeout => vec!["sitemap".to_string(), "rss".to_string(), "head_request".to_string()],
+                    _ => vec![],
+                }
+            } else {
+                vec![]
             },
         });
     }
