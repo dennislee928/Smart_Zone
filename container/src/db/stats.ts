@@ -1,4 +1,3 @@
-import { eq, and, gte, lte } from 'drizzle-orm'
 import { getDb } from './index'
 import { leads, applications } from './schema'
 import type { Stats } from '../types'
@@ -27,13 +26,19 @@ export async function getStats(db: ReturnType<typeof getDb>): Promise<Stats> {
 
   for (const app of allApplications) {
     if (app.deadline) {
-      const deadline = new Date(app.deadline)
-      if (deadline > now && deadline <= sevenDaysFromNow) {
-        upcoming7++
-      } else if (deadline > sevenDaysFromNow && deadline <= fourteenDaysFromNow) {
-        upcoming14++
-      } else if (deadline > fourteenDaysFromNow && deadline <= twentyOneDaysFromNow) {
-        upcoming21++
+      try {
+        const deadline = new Date(app.deadline)
+        if (!isNaN(deadline.getTime())) {
+          if (deadline > now && deadline <= sevenDaysFromNow) {
+            upcoming7++
+          } else if (deadline > sevenDaysFromNow && deadline <= fourteenDaysFromNow) {
+            upcoming14++
+          } else if (deadline > fourteenDaysFromNow && deadline <= twentyOneDaysFromNow) {
+            upcoming21++
+          }
+        }
+      } catch (e) {
+        // Invalid date format, skip
       }
     }
   }
