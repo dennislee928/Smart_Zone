@@ -78,12 +78,10 @@ pub fn calculate_effort_score(lead: &Lead) -> i32 {
         score += 15;
     }
     
-    // Video submission (generic)
-    if contains_any(&text, &["video", "recording", "presentation"]) {
-        score += 15;
-    }
     // Video essay / statement / interview (fine-grained; B-EFFORT-VIDEO-001 also applies via rules)
     if contains_any(&text, &["video essay", "video statement", "video interview"]) {
+        score += 15;
+    } else if contains_any(&text, &["video", "recording", "presentation"]) {
         score += 15;
     }
     
@@ -200,6 +198,8 @@ mod tests {
             url: "https://test.com".to_string(),
             match_score: 0,
             match_reasons: vec![],
+            hard_fail_reasons: vec![],
+            soft_flags: vec![],
             bucket: None,
             http_status: None,
             effort_score: None,
@@ -208,6 +208,7 @@ mod tests {
             matched_rule_ids: vec![],
             eligible_countries: vec![],
             is_taiwan_eligible: None,
+            taiwan_eligibility_confidence: None,
             deadline_date: None,
             deadline_label: None,
             intake_year: None,
@@ -216,6 +217,7 @@ mod tests {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: None,
+            source_domain: None,
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],

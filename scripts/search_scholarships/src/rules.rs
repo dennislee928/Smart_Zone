@@ -468,6 +468,8 @@ mod tests {
             url: "https://example.com/scholarship".to_string(),
             match_score: 0,
             match_reasons: vec![],
+            hard_fail_reasons: vec![],
+            soft_flags: vec![],
             bucket: None,
             http_status: None,
             effort_score: None,
@@ -476,6 +478,7 @@ mod tests {
             matched_rule_ids: vec![],
             eligible_countries: vec![],
             is_taiwan_eligible: None,
+            taiwan_eligibility_confidence: None,
             deadline_date: None,
             deadline_label: None,
             intake_year: None,
@@ -484,6 +487,7 @@ mod tests {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: None,
+            source_domain: None,
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
@@ -621,7 +625,7 @@ mod tests {
         
         // Condition: is_taiwan_eligible: true (require explicit confirmation)
         let condition = RuleCondition {
-            is_taiwan_eligible: Some(true),
+            is_taiwan_eligible: Some(serde_json::Value::Bool(true)),
             ..Default::default()
         };
         
@@ -645,7 +649,7 @@ mod tests {
         
         // Condition: is_taiwan_eligible: false (trigger rejection only when explicit)
         let condition = RuleCondition {
-            is_taiwan_eligible: Some(false),
+            is_taiwan_eligible: Some(serde_json::Value::Bool(false)),
             ..Default::default()
         };
         
