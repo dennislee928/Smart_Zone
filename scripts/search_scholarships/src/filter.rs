@@ -162,6 +162,10 @@ pub fn update_country_eligibility(lead: &mut Lead) {
     // Scrapers may have already set is_taiwan_eligible based on known data
     if lead.is_taiwan_eligible.is_some() && !lead.eligible_countries.is_empty() {
         // Already has explicit eligibility data from scraper, don't override
+        // Set confidence if not already set
+        if lead.taiwan_eligibility_confidence.is_none() && !lead.eligible_countries.is_empty() {
+            lead.taiwan_eligibility_confidence = Some("explicit_list".to_string());
+        }
         return;
     }
     
@@ -175,12 +179,23 @@ pub fn update_country_eligibility(lead: &mut Lead) {
     let (countries, is_eligible) = parse_eligible_countries(&text);
     
     if !countries.is_empty() && lead.eligible_countries.is_empty() {
-        lead.eligible_countries = countries;
+        lead.eligible_countries = countries.clone();
+        // If we parsed explicit country list, mark as explicit_list
+        if !countries.is_empty() {
+            lead.taiwan_eligibility_confidence = Some("explicit_list".to_string());
+        }
     }
     
     // Only update is_taiwan_eligible if not already explicitly set by scraper
     if lead.is_taiwan_eligible.is_none() && is_eligible.is_some() {
         lead.is_taiwan_eligible = is_eligible;
+        // If we inferred eligibility from patterns (not explicit list), mark as inferred
+        if lead.taiwan_eligibility_confidence.is_none() {
+            lead.taiwan_eligibility_confidence = Some("inferred".to_string());
+        }
+    } else if lead.is_taiwan_eligible.is_none() && lead.taiwan_eligibility_confidence.is_none() {
+        // Unknown eligibility
+        lead.taiwan_eligibility_confidence = Some("unknown".to_string());
     }
 }
 
@@ -766,6 +781,21 @@ const TIER_B_DOMAINS: &[&str] = &[
     "scholarshipportal.com", "prospects.ac.uk", "postgraduatesearch.com",
 ];
 
+/// Extract domain from URL for trust tier determination
+pub fn extract_domain_from_url(url: &str) -> Option<String> {
+    // Simple regex-based extraction
+    if let Ok(re) = regex::Regex::new(r"https?://([^/?#]+)") {
+        if let Some(caps) = re.captures(url) {
+            let host = &caps[1];
+            // Remove port if present
+            let domain = host.split(':').next().unwrap_or(host);
+            return Some(domain.to_string());
+        }
+    }
+    
+    None
+}
+
 /// Determine trust tier from URL
 pub fn determine_trust_tier(url: &str) -> TrustTier {
     let url_lower = url.to_lowercase();
@@ -787,6 +817,35 @@ pub fn determine_trust_tier(url: &str) -> TrustTier {
     // Check Tier B (verified aggregators)
     for domain in TIER_B_DOMAINS {
         if url_lower.contains(domain) {
+            return TrustTier::B;
+        }
+    }
+    
+    // Default to Tier C (unverified)
+    TrustTier::C
+}
+
+/// Determine trust tier from domain string
+pub fn determine_trust_tier_from_domain(domain: &str) -> TrustTier {
+    let domain_lower = domain.to_lowercase();
+    
+    // Check Tier S (official sources)
+    for tier_s_domain in TIER_S_DOMAINS {
+        if domain_lower.contains(tier_s_domain) {
+            return TrustTier::S;
+        }
+    }
+    
+    // Check Tier A (major foundations)
+    for tier_a_domain in TIER_A_DOMAINS {
+        if domain_lower.contains(tier_a_domain) {
+            return TrustTier::A;
+        }
+    }
+    
+    // Check Tier B (verified aggregators)
+    for tier_b_domain in TIER_B_DOMAINS {
+        if domain_lower.contains(tier_b_domain) {
             return TrustTier::B;
         }
     }
@@ -837,8 +896,17 @@ pub fn find_official_source(lead: &Lead) -> Option<String> {
 
 /// Update lead with trust tier and official source information
 pub fn update_trust_info(lead: &mut Lead) {
-    // Determine trust tier from URL
-    let tier = determine_trust_tier(&lead.url);
+    // Extract domain from URL if not already set
+    if lead.source_domain.is_none() {
+        lead.source_domain = extract_domain_from_url(&lead.url);
+    }
+    
+    // Determine trust tier: prefer source_domain if available, otherwise use URL
+    let tier = if let Some(ref domain) = lead.source_domain {
+        determine_trust_tier_from_domain(domain)
+    } else {
+        determine_trust_tier(&lead.url)
+    };
     lead.trust_tier = Some(tier.to_string());
     
     // If from aggregator (Tier B or C), try to find official source

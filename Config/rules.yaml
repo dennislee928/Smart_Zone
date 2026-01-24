@@ -132,42 +132,45 @@ hard_reject_rules:
       bucket: "C"
       reason: "Requires US state/county residency - not applicable for Taiwan"
 
-  # === Non-Target University Gate ===
-  - id: "E-NONTARGET-001"
-    name: "Non-Target and Non-Portable"
+  # === EU Only Gate ===
+  - id: "E-REGION-EU-001"
+    name: "EU Only"
     stage: "eligibility"
-    description: "Not from Glasgow and not explicitly portable to UK universities"
+    description: "EU-only scholarship"
     when:
-      is_directory_page: false  # Only apply to scholarship detail pages, not discovery/index pages
-      not_any_regex:
-        - "(?i)gla\\.ac\\.uk"
-        - "(?i)glasgow\\.ac\\.uk"
-        - "(?i)University\\s*of\\s*Glasgow"
-        - "(?i)\\bGlasgow\\b.*scholarship"
-        - "(?i)any\\s*(UK|British)\\s*university"
-        - "(?i)tenable\\s+at\\s+any\\s+UK"
-        - "(?i)\\bChevening\\b"
-        - "(?i)\\bGates\\s*Cambridge\\b"
-        - "(?i)\\bRhodes\\s*Scholar"
-        - "(?i)\\bMarshall\\s*Scholar"
-        - "(?i)\\bCommonwealth\\s*Scholar"
-        - "(?i)\\bRotary\\s*Foundation\\b"
-        - "(?i)\\bFulbright\\b"
-        - "(?i)international\\s+students?\\s+at\\s+UK\\s+universit"
+      any_regex:
+        - "(?i)EU\\s+students?\\s+only"
+        - "(?i)European\\s+Union\\s+students?\\s+only"
+        - "(?i)available\\s+to\\s+EU\\s+nationals?\\s+only"
     action:
       bucket: "C"
-      reason: "Not from Glasgow and not portable to UK universities"
+      reason: "EU-only scholarship."
+
+  # === EU Only Gate ===
+  - id: "E-REGION-EU-001"
+    name: "EU Only"
+    stage: "eligibility"
+    description: "EU-only scholarship"
+    when:
+      any_regex:
+        - "(?i)EU\\s+students?\\s+only"
+        - "(?i)European\\s+Union\\s+students?\\s+only"
+        - "(?i)available\\s+to\\s+EU\\s+nationals?\\s+only"
+    action:
+      bucket: "C"
+      reason: "EU-only scholarship."
 
   # === Country Eligibility Gate ===
   - id: "E-COUNTRY-001"
-    name: "Taiwan Not Eligible"
+    name: "Taiwan Not Eligible (Explicit)"
     stage: "eligibility"
-    description: "Taiwan is not in the eligible countries list"
+    description: "Taiwan is explicitly not in the eligible countries list"
     when:
       is_taiwan_eligible: false
+      taiwan_eligibility_confidence: "explicit_list"
     action:
       bucket: "C"
-      reason: "Taiwan not in eligible countries list"
+      reason: "Taiwan not in eligible countries list (explicit)."
 
   # === Timeline Gate ===
   - id: "T-DEAD-PAST-001"
@@ -182,32 +185,34 @@ hard_reject_rules:
       reason: "Deadline passed - saved for next cycle"
 
   - id: "T-TIMELINE-001"
-    name: "Wrong Intake Cycle"
+    name: "Wrong Intake Cycle (Pre-entry Only)"
     stage: "timeline"
-    description: "Deadline is after target study start date - wrong intake cycle"
+    description: "Deadline is after target study start date - wrong intake cycle for pre-entry funding"
     when:
       deadline:
         gt_study_start: true
         safety_margin_days: 60
+      not_any_regex:
+        - "(?i)current\\s+students?"
+        - "(?i)enrolled\\s+students?"
+        - "(?i)after\\s+enrol"
+        - "(?i)registered\\s+students?"
     action:
       bucket: "C"
-      reason: "Deadline after study start date (Sep 2026) - wrong intake cycle for 2026/27"
+      reason: "Deadline after study start date (Sep 2026) - wrong intake cycle for pre-entry funding."
 
   # === Scam Detection ===
   - id: "S-SCAM-001"
-    name: "Payment Required"
+    name: "Scholarship Application Fee Required"
     stage: "trust"
-    description: "Requires payment or bank details"
+    description: "Scholarship requires payment to apply"
     when:
-      any_regex:
-        - "(?i)credit\\s*card"
-        - "(?i)bank\\s*account"
-        - "(?i)processing\\s*fee"
-        - "(?i)application\\s*fee\\s*\\$"
-        - "(?i)pay\\s*to\\s*apply"
+      all_regex:
+        - "(?i)scholarship"
+        - "(?i)(processing\\s*fee|pay\\s*to\\s*apply|application\\s*fee)"
     action:
       bucket: "C"
-      reason: "Scam-like language: payment or bank details requested."
+      reason: "Scholarship application fee required - likely scam."
 
   - id: "S-SCAM-002"
     name: "Guaranteed/Money Back"
@@ -229,6 +234,60 @@ hard_reject_rules:
 # ============================================
 
 soft_downgrade_rules:
+  - id: "B-COUNTRY-UNK-001"
+    name: "Taiwan Eligibility Unknown"
+    stage: "eligibility"
+    description: "Taiwan eligibility unknown; needs verification"
+    when:
+      is_taiwan_eligible: "unknown"
+    action:
+      bucket: "B"
+      reason: "Taiwan eligibility unknown; needs verification."
+
+  - id: "B-NONTARGET-001"
+    name: "Non-Target (Needs Portability Proof)"
+    stage: "eligibility"
+    description: "Not from Glasgow and portability to UK not proven"
+    when:
+      is_directory_page: false
+      not_any_regex:
+        - "(?i)gla\\.ac\\.uk"
+        - "(?i)glasgow\\.ac\\.uk"
+        - "(?i)University\\s*of\\s*Glasgow"
+        - "(?i)\\bGlasgow\\b.*scholarship"
+        - "(?i)study\\s+in\\s+the\\s+UK"
+        - "(?i)any\\s+university"
+        - "(?i)any\\s+UK\\s+universit"
+        - "(?i)postgraduate\\s+study\\s+in\\s+the\\s+UK"
+        - "(?i)overseas\\s+master"
+        - "(?i)\\bChevening\\b"
+        - "(?i)\\bGates\\s*Cambridge\\b"
+        - "(?i)\\bRhodes\\s*Scholar"
+        - "(?i)\\bMarshall\\s*Scholar"
+        - "(?i)\\bCommonwealth\\s*Scholar"
+        - "(?i)\\bRotary\\s*Foundation\\b"
+        - "(?i)\\bFulbright\\b"
+        - "(?i)international\\s+students?\\s+at\\s+UK\\s+universit"
+    action:
+      bucket: "B"
+      reason: "Non-target scholarship; portability to UK not proven."
+
+  - id: "B-INCOURSE-001"
+    name: "In-Course Funding"
+    stage: "timeline"
+    description: "Scholarship for enrolled students (apply after enrolment)"
+    when:
+      deadline:
+        gt_study_start: true
+      any_regex:
+        - "(?i)current\\s+students?"
+        - "(?i)enrolled\\s+students?"
+        - "(?i)after\\s+enrol"
+        - "(?i)registered\\s+students?"
+    action:
+      bucket: "B"
+      reason: "In-course funding (apply after enrolment)."
+
   - id: "B-LINK-001"
     name: "Rate Limited"
     stage: "link_health"
@@ -387,9 +446,9 @@ positive_scoring_rules:
         - "(?i)computer\\s*science"
         - "(?i)computing"
         - "(?i)software"
-        - "(?i)\\bIT\\b"
         - "(?i)information\\s*technology"
         - "(?i)data\\s*science"
+        - "(?i)\\bI\\.T\\.\\b"
     action:
       score_add: 15
       reason: "Computing/Software field match."

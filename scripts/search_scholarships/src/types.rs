@@ -21,7 +21,11 @@ pub struct Lead {
     #[serde(default)]
     pub match_score: i32,
     #[serde(default)]
-    pub match_reasons: Vec<String>,
+    pub match_reasons: Vec<String>,          // Positive scoring reasons (why it matches)
+    #[serde(default)]
+    pub hard_fail_reasons: Vec<String>,      // Hard reject reasons (why it's in C bucket)
+    #[serde(default)]
+    pub soft_flags: Vec<String>,             // Soft downgrade flags (why it's in B bucket)
     
     // Triage fields
     #[serde(default)]
@@ -41,7 +45,9 @@ pub struct Lead {
     #[serde(default)]
     pub eligible_countries: Vec<String>,    // Normalized country list
     #[serde(default)]
-    pub is_taiwan_eligible: Option<bool>,   // Explicit eligibility flag
+    pub is_taiwan_eligible: Option<bool>,   // Explicit eligibility flag (true/false/None=unknown)
+    #[serde(default)]
+    pub taiwan_eligibility_confidence: Option<String>, // "explicit_list", "inferred", "unknown"
     
     // Structured date fields
     #[serde(default)]
@@ -64,6 +70,8 @@ pub struct Lead {
     // Source priority fields
     #[serde(default)]
     pub official_source_url: Option<String>, // Official source URL (if found via aggregator)
+    #[serde(default)]
+    pub source_domain: Option<String>,        // Extracted domain from URL for trust tier determination
     
     // Confidence scoring fields (0.0 - 1.0)
     #[serde(default)]
@@ -233,13 +241,17 @@ pub struct RuleCondition {
     #[serde(default)]
     pub not_any_regex: Option<Vec<String>>,  // Negative match - trigger if NONE match
     #[serde(default)]
+    pub all_regex: Option<Vec<String>>,     // All patterns must match (AND logic)
+    #[serde(default)]
     pub deadline: Option<DeadlineCondition>,
     #[serde(default)]
     pub http_status: Option<HttpStatusCondition>,
     #[serde(default)]
     pub effort_score: Option<EffortScoreCondition>,
     #[serde(default)]
-    pub is_taiwan_eligible: Option<bool>,  // Country eligibility gate
+    pub is_taiwan_eligible: Option<serde_json::Value>,  // Country eligibility gate (bool or "unknown")
+    #[serde(default)]
+    pub taiwan_eligibility_confidence: Option<String>,  // "explicit_list", "inferred", "unknown"
     #[serde(default)]
     pub is_directory_page: Option<bool>,   // Directory/index page gate - skip rules for discovery pages
 }

@@ -267,8 +267,16 @@ async fn main() -> Result<()> {
     println!();
     
     // ==========================================
-    // Stage 2: Link Health Check (optional, skip if too many)
+    // Stage 1.7: Extract source domains for trust tier determination
     // ==========================================
+    println!("Stage 1.7: Extracting source domains...");
+    for lead in &mut all_leads {
+        if lead.source_domain.is_none() {
+            lead.source_domain = filter::extract_domain_from_url(&lead.url);
+        }
+    }
+    println!("  Extracted domains for {} leads", all_leads.len());
+    println!();
     let mut dead_links = Vec::new();
     if all_leads.len() <= 50 {
         println!("Stage 2: Checking link health...");

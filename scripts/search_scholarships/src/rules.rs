@@ -310,27 +310,68 @@ fn check_rule_condition(condition: &RuleCondition, lead: &Lead, search_text: &st
         }
     }
     
+    // Check all_regex patterns (all must match - AND logic)
+    if let Some(ref patterns) = condition.all_regex {
+        has_any_condition = true;
+        let all_matched = patterns.iter().all(|pattern| {
+            Regex::new(pattern)
+                .map(|re| re.is_match(search_text))
+                .unwrap_or(false)
+        });
+        if !all_matched {
+            all_passed = false;
+        }
+    }
+    
     // Check country eligibility condition (tri-state logic)
     // - expected=true  => require explicit Some(true) to pass
-    // - expected=false => only trigger rejection if eligible_countries list exists AND is_taiwan_eligible == Some(false)
-    if let Some(expected_eligible) = condition.is_taiwan_eligible {
+    // - expected=false => only trigger rejection if eligible_countries list exists AND is_taiwan_eligible == Some(false) AND confidence == "explicit_list"
+    // - expected="unknown" => trigger when is_taiwan_eligible == None
+    if let Some(ref expected_eligible) = condition.is_taiwan_eligible {
         has_any_condition = true;
-
-        match expected_eligible {
-            true => {
-                // Must be explicitly confirmed eligible
-                if lead.is_taiwan_eligible != Some(true) {
-                    all_passed = false;
+        
+        // Handle both bool and string "unknown" values
+        if expected_eligible.is_boolean() {
+            let expected_bool = expected_eligible.as_bool().unwrap();
+            match expected_bool {
+                true => {
+                    // Must be explicitly confirmed eligible
+                    if lead.is_taiwan_eligible != Some(true) {
+                        all_passed = false;
+                    }
+                }
+                false => {
+                    // Only reject when explicit list exists AND Taiwan is not included AND confidence is explicit_list
+                    let has_explicit_list = !lead.eligible_countries.is_empty();
+                    let is_explicitly_false = lead.is_taiwan_eligible == Some(false);
+                    let confidence_ok = condition.taiwan_eligibility_confidence.as_ref()
+                        .map(|c| c == "explicit_list")
+                        .unwrap_or(true); // If not specified, don't check confidence
+                    
+                    if !has_explicit_list || !is_explicitly_false || !confidence_ok {
+                        // Condition not met: either no explicit list, or Taiwan is eligible/unknown, or confidence not explicit
+                        all_passed = false;
+                    }
                 }
             }
-            false => {
-                // Only reject when the page explicitly lists eligible countries AND Taiwan is not included
-                let has_explicit_country_list = !lead.eligible_countries.is_empty();
-                if !has_explicit_country_list || lead.is_taiwan_eligible != Some(false) {
-                    // Condition not met: either no explicit list, or Taiwan is eligible/unknown
-                    all_passed = false;
+        } else if expected_eligible.is_string() {
+            // Handle "unknown" string value
+            if let Some(s) = expected_eligible.as_str() {
+                if s == "unknown" {
+                    // Trigger when is_taiwan_eligible is None
+                    if lead.is_taiwan_eligible.is_some() {
+                        all_passed = false;
+                    }
                 }
             }
+        }
+    }
+    
+    // Check taiwan_eligibility_confidence condition
+    if let Some(ref expected_confidence) = condition.taiwan_eligibility_confidence {
+        has_any_condition = true;
+        if lead.taiwan_eligibility_confidence.as_deref() != Some(expected_confidence.as_str()) {
+            all_passed = false;
         }
     }
     
@@ -382,6 +423,9 @@ fn parse_deadline(deadline: &str) -> Option<NaiveDate> {
 pub struct RuleApplicationResult {
     pub bucket: Option<Bucket>,
     pub matched_rules: Vec<RuleMatch>,
+    pub match_reasons: Vec<String>,           // Positive scoring reasons
+    pub hard_fail_reasons: Vec<String>,      // Hard reject reasons
+    pub soft_flags: Vec<String>,            // Soft downgrade flags
     pub score_adjustments: Vec<(String, i32)>,
     pub effort_adjustments: Vec<(String, i32)>,
     pub total_score_add: i32,
