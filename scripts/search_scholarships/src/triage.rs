@@ -48,6 +48,13 @@ pub fn triage_leads(leads: &mut [Lead], rules: &RulesConfig) -> TriageStats {
         // Determine final bucket: rules engine takes precedence, then deadline/confidence
         lead.bucket = if result.hard_rejected {
             // Hard reject from rules engine
+            // Store rejection reason for reporting
+            if let Some(ref rejection_reason) = result.rejection_reason {
+                // Prepend rejection reason to match_reasons for C bucket reporting
+                if !lead.match_reasons.contains(rejection_reason) {
+                    lead.match_reasons.insert(0, rejection_reason.clone());
+                }
+            }
             result.bucket
         } else {
             // Apply deadline + confidence based bucketing
@@ -350,11 +357,30 @@ pub fn generate_triage_md(
         report.push_str(&format!("{} scholarships were rejected.\n\n", bucket_c.len()));
         
         // Group by rejection reason
+        // For C bucket, use match_reasons (which contains rejection_reason for hard rejects)
+        // or matched_rule_ids to determine the actual rejection reason
         let mut reason_counts: HashMap<String, usize> = HashMap::new();
         for lead in bucket_c {
-            let reason = lead.match_reasons.first()
-                .cloned()
-                .unwrap_or_else(|| "Unknown reason".to_string());
+            // Priority: use first match_reason (which should be rejection_reason for hard rejects)
+            // or use matched_rule_ids to infer reason
+            let reason = if !lead.match_reasons.is_empty() {
+                // Check if first reason looks like a rejection reason (contains "not" or "only" or rule ID pattern)
+                let first_reason = &lead.match_reasons[0];
+                if first_reason.contains("not") || first_reason.contains("only") || 
+                   first_reason.contains("Not eligible") || first_reason.contains("Requires") ||
+                   first_reason.starts_with("E-") || first_reason.starts_with("T-") {
+                    first_reason.clone()
+                } else if !lead.matched_rule_ids.is_empty() {
+                    // Use rule ID as fallback
+                    format!("Rule: {}", lead.matched_rule_ids[0])
+                } else {
+                    "Not eligible".to_string()
+                }
+            } else if !lead.matched_rule_ids.is_empty() {
+                format!("Rule: {}", lead.matched_rule_ids[0])
+            } else {
+                "Unknown reason".to_string()
+            };
             *reason_counts.entry(reason).or_insert(0) += 1;
         }
         

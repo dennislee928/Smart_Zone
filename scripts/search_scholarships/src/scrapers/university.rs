@@ -212,7 +212,34 @@ fn extract_amount(text: &str) -> Option<String> {
 }
 
 fn extract_deadline(text: &str) -> Option<String> {
-    // Look for date patterns
+    let text_lower = text.to_lowercase();
+    
+    // First, check for TBD patterns (higher priority than date extraction)
+    let tbd_patterns = [
+        r"(?i)(?:deadline|closes?|due|by|application)[:\s]*(?:will be|to be)\s+(?:announced|confirmed|determined)",
+        r"(?i)(?:deadline|closes?|due|by|application)[:\s]*(?:TBD|T\.B\.D\.|to be determined)",
+        r"(?i)(?:deadline|closes?|due|by|application)[:\s]*(?:closer to|nearer to|near)\s+(?:the time|the date)",
+        r"(?i)(?:deadline|closes?|due|by|application)[:\s]*(?:check|see)\s+(?:website|page|below)",
+        r"(?i)(?:deadline|closes?|due|by|application)[:\s]*(?:summer|autumn|winter|spring)\s+\d{4}\s*(?:will be|to be)\s+announced",
+    ];
+    
+    for pattern in &tbd_patterns {
+        if let Ok(re) = regex::Regex::new(pattern) {
+            if re.is_match(&text_lower) {
+                // Extract context (e.g., "Summer 2026")
+                if let Ok(context_re) = regex::Regex::new(r"(?i)(summer|autumn|winter|spring|fall)\s+(\d{4})") {
+                    if let Some(caps) = context_re.captures(&text_lower) {
+                        let season = caps.get(1).map(|m| m.as_str()).unwrap_or("");
+                        let year = caps.get(2).map(|m| m.as_str()).unwrap_or("");
+                        return Some(format!("TBD ({}{})", season, year));
+                    }
+                }
+                return Some("TBD".to_string());
+            }
+        }
+    }
+    
+    // Look for date patterns (only if TBD not found)
     if let Ok(re) = regex::Regex::new(r"(?i)(deadline|closes?|due|by)[:\s]+(\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4}|\d{1,2}\s+\w+\s+\d{4}|\w+\s+\d{1,2},?\s+\d{4})") {
         if let Some(caps) = re.captures(text) {
             if let Some(date) = caps.get(2) {
@@ -238,7 +265,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
         Lead {
             name: "Glasgow Global Leadership Scholarship 2026".to_string(),
             amount: "£10,000 tuition fee discount".to_string(),
-            deadline: "2026-06-30".to_string(), // Estimated - usually summer
+            deadline: "TBD (Summer 2026)".to_string(), // Will be announced closer to the time
             source: url.to_string(),
             source_type: "university".to_string(),
             status: "new".to_string(),
@@ -247,7 +274,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
                 "Academic excellence (UK First-Class Honours equivalent)".to_string(),
                 "Full-time 1-year MSc programme".to_string(),
             ],
-            notes: "Must hold an offer; apply with student ID and application number".to_string(),
+            notes: "Must hold an offer; apply with student ID and application number. Deadline will be announced closer to Summer 2026.".to_string(),
             added_date: String::new(),
             url: "https://www.gla.ac.uk/scholarships/globalleadershipscholarship/".to_string(),
             match_score: 0,
@@ -260,11 +287,11 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             matched_rule_ids: vec![],
             eligible_countries: vec![],
             is_taiwan_eligible: Some(true), // International students eligible
-            deadline_date: Some("2026-06-30".to_string()),
-            deadline_label: Some("applications close (estimated)".to_string()),
+            deadline_date: None, // TBD - do not set a specific date
+            deadline_label: Some("will be announced closer to Summer 2026".to_string()),
             intake_year: Some("2026/27".to_string()),
             study_start: Some("2026-09".to_string()),
-            deadline_confidence: Some("estimated".to_string()),
+            deadline_confidence: Some("TBD".to_string()),
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://www.gla.ac.uk/scholarships/globalleadershipscholarship/".to_string()),
@@ -403,7 +430,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             ],
             notes: "Includes Computing Science, Engineering, and other STEM programmes".to_string(),
             added_date: String::new(),
-            url: "https://www.gla.ac.uk/colleges/scienceengineering/".to_string(),
+            url: "https://www.gla.ac.uk/scholarships/scienceengineeringexcellence/".to_string(), // Use scholarship detail page URL pattern
             match_score: 0,
             match_reasons: vec![],
             bucket: None,
@@ -421,7 +448,7 @@ fn get_known_university_scholarships(url: &str) -> Vec<Lead> {
             deadline_confidence: Some("estimated".to_string()),
             canonical_url: None,
             is_directory_page: false,
-            official_source_url: Some("https://www.gla.ac.uk/colleges/scienceengineering/".to_string()),
+            official_source_url: Some("https://www.gla.ac.uk/scholarships/scienceengineeringexcellence/".to_string()),
             confidence: None,
             eligibility_confidence: None,
             tags: vec!["glasgow".to_string(), "stem".to_string(), "computing".to_string()],

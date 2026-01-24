@@ -259,6 +259,14 @@ async fn main() -> Result<()> {
     println!();
     
     // ==========================================
+    // Stage 1.6: Link Validation
+    // ==========================================
+    println!("Stage 1.6: Validating scholarship links...");
+    let invalid_links = filter::validate_all_scholarship_links(&mut all_leads);
+    println!("  Found {} leads with invalid links (pointing to homepages)", invalid_links);
+    println!();
+    
+    // ==========================================
     // Stage 2: Link Health Check (optional, skip if too many)
     // ==========================================
     let mut dead_links = Vec::new();
@@ -638,6 +646,7 @@ fn build_html_report(
 ) -> String {
     let bucket_a: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::A)).collect();
     let bucket_b: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::B)).collect();
+    let bucket_c: Vec<_> = leads.iter().filter(|l| l.bucket == Some(Bucket::C) || l.bucket.is_none()).collect();
     
     let mut html = String::from(r#"<!DOCTYPE html>
 <html lang="en">
@@ -653,11 +662,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 h1 { color: #2c3e50; margin-bottom: 10px; }
 h2 { color: #34495e; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
 .timestamp { color: #7f8c8d; font-size: 0.9em; margin-bottom: 20px; }
-.stats { display: flex; gap: 20px; margin: 20px 0; }
-.stat-box { background: #ecf0f1; padding: 15px 25px; border-radius: 8px; text-align: center; }
+.stats { display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap; }
+.stat-box { background: #ecf0f1; padding: 15px 25px; border-radius: 8px; text-align: center; flex: 1; min-width: 120px; }
 .stat-box.a { background: #d5f5e3; border-left: 4px solid #27ae60; }
 .stat-box.b { background: #fdebd0; border-left: 4px solid #f39c12; }
 .stat-box.c { background: #fadbd8; border-left: 4px solid #e74c3c; }
+.stat-box.filtered { background: #e8e8e8; border-left: 4px solid #95a5a6; }
 .stat-number { font-size: 2em; font-weight: bold; }
 table { width: 100%; border-collapse: collapse; margin: 20px 0; }
 th { background: #3498db; color: white; padding: 12px; text-align: left; }
@@ -666,6 +676,9 @@ tr:hover { background: #f8f9fa; }
 a { color: #3498db; }
 .bucket-a { background: #d5f5e3; }
 .bucket-b { background: #fdebd0; }
+.bucket-c { background: #fadbd8; }
+.filtered-row { background: #f5f5f5; }
+.reason { font-size: 0.9em; color: #7f8c8d; }
 </style>
 </head>
 <body>
@@ -686,7 +699,8 @@ a { color: #3498db; }
     html.push_str("<div class=\"stats\">\n");
     html.push_str(&format!("<div class=\"stat-box a\"><div class=\"stat-number\">{}</div>Bucket A</div>\n", bucket_a.len()));
     html.push_str(&format!("<div class=\"stat-box b\"><div class=\"stat-number\">{}</div>Bucket B</div>\n", bucket_b.len()));
-    html.push_str(&format!("<div class=\"stat-box c\"><div class=\"stat-number\">{}</div>Filtered</div>\n", filtered_out.len()));
+    html.push_str(&format!("<div class=\"stat-box c\"><div class=\"stat-number\">{}</div>Bucket C</div>\n", bucket_c.len()));
+    html.push_str(&format!("<div class=\"stat-box filtered\"><div class=\"stat-number\">{}</div>Filtered</div>\n", filtered_out.len()));
     html.push_str("</div>\n");
     
     if !bucket_a.is_empty() {
@@ -717,6 +731,55 @@ a { color: #3498db; }
         
         if bucket_b.len() > 30 {
             html.push_str(&format!("<p><em>... and {} more</em></p>\n", bucket_b.len() - 30));
+        }
+    }
+    
+    if !bucket_c.is_empty() {
+        html.push_str("<h2>❌ Bucket C - Rejected</h2>\n");
+        html.push_str("<table><thead><tr><th>#</th><th>Name</th><th>Amount</th><th>Deadline</th><th>Rejection Reason</th><th>Link</th></tr></thead><tbody>\n");
+        
+        for (i, lead) in bucket_c.iter().take(20).enumerate() {
+            // Get rejection reason from matched_rule_ids or match_reasons
+            let reason = if !lead.matched_rule_ids.is_empty() {
+                lead.matched_rule_ids.first().cloned().unwrap_or_default()
+            } else if !lead.match_reasons.is_empty() {
+                lead.match_reasons.first().cloned().unwrap_or_default()
+            } else {
+                "Not eligible".to_string()
+            };
+            
+            html.push_str(&format!(
+                "<tr class=\"bucket-c\"><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td class=\"reason\">{}</td><td><a href=\"{}\" target=\"_blank\">Link</a></td></tr>\n",
+                i + 1, lead.name, lead.amount, lead.deadline, reason, lead.url
+            ));
+        }
+        html.push_str("</tbody></table>\n");
+        
+        if bucket_c.len() > 20 {
+            html.push_str(&format!("<p><em>... and {} more rejected scholarships</em></p>\n", bucket_c.len() - 20));
+        }
+    }
+    
+    if !filtered_out.is_empty() {
+        html.push_str("<h2>⏭️ Filtered Out</h2>\n");
+        html.push_str("<table><thead><tr><th>#</th><th>Name</th><th>Filter Reasons</th></tr></thead><tbody>\n");
+        
+        for (i, (name, reasons)) in filtered_out.iter().take(20).enumerate() {
+            let reasons_str = if reasons.is_empty() {
+                "Keyword mismatch".to_string()
+            } else {
+                reasons.join(", ")
+            };
+            
+            html.push_str(&format!(
+                "<tr class=\"filtered-row\"><td>{}</td><td>{}</td><td class=\"reason\">{}</td></tr>\n",
+                i + 1, name, reasons_str
+            ));
+        }
+        html.push_str("</tbody></table>\n");
+        
+        if filtered_out.len() > 20 {
+            html.push_str(&format!("<p><em>... and {} more filtered scholarships</em></p>\n", filtered_out.len() - 20));
         }
     }
     

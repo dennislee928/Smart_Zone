@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - feature/ScholarshipOps
+      - main
+      - master
   schedule:
     - cron: "10 13 * * 3"   # Wednesday 21:10 Asia/Taipei (UTC+8, Wednesday lead search)
   workflow_dispatch: {}
@@ -38,16 +40,10 @@ jobs:
         with:
           toolchain: stable
 
-      - name: Cache Cargo dependencies
-        uses: actions/cache@v3
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            scripts/search_scholarships/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          workspaces: "scripts/search_scholarships -> target"
 
       - name: Build Rust project
         working-directory: scripts/search_scholarships
@@ -66,36 +62,66 @@ jobs:
           SOURCE_EXCLUDE_TYPES: "web3"  # Exclude web3 sources by default
           SOURCE_MAX_FAILURES: "3"       # Auto-disable after 3 consecutive failures
           SOURCE_SKIP_DISABLED: "true"   # Skip auto-disabled sources
-        run: cargo run --release
+        run: ./target/release/search_scholarships
       
       - name: Upload search reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: search-report
+          name: search-report-${{ github.run_number }}
           path: |
-            scripts/search_scholarships/report.txt
+            scripts/productions/**/*
             scripts/search_scholarships/summary.txt
           retention-days: 30
 
-      - name: Commit full report folder
+      - name: Commit full report folder and updates
         if: always()
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
           # Find the latest report folder in scripts/productions (format: YYYY-MM-DD_HH-MM)
           REPORT_DIR=$(find scripts/productions -type d -name "20*_*" | sort | tail -1)
+          HAS_CHANGES=false
+          
           if [ -n "$REPORT_DIR" ] && [ -d "$REPORT_DIR" ]; then
             echo "Found report directory: $REPORT_DIR"
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
             git add "$REPORT_DIR" || true
-            git diff --staged --quiet || git commit -m "Add search report: $(basename $REPORT_DIR)"
+            HAS_CHANGES=true
+          fi
+          
+          # Also add leads.json and source_health.json if they exist and were modified
+          if [ -f tracking/leads.json ] || [ -f tracking/source_health.json ]; then
+            git add tracking/leads.json tracking/source_health.json || true
+            if git diff --staged --quiet; then
+              : # No changes
+            else
+              HAS_CHANGES=true
+            fi
+          fi
+          
+          if [ "$HAS_CHANGES" = true ]; then
             # Fetch and merge remote changes before pushing
             git fetch origin || true
             BRANCH=$(git rev-parse --abbrev-ref HEAD)
             git pull --rebase origin "$BRANCH" || git pull origin "$BRANCH" || true
+            
+            # Create commit message
+            if [ -n "$REPORT_DIR" ]; then
+              COMMIT_MSG="Add search report: $(basename $REPORT_DIR)"
+              if git diff --staged --quiet tracking/leads.json tracking/source_health.json 2>/dev/null; then
+                : # No tracking changes
+              else
+                COMMIT_MSG="$COMMIT_MSG + update leads/source health"
+              fi
+            else
+              COMMIT_MSG="Update leads and source health from automated search"
+            fi
+            
+            git commit -m "$COMMIT_MSG" || true
             git push origin "$BRANCH" || true
           else
-            echo "No report directory found"
+            echo "No changes to commit"
           fi
 
       - name: Send summary to Discord
@@ -112,16 +138,3 @@ jobs:
               -d "{\"content\": $ESCAPED}" \
               "$DISCORD_WEBHOOK_URL"
           fi
-
-      - name: Commit changes if any
-        if: github.event_name == 'schedule'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add tracking/leads.json tracking/source_health.json || true
-          git diff --staged --quiet || git commit -m "Update leads and source health from automated search"
-          # Fetch and merge remote changes before pushing
-          git fetch origin || true
-          BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          git pull --rebase origin "$BRANCH" || git pull origin "$BRANCH" || true
-          git push origin "$BRANCH" || true

@@ -407,13 +407,30 @@ pub fn update_structured_dates(lead: &mut Lead) {
     }
     
     // If we still don't have a deadline_date but have a deadline string, try to parse it
+    // BUT: Do NOT parse TBD deadlines into dates
     if lead.deadline_date.is_none() && !lead.deadline.is_empty() {
-        if let Some(iso_date) = normalize_date(&lead.deadline) {
+        let deadline_lower = lead.deadline.to_lowercase();
+        
+        // Check for TBD patterns - do NOT create a deadline_date for these
+        let tbd_patterns = [
+            "tbd", "t.b.d.", "to be determined", "to be confirmed",
+            "will be announced", "closer to the time", "closer to the date",
+            "check website", "see website", "see page", "check below",
+        ];
+        
+        let is_tbd = tbd_patterns.iter().any(|pattern| deadline_lower.contains(pattern));
+        
+        if is_tbd {
+            // Mark as TBD, do not create deadline_date
+            lead.deadline_confidence = Some("TBD".to_string());
+            if lead.deadline_label.is_none() {
+                lead.deadline_label = Some(lead.deadline.clone());
+            }
+        } else if let Some(iso_date) = normalize_date(&lead.deadline) {
+            // Only parse if it's not TBD
             lead.deadline_date = Some(iso_date);
             lead.deadline_confidence = Some("inferred".to_string());
-        } else if lead.deadline.to_lowercase().contains("check") || 
-                  lead.deadline.to_lowercase().contains("tbd") ||
-                  lead.deadline.to_lowercase().contains("see website") {
+        } else {
             lead.deadline_confidence = Some("unknown".to_string());
         }
     }
@@ -638,6 +655,83 @@ pub fn mark_bulk_extracted_leads(leads: &mut [Lead]) {
             }
         }
     }
+}
+
+/// Validate that a scholarship link points to a detail page, not a directory/college homepage
+/// Returns true if the link is valid, false if it needs correction
+pub fn validate_scholarship_link(lead: &mut Lead) -> bool {
+    let url_lower = lead.url.to_lowercase();
+    
+    // Check if URL is a scholarship detail page (contains scholarship-specific patterns)
+    let scholarship_detail_patterns = [
+        "/scholarship/",           // e.g., /scholarships/globalleadershipscholarship/
+        "/scholarships/",         // e.g., /scholarships/greatscholarships2026/
+        "/funding/",              // e.g., /funding/postgraduate-scholarship/
+        "/bursary/",              // e.g., /bursaries/international-bursary/
+        "/award/",                // e.g., /awards/excellence-award/
+        "/grant/",                // e.g., /grants/research-grant/
+    ];
+    
+    // Check if URL matches detail page patterns
+    let is_detail_page = scholarship_detail_patterns.iter()
+        .any(|pattern| url_lower.contains(pattern));
+    
+    // Check if URL is a college/school homepage (these are NOT detail pages)
+    let homepage_patterns = [
+        "/colleges/",             // e.g., /colleges/scienceengineering/
+        "/schools/",              // e.g., /schools/business/
+        "/departments/",          // e.g., /departments/computing/
+        "/faculties/",            // e.g., /faculties/engineering/
+        "/study/",                // Generic study pages
+        "/postgraduate/",         // Generic postgraduate pages (without scholarship suffix)
+    ];
+    
+    let is_homepage = homepage_patterns.iter()
+        .any(|pattern| {
+            url_lower.contains(pattern) && 
+            !url_lower.contains("/scholarship") && 
+            !url_lower.contains("/funding") &&
+            !url_lower.contains("/bursary")
+        });
+    
+    // If it's a homepage pattern and not a detail page, mark as invalid
+    if is_homepage && !is_detail_page {
+        // Try to find a better URL from the name or notes
+        // For Glasgow CSE Excellence Scholarship, try to construct proper URL
+        if lead.name.to_lowercase().contains("college of science") && 
+           lead.name.to_lowercase().contains("engineering") &&
+           lead.name.to_lowercase().contains("excellence") {
+            // Try common Glasgow scholarship URL patterns
+            let possible_urls = [
+                "https://www.gla.ac.uk/scholarships/scienceengineeringexcellence/",
+                "https://www.gla.ac.uk/scholarships/cse-excellence/",
+                "https://www.gla.ac.uk/colleges/scienceengineering/scholarships/",
+            ];
+            
+            // For now, mark as needing verification
+            lead.risk_flags.push("link_needs_verification".to_string());
+            return false;
+        }
+        
+        lead.risk_flags.push("link_points_to_homepage".to_string());
+        return false;
+    }
+    
+    // Valid detail page
+    true
+}
+
+/// Validate and correct scholarship links for all leads
+pub fn validate_all_scholarship_links(leads: &mut [Lead]) -> usize {
+    let mut invalid_count = 0;
+    
+    for lead in leads.iter_mut() {
+        if !validate_scholarship_link(lead) {
+            invalid_count += 1;
+        }
+    }
+    
+    invalid_count
 }
 
 // ============================================
