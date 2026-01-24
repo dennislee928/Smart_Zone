@@ -1,0 +1,39 @@
+🔍 **ScholarshipOps Search Report**
+📅 2026-01-21 03:31 UTC
+
+👤 **Your Profile:**
+• Nationality: Taiwan
+• Target: University of Glasgow (2026-09-14)
+• Level: master
+
+📊 **Results:** A=2 | B=59 | C=4
+
+## 🎯 Bucket A (主攻)
+
+1. **Chevening Scholarships**
+   💰 Full tuition + living costs + flights | ⏰ 2026-11-05 | Score: 110
+   🔗 https://www.chevening.org/scholarships/
+
+2. **Commonwealth Scholarships (Taught Masters)**
+   💰 Full tuition + stipend + travel | ⏰ 2026-10-18 | Score: 110
+   🔗 https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/
+
+## 📋 Bucket B (備援)
+
+1. Postgraduate Academic Excellence Scholarship - See website (Score: 130)
+2.   Postgraduate taught courses (field_scholarship)   - See website (Score: 120)
+3. GREAT Scholarships 2026 – China, Nigeria and Viet Nam - £12,000 (Score: 85)
+4. College of Engineering, Design & Physical Sciences (CEDPS) Academic Excellence Scholarship 2025/26 - £2000 (Score: 110)
+5. British Council Scholarships for Women in STEM 2025/26 - Fully funded (Score: 110)
+6. Brunel University of London and the China Scholarship Council PhD Scholarship 2026/27 - Full tuition (Score: 110)
+7. The Vice Chancellor’s Postgraduate International Excellence Award - £6,000 (Score: 95)
+8. Postgraduate International Bursary - £4,000 (Score: 95)
+9. The Vice Chancellor’s Undergraduate Excellence Award 2026/27 - See website (Score: 85)
+10. David Cesarani, Kobler Scholarship 2026 - £10,000 (Score: 75)
+... and 49 more
+
+⏭️ **Filtered out:** 12 scholarships
+
+⚠️ **Errors:** 518
+
+📁 **Total in database:** 61

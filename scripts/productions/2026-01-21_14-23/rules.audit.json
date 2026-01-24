@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-01-21T14:23:28Z",
+  "rules_file": "Config/rules.yaml",
+  "total_rules": 26,
+  "items_processed": 2,
+  "buckets": {
+    "a": 0,
+    "b": 0,
+    "c": 2,
+    "x": 0
+  },
+  "rule_hits": [
+    {
+      "rule_id": "E-COUNTRY-001",
+      "rule_name": "Taiwan Not Eligible",
+      "hit_count": 2
+    }
+  ]
+}

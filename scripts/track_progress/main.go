@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"track_progress/notify"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -37,14 +38,14 @@ type DeadlinesFile struct {
 }
 
 type Statistics struct {
-	Total           int
-	InProgress      int
-	Completed       int
-	NotStarted      int
-	Upcoming        []Application
-	Upcoming7       int
-	Upcoming14      int
-	Upcoming21      int
+	Total      int
+	InProgress int
+	Completed  int
+	NotStarted int
+	Upcoming   []Application
+	Upcoming7  int
+	Upcoming14 int
+	Upcoming21 int
 }
 
 func main() {
@@ -105,7 +106,7 @@ func loadApplications(root string) (*ApplicationsFile, error) {
 
 func loadDeadlines(root string) (*DeadlinesFile, error) {
 	yamlPath := filepath.Join(root, "tasks", "deadlines.yml")
-	
+
 	data, err := ioutil.ReadFile(yamlPath)
 	if err != nil {
 		return &DeadlinesFile{Deadlines: []Deadline{}}, nil
@@ -123,12 +124,12 @@ func calculateStatistics(apps []Application, deadlines *DeadlinesFile) Statistic
 	stats := Statistics{
 		Upcoming: []Application{},
 	}
-	
+
 	now := time.Now()
-	
+
 	for _, app := range apps {
 		stats.Total++
-		
+
 		switch app.Status {
 		case "in_progress":
 			stats.InProgress++
@@ -137,13 +138,13 @@ func calculateStatistics(apps []Application, deadlines *DeadlinesFile) Statistic
 		case "not_started":
 			stats.NotStarted++
 		}
-		
+
 		// Check upcoming deadlines
 		if app.Deadline != "" {
 			deadline, err := time.Parse("2006-01-02", app.Deadline)
 			if err == nil && deadline.After(now) {
 				daysUntil := int(time.Until(deadline).Hours() / 24)
-				
+
 				if daysUntil <= 7 {
 					stats.Upcoming7++
 					stats.Upcoming = append(stats.Upcoming, app)
@@ -155,12 +156,12 @@ func calculateStatistics(apps []Application, deadlines *DeadlinesFile) Statistic
 			}
 		}
 	}
-	
+
 	return stats
 }
 
 func generateReport(stats Statistics) string {
-	report := "[ScholarshipOps Progress Report]\n\n"
+	report := "[ScholarshipOps Progress tracking Report]\n\n"
 	report += fmt.Sprintf("📊 Statistics:\n")
 	report += fmt.Sprintf("- Total applications: %d\n", stats.Total)
 	report += fmt.Sprintf("- In progress: %d\n", stats.InProgress)
@@ -171,13 +172,13 @@ func generateReport(stats Statistics) string {
 	report += fmt.Sprintf("- D-7: %d applications\n", stats.Upcoming7)
 	report += fmt.Sprintf("- D-14: %d applications\n", stats.Upcoming14)
 	report += fmt.Sprintf("- D-21: %d applications\n", stats.Upcoming21)
-	
+
 	if len(stats.Upcoming) > 0 {
 		report += "\n🚨 Urgent (D-7 or less):\n"
 		for _, app := range stats.Upcoming {
 			report += fmt.Sprintf("- %s (Deadline: %s)\n", app.Name, app.Deadline)
 		}
 	}
-	
+
 	return report
 }

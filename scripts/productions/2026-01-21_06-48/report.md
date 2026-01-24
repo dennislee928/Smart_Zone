@@ -1,0 +1,551 @@
+# ScholarshipOps Search Report
+
+**Date:** 2026-01-21 06:25 UTC
+
+## Your Profile
+
+- **Nationality:** Taiwan
+- **Target:** University of Glasgow (2026-09-14)
+- **Level:** master
+
+## Results
+
+- **Bucket A (主攻):** 0 scholarships
+- **Bucket B (備援):** 2 scholarships
+- **Filtered out:** 6 scholarships
+
+### Bucket B - Medium Priority
+
+| # | Name | Amount | Deadline | Score |
+|---|------|--------|----------|-------|
+| 1 | Each year the foundation provides more than  $50,000  in scholarships. | $50,000 | Check website | 10 |
+| 2 | Current Scholarship Opportunities | $3,000 | Check website | 10 |
+
+## Errors
+
+- FindAPhD Scholarships: HTTP 403
+- Oxford Scholarships: error sending request for url (https://www.oxford.ac.uk/scholarships/): error trying to connect: error:0A000410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure:../ssl/record/rec_layer_s3.c:1599:SSL alert number 40
+- LSE Scholarships: HTTP 404
+- KCL Scholarships: HTTP 404
+- Manchester Scholarships: HTTP 404
+- Sheffield Scholarships: error sending request for url (https://www.sheffield.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Nottingham Scholarships: HTTP 404
+- York Scholarships: HTTP 404
+- Bath Scholarships: HTTP 404
+- St Andrews Scholarships: error sending request for url (https://www.standrews.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Liverpool Scholarships: HTTP 404
+- Newcastle Scholarships: HTTP 404
+- Cardiff Scholarships: HTTP 403
+- Aberdeen Scholarships: error sending request for url (https://www.aberdeen.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Dundee Scholarships: HTTP 403
+- Heriot-Watt Scholarships: error sending request for url (https://www.heriot-watt.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Temporary failure in name resolution
+- Strathclyde Scholarships: error sending request for url (https://www.strathclyde.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Sussex Scholarships: HTTP 404
+- UEA Scholarships: HTTP 405
+- City Scholarships: HTTP 403
+- Goldsmiths Scholarships: error sending request for url (https://www.goldsmiths.ac.uk/scholarships/): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Birkbeck Scholarships: HTTP 404
+- Kingston Scholarships: HTTP 403
+- Middlesex Scholarships: error sending request for url (https://www.middlesex.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Greenwich Scholarships: HTTP 404
+- Roehampton Scholarships: HTTP 404
+- London Met Scholarships: HTTP 404
+- East London Scholarships: error sending request for url (https://www.eastlondon.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- West London Scholarships: error sending request for url (https://www.westlondon.ac.uk/scholarships/): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- UAL Scholarships: error sending request for url (https://www.ual.ac.uk/scholarships/): error trying to connect: error:0A00010B:SSL routines:ssl3_get_record:wrong version number:../ssl/record/ssl3_record.c:354:
+- RCA Scholarships: HTTP 404
+- RAM Scholarships: HTTP 404
+- Guildhall Scholarships: error sending request for url (https://www.guildhall.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Trinity Laban Scholarships: HTTP 404
+- Salford Scholarships: HTTP 404
+- Huddersfield Scholarships: error sending request for url (https://www.huddersfield.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Sheffield Hallam Scholarships: error sending request for url (https://www.sheffieldhallam.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Nottingham Trent Scholarships: error sending request for url (https://www.nottinghamtrent.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Leicester Scholarships: error sending request for url (https://www.leicester.ac.uk/scholarships/): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Anglia Ruskin Scholarships: error sending request for url (https://www.angliaruskin.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Hertfordshire Scholarships: HTTP 403
+- Bedfordshire Scholarships: error sending request for url (https://www.bedfordshire.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Oxford Brookes Scholarships: error sending request for url (https://www.oxfordbrookes.ac.uk/scholarships/): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Portsmouth Scholarships: error sending request for url (https://www.portsmouth.ac.uk/scholarships/): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Chichester Scholarships: HTTP 403
+- Canterbury Christ Church Scholarships: error sending request for url (https://www.canterburychristchurch.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Bournemouth Scholarships: HTTP 403
+- UWE Scholarships: HTTP 404
+- Gloucestershire Scholarships: HTTP 403
+- Bath Spa Scholarships: HTTP 404
+- Worcester Scholarships: HTTP 404
+- Liverpool Hope Scholarships: error sending request for url (https://www.liverpoolhope.ac.uk/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Chester Scholarships: HTTP 404
+- Aberystwyth Scholarships: error sending request for url (https://www.aberystwyth.ac.uk/scholarships/): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- South Wales Scholarships: HTTP 403
+- UWTSD Scholarships: HTTP 404
+- UHI Scholarships: error following redirect for url (https://www.uhi.ac.uk/scholarships/): too many redirects
+- RGU Scholarships: HTTP 404
+- Ulster Scholarships: HTTP 403
+- St Georges Scholarships: error sending request for url (https://www.stgeorges.ac.uk/scholarships/): error trying to connect: tcp connect error: Connection refused (os error 111)
+- Harvard Scholarships: HTTP 404
+- Stanford Scholarships: HTTP 404
+- Yale Scholarships: HTTP 404
+- Princeton Scholarships: HTTP 404
+- Columbia Scholarships: HTTP 403
+- Chicago Scholarships: HTTP 404
+- Penn Scholarships: HTTP 404
+- Caltech Scholarships: HTTP 404
+- Johns Hopkins Scholarships: error sending request for url (https://www.jhu.edu/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Northwestern Scholarships: HTTP 404
+- Duke Scholarships: HTTP 404
+- Cornell Scholarships: HTTP 404
+- Brown Scholarships: HTTP 404
+- Dartmouth Scholarships: HTTP 404
+- Rice Scholarships: HTTP 406
+- WashU Scholarships: HTTP 404
+- Emory Scholarships: HTTP 404
+- Georgetown Scholarships: HTTP 404
+- CMU Scholarships: HTTP 404
+- UCLA Scholarships: HTTP 404
+- UC Berkeley Scholarships: HTTP 403
+- Michigan Scholarships: HTTP 403
+- Virginia Scholarships: HTTP 404
+- UNC Scholarships: HTTP 404
+- NYU Scholarships: HTTP 405
+- USC Scholarships: HTTP 404
+- Toronto Scholarships: HTTP 404
+- McGill Scholarships: error sending request for url (https://www.mcgill.ca/scholarships/): connection error: Connection reset by peer (os error 104)
+- UBC Scholarships: HTTP 404
+- Melbourne Scholarships: HTTP 403
+- Tokyo Scholarships: HTTP 404
+- Kyoto Scholarships: HTTP 404
+- NTU Scholarships: HTTP 404
+- Tsinghua Scholarships: HTTP 404
+- Peking Scholarships: HTTP 404
+- HKU Scholarships: HTTP 404
+- HKUST Scholarships: HTTP 404
+- CUHK Scholarships: HTTP 404
+- SNU Scholarships: HTTP 404
+- KAIST Scholarships: HTTP 404
+- Yonsei Scholarships: HTTP 404
+- EPFL Scholarships: HTTP 404
+- Zurich Scholarships: HTTP 404
+- Amsterdam Scholarships: HTTP 404
+- Copenhagen Scholarships: HTTP 404
+- Lund Scholarships: HTTP 404
+- Stockholm Scholarships: HTTP 404
+- Aalto Scholarships: HTTP 404
+- Oslo Scholarships: HTTP 404
+- NTNU Scholarships: HTTP 404
+- Sorbonne Scholarships: HTTP 404
+- Polytechnique Scholarships: HTTP 404
+- HEC Scholarships: HTTP 403
+- INSEAD Scholarships: HTTP 403
+- LMU Scholarships: HTTP 404
+- Heidelberg Scholarships: HTTP 404
+- FU Berlin Scholarships: error sending request for url (https://www.fu-berlin.de/scholarships/): operation timed out
+- Bonn Scholarships: HTTP 404
+- Vienna Scholarships: HTTP 404
+- Bocconi Scholarships: HTTP 404
+- Sapienza Scholarships: HTTP 404
+- Barcelona Scholarships: HTTP 404
+- Complutense Scholarships: HTTP 404
+- Lisbon Scholarships: HTTP 404
+- Warsaw Scholarships: HTTP 404
+- Jagiellonian Scholarships: HTTP 404
+- Charles Scholarships: HTTP 404
+- Moscow State Scholarships: HTTP 404
+- St Petersburg Scholarships: HTTP 404
+- Cape Town Scholarships: HTTP 403
+- Wits Scholarships: HTTP 404
+- Unicamp Scholarships: HTTP 404
+- Tec de Monterrey Scholarships: HTTP 404
+- UNAM Scholarships: HTTP 403
+- PUC Chile Scholarships: HTTP 404
+- IIT Scholarships: error sending request for url (https://www.iit.ac.in/scholarships/): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- IISc Scholarships: HTTP 404
+- Delhi Scholarships: HTTP 404
+- JNU Scholarships: HTTP 404
+- Malaya Scholarships: HTTP 404
+- ITB Scholarships: HTTP 404
+- Ateneo Scholarships: HTTP 403
+- UP Scholarships: error following redirect for url (https://www.up.edu.ph/scholarships/): too many redirects
+- Otago Scholarships: HTTP 403
+- Cairo Scholarships: error sending request for url (https://www.cu.edu.eg/scholarships/): operation timed out
+- Technion Scholarships: HTTP 404
+- KFUPM Scholarships: HTTP 404
+- UC San Diego Scholarships: HTTP 404
+- UC Irvine Scholarships: HTTP 404
+- UC Santa Barbara Scholarships: HTTP 404
+- UC Santa Cruz Scholarships: HTTP 404
+- UC Riverside Scholarships: HTTP 404
+- Boston University Scholarships: HTTP 403
+- Boston College Scholarships: HTTP 404
+- Northeastern Scholarships: HTTP 403
+- Tufts Scholarships: HTTP 404
+- UMass Scholarships: HTTP 404
+- Rutgers Scholarships: HTTP 404
+- Penn State Scholarships: HTTP 404
+- Ohio State Scholarships: HTTP 404
+- Purdue Scholarships: HTTP 404
+- Indiana Scholarships: HTTP 404
+- Illinois Scholarships: HTTP 404
+- Wisconsin Scholarships: HTTP 404
+- Minnesota Scholarships: HTTP 404
+- Texas Scholarships: HTTP 404
+- Texas A&M Scholarships: HTTP 404
+- Arizona State Scholarships: HTTP 404
+- Washington Scholarships: HTTP 404
+- Oregon Scholarships: HTTP 404
+- Georgia Tech Scholarships: HTTP 404
+- NC State Scholarships: HTTP 404
+- Virginia Tech Scholarships: HTTP 404
+- Florida Scholarships: HTTP 404
+- FSU Scholarships: HTTP 404
+- Alberta Scholarships: HTTP 404
+- Waterloo Scholarships: HTTP 404
+- Western Scholarships: HTTP 404
+- Queens Scholarships: HTTP 404
+- Monash Scholarships: HTTP 403
+- Adelaide Scholarships: error sending request for url (https://www.adelaide.edu.au/scholarships/): error trying to connect: error:0A000152:SSL routines:final_renegotiate:unsafe legacy renegotiation disabled:../ssl/statem/extensions.c:893:
+- Western Australia Scholarships: HTTP 404
+- Deakin Scholarships: HTTP 403
+- Waseda Scholarships: HTTP 403
+- Keio Scholarships: HTTP 404
+- Osaka Scholarships: HTTP 404
+- Tohoku Scholarships: HTTP 404
+- Nagoya Scholarships: HTTP 404
+- Hokkaido Scholarships: HTTP 404
+- Kyushu Scholarships: HTTP 404
+- Hitotsubashi Scholarships: HTTP 404
+- Seoul Scholarships: HTTP 404
+- Korea Scholarships: HTTP 404
+- Hanyang Scholarships: HTTP 404
+- Sungkyunkwan Scholarships: HTTP 404
+- POSTECH Scholarships: error sending request for url (https://www.postech.ac.kr/scholarships/): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (unable to get local issuer certificate)
+- Fudan Scholarships: error sending request for url (https://www.fudan.edu.cn/scholarships/): error trying to connect: error:0A000152:SSL routines:final_renegotiate:unsafe legacy renegotiation disabled:../ssl/statem/extensions.c:893:
+- Shanghai Jiao Tong Scholarships: HTTP 404
+- Nanjing Scholarships: HTTP 404
+- Wuhan Scholarships: HTTP 404
+- Xi'an Jiaotong Scholarships: HTTP 404
+- Sun Yat-sen Scholarships: HTTP 404
+- Tianjin Scholarships: HTTP 404
+- Beijing Normal Scholarships: HTTP 404
+- Renmin Scholarships: HTTP 404
+- Beihang Scholarships: HTTP 404
+- Tongji Scholarships: HTTP 404
+- Southeast Scholarships: HTTP 410
+- Dalian Tech Scholarships: HTTP 404
+- Central South Scholarships: HTTP 404
+- Hunan Scholarships: HTTP 404
+- Chongqing Scholarships: HTTP 404
+- Xiamen Scholarships: HTTP 404
+- Shandong Scholarships: HTTP 404
+- Jilin Scholarships: HTTP 404
+- Lanzhou Scholarships: HTTP 412
+- Northeast Normal Scholarships: HTTP 404
+- East China Normal Scholarships: HTTP 404
+- South China Tech Scholarships: HTTP 404
+- Beijing Tech Scholarships: HTTP 404
+- Beijing Jiaotong Scholarships: HTTP 404
+- Beijing University of Posts Scholarships: HTTP 412
+- China University of Mining Scholarships: HTTP 404
+- Northeastern Scholarships: HTTP 404
+- Harbin Engineering Scholarships: error sending request for url (https://www.hrbeu.edu.cn/scholarships/): operation timed out
+- Nanjing Tech Scholarships: HTTP 404
+- Jiangsu Scholarships: error sending request for url (https://www.jsnu.edu.cn/scholarships/): operation timed out
+- Soochow Scholarships: HTTP 404
+- Shanghai University Scholarships: HTTP 404
+- Shanghai Tech Scholarships: HTTP 410
+- Southern University of Science Scholarships: error sending request for url (https://www.sustech.edu.cn/scholarships/): operation timed out
+- Westlake Scholarships: HTTP 500
+- Chinese Academy of Sciences Scholarships: HTTP 404
+- Gates Foundation Scholarships: HTTP 404
+- Ford Foundation Scholarships: HTTP 404
+- Rockefeller Foundation Scholarships: HTTP 404
+- Soros Foundation Scholarships: HTTP 404
+- Mastercard Foundation Scholarships: HTTP 404
+- Clinton Foundation Scholarships: HTTP 403
+- Bloomberg Philanthropies Scholarships: HTTP 403
+- Hewlett Foundation Scholarships: HTTP 404
+- Packard Foundation Scholarships: HTTP 404
+- Knight Foundation Scholarships: HTTP 404
+- Kresge Foundation Scholarships: HTTP 404
+- Lilly Endowment Scholarships: HTTP 403
+- Robert Wood Johnson Scholarships: HTTP 404
+- Carnegie Corporation Scholarships: HTTP 403
+- Mellon Foundation Scholarships: HTTP 404
+- Sloan Foundation Scholarships: HTTP 403
+- Kauffman Foundation Scholarships: HTTP 404
+- Casey Foundation Scholarships: HTTP 404
+- Kaiser Family Foundation Scholarships: HTTP 404
+- Pew Charitable Trusts Scholarships: HTTP 404
+- Joyce Foundation Scholarships: HTTP 404
+- Surdna Foundation Scholarships: HTTP 404
+- Barr Foundation Scholarships: HTTP 403
+- Boston Foundation Scholarships: HTTP 404
+- Chicago Community Trust Scholarships: HTTP 404
+- California Community Foundation Scholarships: HTTP 404
+- Denver Foundation Scholarships: HTTP 403
+- Minneapolis Foundation Scholarships: HTTP 404
+- Cleveland Foundation Scholarships: HTTP 404
+- Philadelphia Foundation Scholarships: HTTP 403
+- Community Foundation for Greater Atlanta Scholarships: error sending request for url (https://www.cfgreateratlanta.org/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Houston Endowment Scholarships: HTTP 404
+- Dallas Foundation Scholarships: HTTP 403
+- San Antonio Area Foundation Scholarships: HTTP 403
+- Vermont Community Foundation Scholarships: HTTP 404
+- Maine Community Foundation Scholarships: error sending request for url (https://www.mainecf.org/scholarships): operation timed out
+- Connecticut Community Foundation Scholarships: HTTP 403
+- Maryland Community Foundation Scholarships: HTTP 403
+- Virginia Community Foundation Scholarships: error sending request for url (https://www.virginiacf.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Georgia Community Foundation Scholarships: HTTP 404
+- Alabama Community Foundation Scholarships: error sending request for url (https://www.alabamacommunityfoundation.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Louisiana Community Foundation Scholarships: error sending request for url (https://www.lacf.org/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Iowa Community Foundation Scholarships: error sending request for url (https://www.iowacommunityfoundation.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Missouri Community Foundation Scholarships: HTTP 404
+- Illinois Community Foundation Scholarships: error sending request for url (https://www.illinoiscf.org/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Indiana Community Foundation Scholarships: error sending request for url (https://www.indianacommunityfoundation.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Michigan Community Foundation Scholarships: HTTP 403
+- Wisconsin Community Foundation Scholarships: error sending request for url (https://www.wisconsincf.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Minnesota Community Foundation Scholarships: HTTP 404
+- North Dakota Community Foundation Scholarships: HTTP 404
+- Colorado Community Foundation Scholarships: error sending request for url (https://www.coloradocf.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- New Mexico Community Foundation Scholarships: HTTP 404
+- Utah Community Foundation Scholarships: HTTP 404
+- Nevada Community Foundation Scholarships: HTTP 403
+- Idaho Community Foundation Scholarships: HTTP 404
+- Washington Community Foundation Scholarships: HTTP 404
+- California Community Foundation Scholarships: HTTP 404
+- Lions Clubs International Scholarships: HTTP 403
+- Kiwanis International Scholarships: HTTP 404
+- Soroptimist International Scholarships: HTTP 404
+- Zonta International Scholarships: HTTP 404
+- Quota International Scholarships: HTTP 404
+- International Inner Wheel Scholarships: error sending request for url (https://www.innerwheel.org/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Lions Clubs International Foundation Scholarships: HTTP 403
+- Lions Club Scholarships: HTTP 403
+- Kiwanis Club Scholarships: HTTP 404
+- Soroptimist Club Scholarships: HTTP 404
+- Zonta Club Scholarships: HTTP 404
+- Quota Club Scholarships: HTTP 404
+- Inner Wheel Club Scholarships: error sending request for url (https://www.innerwheel.org/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- United Way Scholarships: HTTP 404
+- Red Cross Scholarships: HTTP 403
+- YMCA Scholarships: HTTP 404
+- YWCA Scholarships: HTTP 404
+- Boys and Girls Clubs Scholarships: HTTP 429
+- Boy Scouts Scholarships: HTTP 403
+- FBLA Scholarships: HTTP 403
+- SkillsUSA Scholarships: HTTP 403
+- TSA Scholarships: HTTP 403
+- FCCLA Scholarships: HTTP 404
+- Family Career and Community Leaders Scholarships: HTTP 404
+- National Honor Society Scholarships: HTTP 403
+- Leo Club Scholarships: HTTP 403
+- Builders Club Scholarships: HTTP 404
+- Aktion Club Scholarships: HTTP 404
+- Alpha Phi Omega Scholarships: HTTP 404
+- Phi Beta Kappa Scholarships: HTTP 404
+- Phi Kappa Phi Scholarships: HTTP 404
+- Phi Theta Kappa Scholarships: HTTP 403
+- Tau Beta Pi Scholarships: HTTP 404
+- Eta Kappa Nu Scholarships: error sending request for url (https://www.hkn.org/scholarships): error trying to connect: tcp connect error: Connection refused (os error 111)
+- Sigma Xi Scholarships: error sending request for url (https://www.sigmaxi.org/scholarships): operation timed out
+- Alpha Omega Alpha Scholarships: HTTP 404
+- Phi Alpha Theta Scholarships: HTTP 404
+- Pi Sigma Alpha Scholarships: HTTP 404
+- Omicron Delta Epsilon Scholarships: HTTP 403
+- Alpha Iota Delta Scholarships: error sending request for url (https://www.alphaiotadelta.org/scholarships): error trying to connect: tcp connect error: Connection refused (os error 111)
+- Alpha Mu Alpha Scholarships: error sending request for url (https://www.alphamualpha.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Chi Epsilon Scholarships: error sending request for url (https://www.chiepsilon.org/scholarships): error trying to connect: dns error: failed to lookup address information: Temporary failure in name resolution
+- Tau Sigma Scholarships: error sending request for url (https://www.tausigma.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Alpha Lambda Delta Scholarships: error sending request for url (https://www.alphalambdadelta.org/scholarships): operation timed out
+- Omicron Delta Kappa Scholarships: HTTP 403
+- Mortar Board Scholarships: HTTP 404
+- Order of Omega Scholarships: HTTP 404
+- Gamma Sigma Alpha Scholarships: HTTP 404
+- Phi Chi Theta Scholarships: HTTP 404
+- Alpha Kappa Psi Scholarships: HTTP 503
+- Beta Alpha Psi Scholarships: HTTP 404
+- Omicron Delta Epsilon Scholarships: HTTP 403
+- Alpha Iota Delta Scholarships: error sending request for url (https://www.alphaiotadelta.org/scholarships): error trying to connect: tcp connect error: Connection refused (os error 111)
+- Alpha Mu Alpha Scholarships: error sending request for url (https://www.alphamualpha.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Chi Epsilon Scholarships: error sending request for url (https://www.chiepsilon.org/scholarships): error trying to connect: dns error: failed to lookup address information: Temporary failure in name resolution
+- Tau Sigma Scholarships: error sending request for url (https://www.tausigma.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Alpha Lambda Delta Scholarships: error sending request for url (https://www.alphalambdadelta.org/scholarships): operation timed out
+- Omicron Delta Kappa Scholarships: HTTP 403
+- Mortar Board Scholarships: HTTP 404
+- Order of Omega Scholarships: HTTP 404
+- Gamma Sigma Alpha Scholarships: HTTP 404
+- Phi Chi Theta Scholarships: HTTP 404
+- Kappa Alpha Psi Scholarships: HTTP 404
+- Alpha Phi Alpha Scholarships: HTTP 404
+- Omega Psi Phi Scholarships: error sending request for url (https://www.omegapsiphifraternity.org/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (certificate has expired)
+- Phi Beta Sigma Scholarships: HTTP 403
+- Sigma Gamma Rho Scholarships: HTTP 404
+- Zeta Phi Beta Scholarships: HTTP 404
+- Alpha Kappa Alpha Scholarships: HTTP 403
+- Iota Phi Theta Scholarships: HTTP 404
+- Phi Beta Chi Scholarships: HTTP 404
+- Alpha Phi Scholarships: HTTP 403
+- Chi Omega Scholarships: HTTP 404
+- Delta Delta Delta Scholarships: HTTP 404
+- Delta Zeta Scholarships: HTTP 403
+- Gamma Phi Beta Scholarships: HTTP 404
+- Kappa Alpha Theta Scholarships: HTTP 404
+- Kappa Kappa Gamma Scholarships: HTTP 403
+- Phi Mu Scholarships: HTTP 404
+- Theta Phi Alpha Scholarships: error sending request for url (https://www.thetaphialpha.org/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Alpha Epsilon Phi Scholarships: error sending request for url (https://www.alphaepsilonphi.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Alpha Gamma Delta Scholarships: HTTP 403
+- Alpha Omicron Pi Scholarships: HTTP 404
+- Alpha Sigma Alpha Scholarships: HTTP 404
+- Alpha Sigma Tau Scholarships: HTTP 404
+- Chi Upsilon Sigma Scholarships: error sending request for url (https://www.chiupsilonsigma.org/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Gamma Phi Beta Scholarships: HTTP 404
+- Kappa Alpha Theta Scholarships: HTTP 404
+- Kappa Kappa Gamma Scholarships: HTTP 403
+- Phi Mu Scholarships: HTTP 404
+- Theta Phi Alpha Scholarships: error sending request for url (https://www.thetaphialpha.org/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Microsoft Scholarships: HTTP 404
+- Apple Scholarships: HTTP 404
+- Amazon Scholarships: HTTP 404
+- Meta Scholarships: HTTP 429
+- Tesla Scholarships: HTTP 403
+- Uber Scholarships: HTTP 404
+- Airbnb Scholarships: HTTP 404
+- Salesforce Scholarships: HTTP 404
+- Oracle Scholarships: HTTP 403
+- Intel Scholarships: error sending request for url (https://www.intel.com/careers/scholarships): operation timed out
+- NVIDIA Scholarships: HTTP 404
+- AMD Scholarships: error sending request for url (https://www.amd.com/careers/scholarships): operation timed out
+- Qualcomm Scholarships: HTTP 404
+- Cisco Scholarships: HTTP 404
+- HP Scholarships: HTTP 404
+- Lenovo Scholarships: error sending request for url (https://www.lenovo.com/careers/scholarships): operation timed out
+- Samsung Scholarships: HTTP 404
+- LG Scholarships: HTTP 404
+- Sony Scholarships: HTTP 403
+- Panasonic Scholarships: error sending request for url (https://www.panasonic.com/careers/scholarships): operation timed out
+- Toshiba Scholarships: HTTP 404
+- Hitachi Scholarships: HTTP 404
+- Mitsubishi Scholarships: HTTP 404
+- Honda Scholarships: HTTP 403
+- Nissan Scholarships: HTTP 404
+- BMW Scholarships: error sending request for url (https://www.bmw.com/careers/scholarships): operation timed out
+- Mercedes-Benz Scholarships: HTTP 403
+- Audi Scholarships: HTTP 404
+- Porsche Scholarships: HTTP 404
+- Ferrari Scholarships: HTTP 404
+- Lamborghini Scholarships: HTTP 404
+- Rolls-Royce Scholarships: HTTP 403
+- Bentley Scholarships: HTTP 404
+- Jaguar Scholarships: HTTP 404
+- Land Rover Scholarships: HTTP 404
+- McLaren Scholarships: HTTP 404
+- Lotus Scholarships: HTTP 404
+- Maserati Scholarships: HTTP 403
+- Alfa Romeo Scholarships: HTTP 404
+- Fiat Scholarships: HTTP 404
+- Peugeot Scholarships: HTTP 404
+- Renault Scholarships: HTTP 404
+- Citroen Scholarships: HTTP 404
+- Volvo Scholarships: HTTP 403
+- Saab Scholarships: HTTP 404
+- Koenigsegg Scholarships: HTTP 404
+- Ford Scholarships: HTTP 404
+- Chrysler Scholarships: HTTP 403
+- Jeep Scholarships: HTTP 403
+- Dodge Scholarships: HTTP 403
+- Ram Scholarships: HTTP 403
+- Lincoln Scholarships: HTTP 404
+- Acura Scholarships: HTTP 403
+- Infiniti Scholarships: HTTP 404
+- Lexus Scholarships: HTTP 404
+- Genesis Scholarships: HTTP 404
+- Hyundai Scholarships: HTTP 404
+- Kia Scholarships: HTTP 404
+- Mazda Scholarships: HTTP 404
+- Subaru Scholarships: HTTP 404
+- Mitsubishi Motors Scholarships: HTTP 404
+- Isuzu Scholarships: error sending request for url (https://www.isuzu.com/careers/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (unable to get local issuer certificate)
+- Suzuki Scholarships: HTTP 404
+- Yamaha Scholarships: HTTP 404
+- Kawasaki Scholarships: error following redirect for url (https://www.kawasaki.com/careers/scholarships): too many redirects
+- Honda Motorcycle Scholarships: HTTP 403
+- Ducati Scholarships: HTTP 403
+- Harley-Davidson Scholarships: HTTP 404
+- Triumph Scholarships: HTTP 404
+- Royal Enfield Scholarships: HTTP 404
+- Bajaj Scholarships: HTTP 404
+- TVS Scholarships: HTTP 404
+- Hero Scholarships: HTTP 403
+- Mahindra Scholarships: HTTP 404
+- Tata Motors Scholarships: HTTP 403
+- Maruti Suzuki Scholarships: HTTP 404
+- BYD Scholarships: HTTP 404
+- Geely Scholarships: HTTP 404
+- Great Wall Motors Scholarships: HTTP 404
+- Chery Scholarships: HTTP 404
+- Changan Scholarships: error sending request for url (https://www.changan.com/careers/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- FAW Scholarships: HTTP 410
+- Dongfeng Scholarships: error sending request for url (https://www.dfmc.com/careers/scholarships): error trying to connect: tcp connect error: Connection refused (os error 111)
+- SAIC Scholarships: HTTP 404
+- GAC Scholarships: HTTP 404
+- JAC Scholarships: error sending request for url (https://www.jac.com/careers/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (self-signed certificate)
+- Zotye Scholarships: error sending request for url (https://www.zotye.com/careers/scholarships): operation timed out
+- Lifan Scholarships: error sending request for url (https://www.lifan.com/careers/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Haval Scholarships: error sending request for url (https://www.haval.com/careers/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Lynk & Co Scholarships: HTTP 404
+- Polestar Scholarships: HTTP 404
+- Nio Scholarships: HTTP 404
+- Li Auto Scholarships: HTTP 404
+- WM Motor Scholarships: HTTP 404
+- Byton Scholarships: error sending request for url (https://www.byton.com/careers/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Lucid Motors Scholarships: HTTP 404
+- Rivian Scholarships: HTTP 404
+- Fisker Scholarships: HTTP 404
+- Lordstown Motors Scholarships: error sending request for url (https://www.lordstownmotors.com/careers/scholarships): error trying to connect: dns error: failed to lookup address information: No address associated with hostname
+- Canoo Scholarships: error sending request for url (https://www.canoo.com/careers/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (unable to get local issuer certificate)
+- Arrival Scholarships: error sending request for url (https://www.arrival.com/careers/scholarships): operation timed out
+- Bollinger Motors Scholarships: HTTP 403
+- Nikola Scholarships: HTTP 404
+- Hyundai Motor Group Scholarships: HTTP 404
+- Kia Motors Scholarships: HTTP 404
+- Genesis Motors Scholarships: HTTP 404
+- SsangYong Scholarships: error sending request for url (https://www.ssangyong.com/careers/scholarships): connection closed before message completed
+- Daewoo Scholarships: error sending request for url (https://www.daewoo.com/careers/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (hostname mismatch)
+- Tata Scholarships: HTTP 404
+- Mahindra Scholarships: HTTP 404
+- Maruti Scholarships: HTTP 404
+- Hero Scholarships: HTTP 403
+- Bajaj Scholarships: HTTP 404
+- TVS Scholarships: HTTP 404
+- Ashok Leyland Scholarships: HTTP 403
+- Eicher Motors Scholarships: HTTP 404
+- Force Motors Scholarships: HTTP 404
+- SML Isuzu Scholarships: HTTP 404
+- Hindustan Motors Scholarships: error sending request for url (https://www.hindustanmotors.com/careers/scholarships): operation timed out
+- Premier Scholarships: error sending request for url (https://www.premier.co.in/careers/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (self-signed certificate)
+- Reva Scholarships: HTTP 404
+- Mahindra Electric Scholarships: HTTP 404
+- Tata Motors Electric Scholarships: HTTP 403
+- MG Motor Scholarships: HTTP 404
+- Jaguar Land Rover Scholarships: HTTP 404
+- Volvo Cars Scholarships: HTTP 403
+- Geely Scholarships: HTTP 404
+- Lynk & Co Scholarships: HTTP 404
+- Polestar Scholarships: HTTP 404
+- Nio Scholarships: HTTP 404
+- Li Auto Scholarships: HTTP 404
+- WM Motor Scholarships: HTTP 404
+- Byton Scholarships: error sending request for url (https://www.byton.com/careers/scholarships): error trying to connect: dns error: failed to lookup address information: Name or service not known
+- Lucid Motors Scholarships: HTTP 404
+- Rivian Scholarships: HTTP 404
+- Fisker Scholarships: HTTP 404
+- Lordstown Motors Scholarships: error sending request for url (https://www.lordstownmotors.com/careers/scholarships): error trying to connect: dns error: failed to lookup address information: No address associated with hostname
+- Canoo Scholarships: error sending request for url (https://www.canoo.com/careers/scholarships): error trying to connect: error:0A000086:SSL routines:tls_post_process_server_certificate:certificate verify failed:../ssl/statem/statem_clnt.c:1889: (unable to get local issuer certificate)
+- Arrival Scholarships: error sending request for url (https://www.arrival.com/careers/scholarships): operation timed out
+- Bollinger Motors Scholarships: HTTP 403
+- Nikola Scholarships: HTTP 404
+
+## Statistics
+
+**Total leads in database:** 2

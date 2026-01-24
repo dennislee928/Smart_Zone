@@ -1,0 +1,12 @@
+{
+  "name": "cloudflare-kv",
+  "description": "Store key-value data globally with Cloudflare KVs edge network. Use when: caching API responses, storing configuration, managing user preferences, handling TTL expiration, or troubleshooting KV_ERROR, 429 rate limits, eventual consistency, or cacheTtl errors. kv_namespaces: [{ binding: MY_NAMESPACE, // Access as env.MY_NAMESPACE id: <production-uuid>, preview_id: <preview-uuid> // Optional: local dev }] await c.env.MY_NAMESPACE.put(c.req.param(key), await c.req.text()); return c.json({ success: ",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeremy Dawes",
+    "email": "jeremy@jezweb.net"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/jezweb/claude-skills",
+  "keywords": []
+}

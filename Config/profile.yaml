@@ -1,0 +1,88 @@
+# ScholarshipOps Triage Profile Configuration
+# 使用者個人資料，用於獎學金篩選
+
+# 目標入學年度
+target_intake: "2026/27"
+
+# 預期開學月份
+expected_start_month: "2026-09"
+
+# 學位層級: postgraduate_taught (PGT), postgraduate_research (PGR), undergraduate
+degree_level: "postgraduate_taught"
+
+# 國籍（可多個）
+country_of_citizenship:
+  - "Taiwan"
+
+# 居住地（可多個）
+country_of_residence:
+  - "Taiwan"
+
+# 目標大學（可多個，用於加分）
+target_university:
+  - "University of Glasgow"
+  - "Glasgow"
+
+# 目標科系關鍵字
+target_program_keywords:
+  - "Software Development"
+  - "Computer Science"
+  - "Computing"
+  - "Software Engineering"
+  - "Data Science"
+  - "Information Technology"
+
+# 硬排除條件（命中任一則淘汰）
+hard_exclusions:
+  - "undergraduate_only"
+  - "phd_only"
+  - "home_fee_status_only"
+  - "care_leaver_only"
+  - "refugee_only"
+  - "uk_domicile_only"
+  - "eu_only"
+
+# 偏好幣別（用於金額標準化）
+preferred_currencies:
+  - "GBP"
+  - "USD"
+  - "EUR"
+
+# A 類最低獎金（GBP 等值）
+min_award_gbp_equiv_for_A: 2000
+
+# A 類最高申請成本（小時）
+max_application_effort_hours_for_A: 6
+
+# 最晚可接受的截止日期（入學前可合理完成）
+latest_acceptable_deadline: "2026-08-31"
+
+# 教育背景（用於 GPA 匹配）
+education:
+  - degree: "bachelor"
+    university: "National Chengchi University (NCCU)"
+    department: "Management Information Systems (MIS)"
+    gpa: 2.92
+    gpa_scale: 4.0
+    status: "graduated"
+  - degree: "master"
+    university: "National Chengchi University (NCCU)"
+    department: "Digital Content and Technologies (DCT)"
+    gpa: 3.96
+    gpa_scale: 4.0
+    status: "incomplete"
+
+# 已準備好的申請材料（用於 effort 計算）
+prepared_materials:
+  - "personal_statement"
+  - "cv"
+  - "transcript"
+  - "english_certificate"
+  - "recommendation_letter_1"
+  - "recommendation_letter_2"
+
+# 尚未準備的材料（會增加 effort）
+unprepared_materials:
+  - "video_essay"
+  - "portfolio"
+  - "research_proposal"

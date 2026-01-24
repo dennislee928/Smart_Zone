@@ -1,0 +1,15 @@
+🔍 **ScholarshipOps Search Report**
+📅 2026-01-21 08:18 UTC
+
+👤 **Your Profile:**
+• Nationality: Taiwan
+• Target: University of Glasgow (2026-09-14)
+• Level: master
+
+📊 **Results:** A=0 | B=0 | C=3
+
+⏭️ **Filtered out:** 6 scholarships
+
+⚠️ **Errors:** 521
+
+📁 **Total in database:** 0

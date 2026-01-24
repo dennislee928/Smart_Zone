@@ -1,0 +1,9 @@
+/Users/dennis_leedennis_lee/Documents/GitHub/Smart_Zone/scripts/search_scholarships/target/debug/deps/find_msvc_tools-da23836b0934b665.d: /Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/lib.rs /Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/find_tools.rs /Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/tool.rs
+
+/Users/dennis_leedennis_lee/Documents/GitHub/Smart_Zone/scripts/search_scholarships/target/debug/deps/libfind_msvc_tools-da23836b0934b665.rlib: /Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/lib.rs /Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/find_tools.rs /Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/tool.rs
+
+/Users/dennis_leedennis_lee/Documents/GitHub/Smart_Zone/scripts/search_scholarships/target/debug/deps/libfind_msvc_tools-da23836b0934b665.rmeta: /Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/lib.rs /Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/find_tools.rs /Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/tool.rs
+
+/Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/lib.rs:
+/Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/find_tools.rs:
+/Users/dennis_leedennis_lee/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/find-msvc-tools-0.1.8/src/tool.rs:

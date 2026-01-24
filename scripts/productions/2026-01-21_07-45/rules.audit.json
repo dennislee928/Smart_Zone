@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-01-21T07:45:52Z",
+  "rules_file": "Config/rules.yaml",
+  "total_rules": 25,
+  "items_processed": 3,
+  "buckets": {
+    "a": 0,
+    "b": 1,
+    "c": 2,
+    "x": 0
+  },
+  "rule_hits": [
+    {
+      "rule_id": "B-DEADLINE-001",
+      "rule_name": "Deadline Missing",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "E-COUNTRY-001",
+      "rule_name": "Taiwan Not Eligible",
+      "hit_count": 2
+    },
+    {
+      "rule_id": "B-NONTARGET-001",
+      "rule_name": "Non-Target University",
+      "hit_count": 1
+    }
+  ]
+}

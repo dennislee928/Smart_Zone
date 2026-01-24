@@ -1,0 +1,19 @@
+🔍 **ScholarshipOps Search Report**
+📅 2026-01-21 07:24 UTC
+
+👤 **Your Profile:**
+• Nationality: Taiwan
+• Target: University of Glasgow (2026-09-14)
+• Level: master
+
+📊 **Results:** A=0 | B=1 | C=2
+
+## 📋 Bucket B (備援)
+
+1. Current Scholarship Opportunities - $3,000 (Score: 10)
+
+⏭️ **Filtered out:** 6 scholarships
+
+⚠️ **Errors:** 515
+
+📁 **Total in database:** 1

@@ -1,0 +1,12 @@
+{
+  "name": "sub-agent-patterns",
+  "description": "Expert code reviewer. Use proactively after code changes.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeremy Dawes",
+    "email": "jeremy@jezweb.net"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/jezweb/claude-skills",
+  "keywords": []
+}

@@ -1,18 +1,197 @@
+# ScholarshipOps Source Configuration
+# Tiered architecture for high-precision scholarship discovery
+# 
+# Priority System:
+#   - Tier 1 (priority: 1): Glasgow-specific - MUST process first
+#   - Tier 2 (priority: 2): Portable international scholarships (Chevening, Rotary, etc.)
+#   - Tier 3 (priority: 3): Other UK universities (disabled by default for focused search)
+#
+# Total active sources target: 20-80 (not 800+)
+
 sources:
-  - name: "University of Glasgow Scholarships"
+  # ============================================
+  # TIER 1: Glasgow Target University (MUST HAVE)
+  # Process these first - highest priority
+  # ============================================
+  
+  - name: "Glasgow All Scholarships"
     type: "university"
-    url: "https://www.gla.ac.uk/scholarships/"
+    url: "https://www.gla.ac.uk/scholarships/all/"
     enabled: true
+    priority: 1
     scraper: "university"
-    
-  - name: "UK Government Scholarships"
+
+  - name: "Glasgow Scholarship Search"
+    type: "university"
+    url: "https://www.gla.ac.uk/scholarships/search/"
+    enabled: true
+    priority: 1
+    scraper: "university"
+
+  - name: "Glasgow Global Leadership Scholarship"
+    type: "university"
+    url: "https://www.gla.ac.uk/scholarships/globalleadershipscholarship/"
+    enabled: true
+    priority: 1
+    scraper: "university"
+
+  - name: "Glasgow PGT Fees & Funding"
+    type: "university"
+    url: "https://www.gla.ac.uk/study/postgraduate/fees-funding/scholarships/"
+    enabled: true
+    priority: 1
+    scraper: "university"
+
+  - name: "Glasgow International Fees & Funding"
+    type: "university"
+    url: "https://www.gla.ac.uk/international/support/fees-funding/"
+    enabled: true
+    priority: 1
+    scraper: "university"
+
+  - name: "Glasgow Computing Science PGT"
+    type: "university"
+    url: "https://www.gla.ac.uk/schools/computing/postgraduate/"
+    enabled: true
+    priority: 1
+    scraper: "university"
+
+  - name: "Glasgow Scholarships Portal"
+    type: "university"
+    url: "https://frontdoor.spa.gla.ac.uk/ScholarshipApp/"
+    enabled: true
+    priority: 1
+    scraper: "selenium"
+
+  # ============================================
+  # TIER 2: Portable International Scholarships
+  # These can be used at Glasgow or are UK-wide
+  # ============================================
+
+  # Major UK Government Scholarships
+  - name: "Chevening Scholarships"
     type: "government"
-    url: "https://www.gov.uk/browse/education/student-finance"
+    url: "https://www.chevening.org/scholarships/"
     enabled: true
+    priority: 2
     scraper: "government"
-    
-  - name: "FindAPhD Scholarships"
-    type: "third_party"
-    url: "https://www.findaphd.com/funding/"
+
+  - name: "Commonwealth Scholarships"
+    type: "government"
+    url: "https://cscuk.fcdo.gov.uk/scholarships/"
     enabled: true
+    priority: 2
+    scraper: "government"
+
+  - name: "GREAT Scholarships"
+    type: "government"
+    url: "https://study-uk.britishcouncil.org/scholarships/great-scholarships"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  # Major International Foundations
+  - name: "Rotary Foundation Global Grants"
+    type: "foundation"
+    url: "https://www.rotary.org/en/our-programs/scholarships"
+    enabled: true
+    priority: 2
     scraper: "third_party"
+
+  - name: "Gates Cambridge Scholarship"
+    type: "foundation"
+    url: "https://www.gatescambridge.org/"
+    enabled: true
+    priority: 2
+    scraper: "third_party"
+
+  - name: "Marshall Scholarship"
+    type: "foundation"
+    url: "https://www.marshallscholarship.org/"
+    enabled: true
+    priority: 2
+    scraper: "third_party"
+
+  # Taiwan-specific sources
+  - name: "Taiwan MOE Overseas Study"
+    type: "government"
+    url: "https://www.scholarship.moe.gov.tw/"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  # Verified Aggregators (high quality)
+  - name: "British Council Study UK"
+    type: "third_party"
+    url: "https://study-uk.britishcouncil.org/scholarships"
+    enabled: true
+    priority: 2
+    scraper: "third_party"
+
+  - name: "FindAPhD - Masters Funding"
+    type: "third_party"
+    url: "https://www.findamasters.com/funding/"
+    enabled: true
+    priority: 2
+    scraper: "third_party"
+
+  - name: "Prospects Postgrad Funding"
+    type: "third_party"
+    url: "https://www.prospects.ac.uk/postgraduate-study/funding-postgraduate-study"
+    enabled: true
+    priority: 2
+    scraper: "third_party"
+
+  # Scottish-specific
+  - name: "SAAS - Student Awards Agency Scotland"
+    type: "government"
+    url: "https://www.saas.gov.uk/"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  - name: "Scotland's Saltire Scholarships"
+    type: "government"
+    url: "https://www.scotland.org/study/saltire-scholarships"
+    enabled: true
+    priority: 2
+    scraper: "government"
+
+  # ============================================
+  # TIER 3: Other UK Russell Group Universities
+  # Disabled by default - enable when Tier 1/2 stable
+  # These are NOT portable scholarships
+  # ============================================
+
+  - name: "Edinburgh Scholarships"
+    type: "university"
+    url: "https://www.ed.ac.uk/student-funding/postgraduate/international"
+    enabled: false
+    priority: 3
+    scraper: "university"
+
+  - name: "St Andrews International"
+    type: "university"
+    url: "https://www.st-andrews.ac.uk/study/fees-and-funding/postgraduate/"
+    enabled: false
+    priority: 3
+    scraper: "university"
+
+  - name: "Strathclyde Scholarships"
+    type: "university"
+    url: "https://www.strath.ac.uk/studywithus/scholarships/"
+    enabled: false
+    priority: 3
+    scraper: "university"
+
+  # ============================================
+  # DISABLED: Research-only aggregators
+  # Use generate_sources_complete.py for research mode
+  # ============================================
+
+  # - name: "Scholarship Portal"
+  #   type: "third_party"
+  #   url: "https://www.scholarshipportal.com/"
+  #   enabled: false
+  #   priority: 4
+  #   scraper: "third_party"

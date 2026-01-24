@@ -1,0 +1,32 @@
+{
+  "name": "my-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server with OAuth authentication",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev --remote",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "cf-typegen": "wrangler types"
+  },
+  "keywords": [
+    "mcp",
+    "cloudflare",
+    "workers",
+    "oauth"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260103.0",
+    "typescript": "^5.7.3",
+    "wrangler": "^4.54.0"
+  },
+  "dependencies": {
+    "@cloudflare/workers-oauth-provider": "^0.2.2",
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "agents": "^0.3.3",
+    "hono": "^4.11.3",
+    "zod": "^3.24.2"
+  }
+}

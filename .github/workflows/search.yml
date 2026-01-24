@@ -4,12 +4,14 @@ on:
   push:
     branches:
       - feature/ScholarshipOps
+      - main
+      - master
   schedule:
-    - cron: "10 13 * * 3"   # Wednesday 21:10 Asia/Taipei (Wednesday lead search)
+    - cron: "10 13 * * 3"   # Wednesday 21:10 Asia/Taipei (UTC+8, Wednesday lead search)
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 concurrency:
@@ -22,21 +24,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Chrome and ChromeDriver
+        uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
+
+      - name: Start ChromeDriver
+        run: |
+          chromedriver --port=9515 &
+          sleep 3
+          echo "ChromeDriver started on port 9515"
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
 
-      - name: Cache Cargo dependencies
-        uses: actions/cache@v3
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            scripts/search_scholarships/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          workspaces: "scripts/search_scholarships -> target"
 
       - name: Build Rust project
         working-directory: scripts/search_scholarships
@@ -51,13 +58,83 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: cargo run --release
+          # Source filtering config
+          SOURCE_EXCLUDE_TYPES: "web3"  # Exclude web3 sources by default
+          SOURCE_MAX_FAILURES: "3"       # Auto-disable after 3 consecutive failures
+          SOURCE_SKIP_DISABLED: "true"   # Skip auto-disabled sources
+        run: ./target/release/search_scholarships
+      
+      - name: Upload search reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: search-report-${{ github.run_number }}
+          path: |
+            scripts/productions/**/*
+            scripts/search_scholarships/summary.txt
+          retention-days: 30
 
-      - name: Commit changes if any
-        if: github.event_name == 'schedule'
+      - name: Commit full report folder and updates
+        if: always()
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add tracking/leads.json || true
-          git diff --staged --quiet || git commit -m "Update leads from automated search"
-          git push || true
+          
+          # Find the latest report folder in scripts/productions (format: YYYY-MM-DD_HH-MM)
+          REPORT_DIR=$(find scripts/productions -type d -name "20*_*" | sort | tail -1)
+          HAS_CHANGES=false
+          
+          if [ -n "$REPORT_DIR" ] && [ -d "$REPORT_DIR" ]; then
+            echo "Found report directory: $REPORT_DIR"
+            git add "$REPORT_DIR" || true
+            HAS_CHANGES=true
+          fi
+          
+          # Also add leads.json and source_health.json if they exist and were modified
+          if [ -f tracking/leads.json ] || [ -f tracking/source_health.json ]; then
+            git add tracking/leads.json tracking/source_health.json || true
+            if git diff --staged --quiet; then
+              : # No changes
+            else
+              HAS_CHANGES=true
+            fi
+          fi
+          
+          if [ "$HAS_CHANGES" = true ]; then
+            # Fetch and merge remote changes before pushing
+            git fetch origin || true
+            BRANCH=$(git rev-parse --abbrev-ref HEAD)
+            git pull --rebase origin "$BRANCH" || git pull origin "$BRANCH" || true
+            
+            # Create commit message
+            if [ -n "$REPORT_DIR" ]; then
+              COMMIT_MSG="Add search report: $(basename $REPORT_DIR)"
+              if git diff --staged --quiet tracking/leads.json tracking/source_health.json 2>/dev/null; then
+                : # No tracking changes
+              else
+                COMMIT_MSG="$COMMIT_MSG + update leads/source health"
+              fi
+            else
+              COMMIT_MSG="Update leads and source health from automated search"
+            fi
+            
+            git commit -m "$COMMIT_MSG" || true
+            git push origin "$BRANCH" || true
+          else
+            echo "No changes to commit"
+          fi
+
+      - name: Send summary to Discord
+        if: always()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ -n "$DISCORD_WEBHOOK_URL" ] && [ -f scripts/search_scholarships/summary.txt ]; then
+            SUMMARY=$(cat scripts/search_scholarships/summary.txt)
+            # Escape for JSON payload
+            ESCAPED=$(printf "%s" "$SUMMARY" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
+            curl -H "Content-Type: application/json" \
+              -X POST \
+              -d "{\"content\": $ESCAPED}" \
+              "$DISCORD_WEBHOOK_URL"
+          fi

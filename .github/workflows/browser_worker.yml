@@ -1,0 +1,42 @@
+name: Browser Worker
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"  # 每 30 分鐘檢查一次
+
+jobs:
+  browser-worker:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        worker_id: [1, 2, 3, 4, 5]
+      max-parallel: 3
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          playwright install chromium
+      
+      - name: Run browser worker
+        run: |
+          python scripts/browser_worker/browser_worker.py \
+            --worker-id ${{ matrix.worker_id }} \
+            --total-workers 5 \
+            --queue-file tracking/browser_queue.jsonl \
+            --output-file tracking/browser_results.jsonl \
+            --max-urls 50
+      
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-results-worker-${{ matrix.worker_id }}
+          path: tracking/browser_results.jsonl
+          retention-days: 7

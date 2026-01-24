@@ -1,0 +1,19 @@
+🔍 **ScholarshipOps Search Report**
+📅 2026-01-21 14:33 UTC
+
+👤 **Your Profile:**
+• Nationality: Taiwan
+• Target: University of Glasgow (2026-09-14)
+• Level: master
+
+📊 **Results:** A=0 | B=1 | C=2
+
+## 📋 Bucket B (備援)
+
+1. Chevening Scholarships 2027/28 - Full tuition + living costs + flights (Score: 110)
+
+⏭️ **Filtered out:** 1 scholarships
+
+⚠️ **Errors:** 5
+
+📁 **Total in database:** 1

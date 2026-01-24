@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-01-21T03:53:15Z",
+  "rules_file": "Config/rules.yaml",
+  "total_rules": 22,
+  "items_processed": 65,
+  "buckets": {
+    "a": 2,
+    "b": 59,
+    "c": 4
+  },
+  "rule_hits": [
+    {
+      "rule_id": "E-IDENTITY-002",
+      "rule_name": "Refugee/Asylum",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "P-FULL-001",
+      "rule_name": "Full Funding",
+      "hit_count": 4
+    },
+    {
+      "rule_id": "E-IDENTITY-001",
+      "rule_name": "Care Leaver",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "P-INTL-001",
+      "rule_name": "International Students",
+      "hit_count": 36
+    },
+    {
+      "rule_id": "E-IDENTITY-003",
+      "rule_name": "Armed Forces",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "E-LEVEL-PHD-001",
+      "rule_name": "PhD Only",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "P-MERIT-001",
+      "rule_name": "Merit Based",
+      "hit_count": 2
+    },
+    {
+      "rule_id": "B-DEADLINE-001",
+      "rule_name": "Deadline Missing",
+      "hit_count": 52
+    },
+    {
+      "rule_id": "P-LEVEL-001",
+      "rule_name": "Postgraduate Taught",
+      "hit_count": 2
+    }
+  ]
+}

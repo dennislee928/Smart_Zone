@@ -1,0 +1,12 @@
+{
+  "name": "flask",
+  "description": "Build Python web apps with Flask using application factory pattern, Blueprints, and Flask-SQLAlchemy. Covers project structure, authentication, and configuration management. Use when: creating Flask projects, organizing blueprints, or troubleshooting circular imports, context errors, or registration.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeremy Dawes",
+    "email": "jeremy@jezweb.net"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/jezweb/claude-skills",
+  "keywords": []
+}
