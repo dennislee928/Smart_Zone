@@ -26,6 +26,9 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
     let mut result = RuleApplicationResult {
         bucket: None,
         matched_rules: Vec::new(),
+        match_reasons: Vec::new(),
+        hard_fail_reasons: Vec::new(),
+        soft_flags: Vec::new(),
         score_adjustments: Vec::new(),
         effort_adjustments: Vec::new(),
         total_score_add: 0,
@@ -54,6 +57,7 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
                 action: format!("Hard reject -> Bucket {}", target_bucket),
                 reason: rule.action.reason.clone(),
             });
+            result.hard_fail_reasons.push(rule.action.reason.clone());
             result.bucket = Some(target_bucket);
             result.hard_rejected = true;
             result.rejection_reason = Some(rule.action.reason.clone());
@@ -72,6 +76,7 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
                 action: format!("Soft downgrade -> Bucket B"),
                 reason: rule.action.reason.clone(),
             });
+            result.soft_flags.push(rule.action.reason.clone());
             
             // Only downgrade if not already set to C
             if result.bucket.is_none() {
@@ -97,6 +102,7 @@ pub fn apply_rules(lead: &Lead, rules: &RulesConfig) -> RuleApplicationResult {
                 action: format!("Score +{}, Effort -{}", score_add, effort_reduce),
                 reason: rule.action.reason.clone(),
             });
+            result.match_reasons.push(rule.action.reason.clone());
             
             if score_add > 0 {
                 result.score_adjustments.push((rule.id.clone(), score_add));
