@@ -133,19 +133,6 @@ hard_reject_rules:
       reason: "Requires US state/county residency - not applicable for Taiwan"
 
   # === EU Only Gate ===
-  - id: "E-REGION-EU-001"
-    name: "EU Only"
-    stage: "eligibility"
-    description: "EU-only scholarship"
-    when:
-      any_regex:
-        - "(?i)EU\\s+students?\\s+only"
-        - "(?i)European\\s+Union\\s+students?\\s+only"
-        - "(?i)available\\s+to\\s+EU\\s+nationals?\\s+only"
-    action:
-      bucket: "C"
-      reason: "EU-only scholarship."
-
   # === EU Only Gate ===
   - id: "E-REGION-EU-001"
     name: "EU Only"
