@@ -93,6 +93,77 @@ async fn main() -> Result<()> {
     println!();
     
     // ==========================================
+    // Stage 0.5: Discovery (sitemap/RSS)
+    // ==========================================
+    println!("Stage 0.5: Discovering URLs from sitemaps/RSS...");
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(10))
+        .build()
+        .context("Failed to create HTTP client for discovery")?;
+    
+    let mut discovered_urls: Vec<discovery::CandidateUrl> = Vec::new();
+    let discovery_config = discovery::DiscoveryConfig::default();
+    
+    for source in &enabled_sources {
+        // Try discovery from robots.txt -> sitemap
+        if let Ok(candidates) = discovery::discover_urls(&client, source, &discovery_config).await {
+            for candidate in candidates {
+                // Filter by keywords
+                let url_lower = candidate.url.to_lowercase();
+                if url_lower.contains("scholarship") || 
+                   url_lower.contains("funding") || 
+                   url_lower.contains("bursary") || 
+                   url_lower.contains("award") ||
+                   url_lower.contains("grant") {
+                    discovered_urls.push(candidate);
+                }
+            }
+        }
+        
+        // Try parsing sitemap directly
+        let base_url = if let Some(pos) = source.url.find("://") {
+            let rest = &source.url[pos + 3..];
+            if let Some(path_pos) = rest.find('/') {
+                format!("{}://{}", &source.url[..pos + 3], &rest[..path_pos])
+            } else {
+                source.url.clone()
+            }
+        } else {
+            source.url.clone()
+        };
+        
+        let common_sitemaps = vec![
+            format!("{}/sitemap.xml", base_url),
+            format!("{}/sitemap_index.xml", base_url),
+        ];
+        
+        for sitemap_url in common_sitemaps {
+            if let Ok(sitemap_candidates) = discovery::parse_sitemap(&client, &sitemap_url, &discovery_config).await {
+                for candidate in sitemap_candidates {
+                    // Filter by keywords
+                    let url_lower = candidate.url.to_lowercase();
+                    if url_lower.contains("scholarship") || 
+                       url_lower.contains("funding") || 
+                       url_lower.contains("bursary") || 
+                       url_lower.contains("award") ||
+                       url_lower.contains("grant") {
+                        discovered_urls.push(candidate);
+                    }
+                }
+            }
+        }
+    }
+    
+    println!("  Discovered {} candidate URLs from sitemaps/RSS", discovered_urls.len());
+    if !discovered_urls.is_empty() {
+        println!("  Sample discovered URLs:");
+        for (idx, candidate) in discovered_urls.iter().take(5).enumerate() {
+            println!("    {}. {} ({:?})", idx + 1, candidate.url, candidate.discovered_from);
+        }
+    }
+    println!();
+    
+    // ==========================================
     // Stage 1: Scrape Sources (with health tracking)
     // ==========================================
     let mut skipped_sources: Vec<(String, String)> = Vec::new();
