@@ -217,6 +217,9 @@ pub fn extract_external_links(
     
     external_links
 }
+
+/// Extract absolute gla.ac.uk links from HTML that match whitelist.
+fn extract_gla_links(html: &str, base_url: &str) -> Vec<String> {
     let doc = Html::parse_document(html);
     let sel = match Selector::parse("a[href]") {
         Ok(s) => s,
@@ -430,9 +433,10 @@ pub fn scrape_with_source(url: &str, source: Option<&Source>) -> Result<ScrapeRe
                         // Create leads from external links (these will be discovered sources, not scholarships)
                         let mut leads = Vec::new();
                         for ext_url in external_links {
+                            let ext_url_clone = ext_url.clone();
                             // Create a discovery lead - will be processed as a new source candidate
                             leads.push(Lead {
-                                name: format!("External funding source: {}", ext_url),
+                                name: format!("External funding source: {}", ext_url_clone),
                                 amount: String::new(),
                                 deadline: String::new(),
                                 source: url.to_string(),
@@ -441,7 +445,7 @@ pub fn scrape_with_source(url: &str, source: Option<&Source>) -> Result<ScrapeRe
                                 eligibility: vec![],
                                 notes: format!("Discovered from {} (external_links_only mode)", src.name),
                                 added_date: chrono::Utc::now().format("%Y-%m-%d").to_string(),
-                                url: ext_url,
+                                url: ext_url_clone.clone(),
                                 match_score: 0,
                                 match_reasons: vec![],
                                 hard_fail_reasons: vec![],
@@ -462,7 +466,7 @@ pub fn scrape_with_source(url: &str, source: Option<&Source>) -> Result<ScrapeRe
                                 deadline_confidence: None,
                                 canonical_url: None,
                                 is_directory_page: false,
-                                official_source_url: Some(ext_url.clone()),
+                                official_source_url: Some(ext_url_clone),
                                 source_domain: None,
                                 confidence: Some(0.5), // Lower confidence for discovered links
                                 eligibility_confidence: None,

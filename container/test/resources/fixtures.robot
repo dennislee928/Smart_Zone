@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    測試資料設置和清理
 Resource          api_keywords.robot
-Variables         ../variables/config.robot
+Variables         ${CURDIR}/../variables/config.robot
 
 *** Variables ***
 @{CREATED_LEAD_IDS}    
@@ -81,7 +81,7 @@ Create Test Lead
     ${json}=    Validate JSON Response    ${response}
     ${lead_id}=    Set Variable    ${json}[lead][id]
     Append To List    ${CREATED_LEAD_IDS}    ${lead_id}
-    [Return]    ${json}[lead]
+    RETURN    ${json}[lead]
 
 Create Test Application
     [Documentation]    建立測試用申請資料
@@ -93,7 +93,7 @@ Create Test Application
     ${json}=    Validate JSON Response    ${response}
     ${app_id}=    Set Variable    ${json}[application][id]
     Append To List    ${CREATED_APPLICATION_IDS}    ${app_id}
-    [Return]    ${json}[application]
+    RETURN    ${json}[application]
 
 Create Test Criteria
     [Documentation]    建立測試用搜尋條件
@@ -106,4 +106,4 @@ Create Test Criteria
     Validate Status Code    ${response}    ${STATUS_OK}
     ${json}=    Validate JSON Response    ${response}
     Set Suite Variable    ${CREATED_CRITERIA_ID}    ${json}[criteria][id]
-    [Return]    ${json}[criteria]
+    RETURN    ${json}[criteria]

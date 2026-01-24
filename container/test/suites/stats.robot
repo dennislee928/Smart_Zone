@@ -3,7 +3,7 @@ Documentation    Stats API 測試套件
 Resource          ../resources/api_keywords.robot
 Resource          ../resources/validators.robot
 Resource          ../resources/fixtures.robot
-Variables         ../variables/config.robot
+Variables         ${CURDIR}/../variables/config.robot
 Suite Setup       Setup Test Database
 Suite Teardown    Teardown Test Database
 Test Setup        Create Session    api
