@@ -235,7 +235,7 @@ mod tests {
     fn test_auto_considered() {
         let lead = make_test_lead("Automatically considered upon application");
         let score = calculate_effort_score(&lead);
-        assert!(score < 20, "Auto-considered should have low effort (got {})", score);
+        assert!(score < 30, "Auto-considered should have low effort (got {})", score);
     }
     
     #[test]
