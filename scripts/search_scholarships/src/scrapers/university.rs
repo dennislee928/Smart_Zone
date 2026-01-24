@@ -1,27 +1,263 @@
 use crate::types::{Lead, ScrapeResult, SourceStatus};
+use crate::normalize;
 use anyhow::Result;
 use scraper::{Html, Selector};
+use std::collections::{HashSet, VecDeque};
+
+/// Returns true if url is a Glasgow directory/list page (e.g. /scholarships, /scholarships/all, fees-funding).
+fn is_glasgow_directory_url(url: &str) -> bool {
+    let u = url.to_lowercase();
+    if !u.contains("gla.ac.uk") {
+        return false;
+    }
+    u.contains("/scholarships")
+        || u.contains("/postgraduate/feesandfunding")
+        || u.contains("/fees-funding")
+        || u.contains("/study/postgraduate/fees-funding")
+}
+
+/// Resolve relative URL against base. Returns absolute URL (no normalizing).
+fn resolve_url(base: &str, href: &str) -> Option<String> {
+    let href = href.trim().split('#').next().unwrap_or("").trim();
+    if href.is_empty() {
+        return None;
+    }
+    if href.starts_with("http://") || href.starts_with("https://") {
+        return Some(href.to_string());
+    }
+    let (scheme, rest) = {
+        let pos = base.find("://")?;
+        (base[..pos + 3].to_string(), base[pos + 3..].to_string())
+    };
+    let rest = rest.trim_start_matches('/');
+    let slash = rest.find('/').unwrap_or(rest.len());
+    let host = &rest[..slash];
+    let path = if slash < rest.len() { &rest[slash..] } else { "/" };
+    let path_dir = if path.ends_with('/') {
+        path.to_string()
+    } else {
+        let last = path.rfind('/').map(|i| i + 1).unwrap_or(0);
+        format!("{}/", &path[..last])
+    };
+    let resolved = if href.starts_with('/') {
+        format!("{}{}{}", scheme, host, href)
+    } else {
+        format!("{}{}/{}{}", scheme, host, path_dir.trim_start_matches('/'), href)
+    };
+    Some(resolved)
+}
+
+/// Extract absolute gla.ac.uk links from HTML that match whitelist.
+fn extract_gla_links(html: &str, base_url: &str) -> Vec<String> {
+    let doc = Html::parse_document(html);
+    let sel = match Selector::parse("a[href]") {
+        Ok(s) => s,
+        Err(_) => return vec![],
+    };
+    let mut seen = HashSet::new();
+    let mut out = Vec::new();
+    let whitelist = ["/scholarships/", "/postgraduate/feesandfunding/", "/fees-funding/", "/study/postgraduate/fees-funding/"];
+    for el in doc.select(&sel) {
+        let href = el.value().attr("href").unwrap_or("").trim();
+        if let Some(abs) = resolve_url(base_url, href) {
+            let lower = abs.to_lowercase();
+            if lower.contains("gla.ac.uk") && whitelist.iter().any(|w| lower.contains(w)) {
+                let n = normalize::normalize_url(&abs);
+                if seen.insert(n) {
+                    out.push(abs);
+                }
+            }
+        }
+    }
+    out
+}
+
+/// Build base URL (scheme + host + path dir) for resolving relative links.
+fn base_url_for_resolve(url: &str) -> String {
+    let url = url.trim();
+    let path_start = url.find("://").map(|i| i + 3).unwrap_or(0);
+    let after = &url[path_start..];
+    let host_end = after.find('/').map(|i| path_start + i).unwrap_or(url.len());
+    let path = if host_end < url.len() { &url[host_end..] } else { "/" };
+    let path_dir = if path.ends_with('/') {
+        path.to_string()
+    } else {
+        let last = path.rfind('/').map(|i| i + 1).unwrap_or(0);
+        format!("{}/", &path[..last])
+    };
+    format!("{}{}", &url[..host_end.min(url.len())], path_dir)
+}
+
+/// Extract a single scholarship lead from a page if it looks like a detail page.
+fn extract_scholarship_from_page(html: &str, page_url: &str, source_url: &str) -> Option<Lead> {
+    let doc = Html::parse_document(html);
+    let mut text = String::new();
+    for sel_str in &["main", "article", ".content", "#content", "body"] {
+        if let Ok(sel) = Selector::parse(sel_str) {
+            for el in doc.select(&sel) {
+                text.push_str(&el.text().collect::<Vec<_>>().join(" "));
+                text.push(' ');
+            }
+            if !text.trim().is_empty() {
+                break;
+            }
+        }
+    }
+    if text.is_empty() {
+        if let Ok(sel) = Selector::parse("body") {
+            for el in doc.select(&sel) {
+                text = el.text().collect::<Vec<_>>().join(" ");
+                break;
+            }
+        }
+    }
+    let title = doc
+        .select(&Selector::parse("h1").ok()?)
+        .next()
+        .or_else(|| doc.select(&Selector::parse("h2").ok()?).next())
+        .map(|e| e.text().collect::<String>().trim().to_string())
+        .filter(|s| s.len() > 3 && s.len() < 200)?;
+    let amount = extract_amount(&text).unwrap_or_else(|| "See website".to_string());
+    let deadline = extract_deadline(&text).unwrap_or_else(|| "Check website".to_string());
+    let mut eligibility = Vec::new();
+    if text.to_lowercase().contains("international") {
+        eligibility.push("International students".to_string());
+    }
+    if text.to_lowercase().contains("postgraduate") || text.to_lowercase().contains("pg ") || text.to_lowercase().contains("msc") {
+        eligibility.push("Postgraduate".to_string());
+    }
+    let canonical = normalize::normalize_url(page_url);
+    let mut lead = Lead {
+        name: title,
+        amount,
+        deadline,
+        source: source_url.to_string(),
+        source_type: "university".to_string(),
+        status: "new".to_string(),
+        eligibility: if eligibility.is_empty() { vec!["See website".to_string()] } else { eligibility },
+        notes: String::new(),
+        added_date: String::new(),
+        url: page_url.to_string(),
+        match_score: 0,
+        match_reasons: vec![],
+        hard_fail_reasons: vec![],
+        soft_flags: vec![],
+        bucket: None,
+        http_status: None,
+        effort_score: None,
+        trust_tier: Some("S".to_string()),
+        risk_flags: vec![],
+        matched_rule_ids: vec![],
+        eligible_countries: vec![],
+        is_taiwan_eligible: None,
+        taiwan_eligibility_confidence: None,
+        deadline_date: None,
+        deadline_label: None,
+        intake_year: None,
+        study_start: None,
+        deadline_confidence: Some("unknown".to_string()),
+        canonical_url: Some(canonical),
+        is_directory_page: false,
+        official_source_url: Some(page_url.to_string()),
+        source_domain: Some("gla.ac.uk".to_string()),
+        confidence: None,
+        eligibility_confidence: None,
+        tags: vec!["glasgow".to_string(), "bfs".to_string()],
+    };
+    if lead.deadline.to_lowercase().contains("tbd") || lead.deadline.to_lowercase().contains("check") {
+        lead.deadline_confidence = Some("TBD".to_string());
+    }
+    Some(lead)
+}
+
+/// BFS crawl Glasgow scholarship pages from a seed URL. Target >50 leads.
+pub fn crawl_glasgow_scholarships(client: &reqwest::blocking::Client, seed_url: &str) -> Result<Vec<Lead>> {
+    const MAX_DEPTH: u32 = 3;
+    const RATE_LIMIT_MS: u64 = 1500;
+
+    let mut queue: VecDeque<(String, u32)> = VecDeque::new();
+    let mut visited: HashSet<String> = HashSet::new();
+    let mut leads: Vec<Lead> = Vec::new();
+
+    queue.push_back((seed_url.to_string(), 0));
+
+    while let Some((url, depth)) = queue.pop_front() {
+        let norm = normalize::normalize_url(&url);
+        if visited.contains(&norm) {
+            continue;
+        }
+        visited.insert(norm.clone());
+
+        if depth > MAX_DEPTH {
+            continue;
+        }
+
+        let resp = match client.get(&url).send() {
+            Ok(r) => r,
+            Err(_) => continue,
+        };
+        let html = match resp.text() {
+            Ok(h) if !h.is_empty() => h,
+            _ => continue,
+        };
+
+        let base = base_url_for_resolve(&url);
+        for link in extract_gla_links(&html, &base) {
+            let nn = normalize::normalize_url(&link);
+            if visited.contains(&nn) {
+                continue;
+            }
+            visited.insert(nn);
+            queue.push_back((link, depth + 1));
+        }
+
+        if let Some(lead) = extract_scholarship_from_page(&html, &url, seed_url) {
+            leads.push(lead);
+        }
+
+        std::thread::sleep(std::time::Duration::from_millis(RATE_LIMIT_MS));
+    }
+
+    leads = normalize::deduplicate_leads(leads);
+    Ok(leads)
+}
 
 /// Scrape a university source and return detailed result for health tracking
 pub fn scrape(url: &str) -> Result<ScrapeResult> {
     println!("Scraping university website: {}", url);
-    
+
     let client = reqwest::blocking::Client::builder()
         .user_agent("Mozilla/5.0 (compatible; ScholarshipBot/1.0)")
         .timeout(std::time::Duration::from_secs(30))
         .redirect(reqwest::redirect::Policy::limited(5))
         .build()?;
-    
+
+    if is_glasgow_directory_url(url) {
+        match crawl_glasgow_scholarships(&client, url) {
+            Ok(leads) if !leads.is_empty() => {
+                println!("  BFS crawl: {} leads", leads.len());
+                return Ok(ScrapeResult {
+                    leads,
+                    status: SourceStatus::Ok,
+                    http_code: Some(200),
+                    error_message: None,
+                });
+            }
+            Ok(_) => {}
+            Err(e) => println!("  BFS crawl failed: {}; falling back", e),
+        }
+    }
+
     let response = client.get(url).send();
-    
+
     match response {
         Ok(resp) => {
             let status_code = resp.status().as_u16();
-            
+
             if resp.status().is_success() {
                 let html = resp.text()?;
                 let mut leads = parse_university_html(&html, url);
-                
+
                 // If HTML parsing found nothing, use known scholarships as fallback
                 if leads.is_empty() {
                     let known = get_known_university_scholarships(url);
