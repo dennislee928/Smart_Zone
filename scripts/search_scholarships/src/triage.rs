@@ -188,6 +188,7 @@ fn is_watchlist_candidate(lead: &Lead) -> bool {
 }
 
 /// Parse deadline string to NaiveDate with validation
+/// Rejects invalid dates like "68-58-58" by validating year (2020-2100), month (1-12), and day validity
 fn parse_deadline_date(deadline: &str) -> Option<NaiveDate> {
     let formats = [
         "%Y-%m-%d",
@@ -200,30 +201,48 @@ fn parse_deadline_date(deadline: &str) -> Option<NaiveDate> {
     
     for fmt in &formats {
         if let Ok(date) = NaiveDate::parse_from_str(deadline, fmt) {
-            // Validate date: check if year is in valid range by formatting and re-parsing
-            let formatted = date.format("%Y-%m-%d").to_string();
-            if let Some(parsed_year) = formatted.split('-').next().and_then(|s| s.parse::<i32>().ok()) {
-                if parsed_year >= 2020 && parsed_year <= 2100 {
-                    return Some(date);
-                }
+            // Validate date: check year, month, and day validity
+            let year = date.year();
+            let month = date.month();
+            let day = date.day();
+            
+            // Validate year range (2020-2100)
+            if year < 2020 || year > 2100 {
+                continue; // Try next format
+            }
+            
+            // Validate month range (1-12)
+            if month < 1 || month > 12 {
+                continue; // Try next format
+            }
+            
+            // Validate day - from_ymd_opt would have failed if invalid, but double-check
+            if NaiveDate::from_ymd_opt(year, month, day).is_some() {
+                return Some(date);
             }
         }
     }
     
     // Try regex for embedded dates
-    if let Ok(re) = regex::Regex::new(r"(\d{4})-(\d{2})-(\d{2})") {
+    // This handles cases like "68-58-58" which should be rejected
+    if let Ok(re) = regex::Regex::new(r"(\d{1,4})-(\d{1,2})-(\d{1,2})") {
         if let Some(caps) = re.captures(deadline) {
             let year: i32 = caps[1].parse().ok()?;
             let month: u32 = caps[2].parse().ok()?;
             let day: u32 = caps[3].parse().ok()?;
             
-            // Validate before creating date
-            if year < 2020 || year > 2100 || month < 1 || month > 12 {
+            // Validate year range (2020-2100)
+            if year < 2020 || year > 2100 {
                 return None;
             }
             
+            // Validate month range (1-12)
+            if month < 1 || month > 12 {
+                return None;
+            }
+            
+            // Validate day - from_ymd_opt will return None for invalid dates (e.g., Feb 30)
             if let Some(date) = NaiveDate::from_ymd_opt(year, month, day) {
-                // from_ymd_opt validates the date, so if it returns Some, the date is valid
                 return Some(date);
             }
         }

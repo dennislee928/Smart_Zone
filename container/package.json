@@ -11,7 +11,15 @@
     "db:migrate:local": "wrangler d1 migrations apply scholarshipops-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply scholarshipops-db --remote",
     "db:studio": "drizzle-kit studio",
-    "db:check-auth": "wrangler whoami"
+    "db:check-auth": "wrangler whoami",
+    "test": "cd test && robot --outputdir output suites/",
+    "test:health": "cd test && robot --outputdir output suites/health_check.robot",
+    "test:leads": "cd test && robot --outputdir output suites/leads.robot",
+    "test:applications": "cd test && robot --outputdir output suites/applications.robot",
+    "test:criteria": "cd test && robot --outputdir output suites/criteria.robot",
+    "test:stats": "cd test && robot --outputdir output suites/stats.robot",
+    "test:triggers": "cd test && robot --outputdir output suites/triggers.robot",
+    "test:report": "cd test && robot --outputdir output --report report.html --log log.html suites/"
   },
   "dependencies": {
     "hono": "^4.11.3",

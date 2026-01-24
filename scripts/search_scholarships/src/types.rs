@@ -460,6 +460,10 @@ pub struct Source {
     pub scraper: String,
     #[serde(default)]
     pub priority: Option<u8>,  // 1 = highest priority (Glasgow), None = default
+    #[serde(default)]
+    pub discovery_mode: Option<String>,  // "external_links_only", "full", None
+    #[serde(default)]
+    pub allow_domains_outbound: Option<Vec<String>>,  // Whitelist of external domains to crawl
 }
 
 // ============================================
