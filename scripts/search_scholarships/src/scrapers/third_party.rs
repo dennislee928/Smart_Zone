@@ -159,6 +159,7 @@ fn parse_third_party_html(html: &str, base_url: &str) -> Vec<Lead> {
                             canonical_url: None,
                             is_directory_page: false,
                             official_source_url: None,
+                            source_domain: None,
                             confidence: None,
                             eligibility_confidence: None,
                             tags: vec![],
@@ -378,6 +379,7 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
                 matched_rule_ids: vec![],
                 eligible_countries: vec!["United States".to_string()],
                 is_taiwan_eligible: Some(false), // US citizens only
+                taiwan_eligibility_confidence: Some("explicit_list".to_string()),
                 deadline_date: Some("2025-09-30".to_string()),
                 deadline_label: Some("applications close".to_string()),
                 intake_year: Some("2026/27".to_string()),
@@ -386,6 +388,7 @@ fn get_known_third_party_scholarships(source_url: &str) -> Vec<Lead> {
                 canonical_url: None,
                 is_directory_page: false,
                 official_source_url: Some("https://www.marshallscholarship.org/".to_string()),
+                source_domain: Some("marshallscholarship.org".to_string()),
                 confidence: None,
                 eligibility_confidence: None,
                 tags: vec!["us-only".to_string(), "prestigious".to_string()],
@@ -469,6 +472,7 @@ fn _get_known_third_party_scholarships_deprecated(source_url: &str) -> Vec<Lead>
             matched_rule_ids: vec![],
             eligible_countries: vec![],
             is_taiwan_eligible: None, // Need to verify - Taiwan may not be in Rhodes list
+            taiwan_eligibility_confidence: None,
             deadline_date: Some("2026-10-01".to_string()),
             deadline_label: Some("applications close".to_string()),
             intake_year: Some("2027/28".to_string()),
