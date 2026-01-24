@@ -151,6 +151,7 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://study-uk.britishcouncil.org/scholarships/great-scholarships".to_string()),
+            source_domain: Some("study-uk.britishcouncil.org".to_string()),
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
