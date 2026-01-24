@@ -102,6 +102,7 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
                 "Uganda".to_string(), "Zambia".to_string(),
             ],
             is_taiwan_eligible: Some(false), // Taiwan is NOT a Commonwealth country - HARD REJECT
+            taiwan_eligibility_confidence: Some("explicit_list".to_string()),
             deadline_date: Some("2026-10-18".to_string()),
             deadline_label: Some("applications close".to_string()),
             intake_year: Some("2027/28".to_string()),
@@ -110,6 +111,7 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/".to_string()),
+            source_domain: Some("cscuk.fcdo.gov.uk".to_string()),
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
@@ -188,6 +190,7 @@ fn get_known_government_scholarships(source_url: &str) -> Vec<Lead> {
             canonical_url: None,
             is_directory_page: false,
             official_source_url: Some("https://www.marshallscholarship.org/".to_string()),
+            source_domain: Some("marshallscholarship.org".to_string()),
             confidence: None,
             eligibility_confidence: None,
             tags: vec![],
