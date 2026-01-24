@@ -13,43 +13,43 @@ overview: 實作三層式 Discovery 策略、修復日期解析與 dedupe、對 
 
 todos:
 
-        - id: p1-date-validation
+                                - id: p1-date-validation
 
 content: 修復日期解析驗證：在 parse_deadline 函數中加入合法性驗證（年份 2020-2100，月份 1-12，日期有效），拒絕 68-58-58 等無效日期
 
 status: in_progress
 
-        - id: p1-dedup-content-hash
+                                - id: p1-dedup-content-hash
 
 content: 強化 Deduplication：在 deduplicate_leads_with_stats 中加入 content-hash 作為第二層去重，使用 url_state::UrlStateStorage::calculate_content_hash
 
 status: pending
 
-        - id: p2-layer1-index-pages
+                                - id: p2-layer1-index-pages
 
 content: Layer 1 官方清單：在 university.rs 實作 discover_from_index_pages，從索引頁提取 /scholarships/ links，整合到 scrape 函數
 
 status: pending
 
-        - id: p2-layer2-sitemap-integration
+                                - id: p2-layer2-sitemap-integration
 
 content: Layer 2 Sitemap/RSS 整合：在 main.rs 新增 Stage 0.5 Discovery，對每個 source 嘗試 discovery::discover_urls 和 discovery::parse_sitemap
 
 status: pending
 
-        - id: p2-layer3-browser-optimization
+                                - id: p2-layer3-browser-optimization
 
 content: Layer 3 Browser 優化：確保 js_detector::needs_browser 只在 HTTP 抓取失敗或欄位不完整時觸發
 
 status: pending
 
-        - id: p3-fallback-strategies
+                                - id: p3-fallback-strategies
 
 content: 403/Timeout 分流：在 SourceHealth 新增 fallback_strategies 欄位，修改 update_health 邏輯，不立即 auto-disable，而是嘗試 sitemap/rss fallback
 
 status: pending
 
-        - id: p3-fallback-execution
+                                - id: p3-fallback-execution
 
 content: Fallback 策略執行：在 main.rs Stage 1 中，若 source 有 fallback_strategies，執行對應的 discovery 策略
 
@@ -57,127 +57,127 @@ status: pending
 
 status: pending
 
-        - id: p4-government-agencies
+                                - id: p4-government-agencies
 
 content: 新增 UK 政府/公共機構：在 sources.yml 新增 UKRI, Scottish Funding Council 等 5-8 個政府機構來源
 
 status: pending
 
-        - id: p4-foundations
+                                - id: p4-foundations
 
 content: 新增基金會/產業獎學金：在 sources.yml 新增科技/工程向基金會（IEEE, Google, Microsoft 等 5-10 個）
 
 status: pending
 
-        - id: p4-uk-universities-external-discovery
+                                - id: p4-uk-universities-external-discovery
 
 content: 新增其他 UK 大學來源（external_links_only 模式）：實作 discovery_mode: external_links_only，只提取外部資助方連結，不追校內獎學金 detail pages
 
 status: pending
 
-        - id: p4-sources-external-domains-whitelist
+                                - id: p4-sources-external-domains-whitelist
 
 content: 實作 allow_domains_outbound 白名單：在 sources.yml 新增 allow_domains_outbound 欄位，限制 crawler 只追蹤白名單外部域名
 
 status: pending
 
-        - id: p5-matrix-strategy
+                                - id: p5-matrix-strategy
 
 content: GitHub Actions Matrix 分片：修改 search.yml，將 sources 分成 10 片，每片產生 leads.part-*.jsonl，最後 merge job 合併
 
 status: pending
 
-        - id: p5-two-stage-workflow
+                                - id: p5-two-stage-workflow
 
 content: 分兩段 Workflow（替代方案）：實作 discovery job（只抓 index/sitemap）和 fetch_extract job（處理 queue）
 
 status: pending
 
-        - id: p0-diagnosis-schedule-branch
+                                - id: p0-diagnosis-schedule-branch
 
 content: 問題診斷：確認 GitHub Actions schedule 是否在 default branch 上執行，若在 feature branch 則 schedule 不會觸發
 
 status: pending
 
-        - id: p0-diagnosis-glasgow-js
+                                - id: p0-diagnosis-glasgow-js
 
 content: 問題診斷：確認 Glasgow /scholarships/all/ 是否為 JS-templated 頁面（{{scholar.title}}），需要瀏覽器渲染
 
 status: pending
 
-        - id: p0-diagnosis-runner-time-limit
+                                - id: p0-diagnosis-runner-time-limit
 
 content: 問題診斷：確認 GitHub-hosted runner 執行時間上限（通常 6 小時），規劃 matrix sharding 策略
 
 status: pending
 
-        - id: p0-sources-glasgow-selenium
+                                - id: p0-sources-glasgow-selenium
 
 content: Sources v2：將 Glasgow /scholarships/all/ 和 /scholarships/search/ 改為 selenium scraper（JS-templated）
 
 status: pending
 
-        - id: p0-sources-glasgow-landing
+                                - id: p0-sources-glasgow-landing
 
 content: Sources v2：新增 Glasgow /scholarships/ landing 頁作為額外 seed
 
 status: pending
 
-        - id: p0-sources-disable-saltire-saas
+                                - id: p0-sources-disable-saltire-saas
 
 content: Sources v2：將 Saltire 和 SAAS 預設 disabled（台灣不符合資格）
 
 status: pending
 
-        - id: p0-sources-great-selenium
+                                - id: p0-sources-great-selenium
 
 content: Sources v2：將 GREAT Scholarships 和 British Council Study UK 改為 selenium scraper（避免 403）
 
 status: pending
 
-        - id: p0-criteria-required-minimal
+                                - id: p0-criteria-required-minimal
 
 content: Criteria v2：將 required keywords 減到最小集合（scholarship|funding|bursary|award），其餘移到 preferred
 
 status: pending
 
-        - id: p0-criteria-gpa-degree-aware
+                                - id: p0-criteria-gpa-degree-aware
 
 content: Criteria v2：GPA 判斷改為 degree-aware（undergrad vs postgrad），max_gpa_requirement 改為 4.0
 
 status: pending
 
-        - id: p0-rules-intl-fee-status
+                                - id: p0-rules-intl-fee-status
 
 content: Rules v2：新增 P-INTL-FEE-002 規則，匹配 "international fee status" / "overseas fee status" 語句
 
 status: pending
 
-        - id: p0-rules-scam-allowlist
+                                - id: p0-rules-scam-allowlist
 
 content: Rules v2：修正 S-SCAM-001，加入官方網域 allowlist（gla.ac.uk, gov.uk 等），避免誤判 hardship fund
 
 status: pending
 
-        - id: p0-rules-nontarget-source-type
+                                - id: p0-rules-nontarget-source-type
 
 content: Rules v2：修正 E-NONTARGET-001，只套用在 university sources，不套用在 foundation/government sources
 
 status: pending
 
-        - id: p0-workflow-mode-wide
+                                - id: p0-workflow-mode-wide
 
 content: Workflow v2：新增 mode=wide|focused 選項，wide 模式啟用 discovery + matrix sharding
 
 status: pending
 
-        - id: p0-workflow-prepare-matrix
+                                - id: p0-workflow-prepare-matrix
 
 content: Workflow v2：新增 prepare job 產生 shard matrix，支援 SHARD_INDEX/SHARD_TOTAL 環境變數
 
 status: pending
 
-        - id: p0-workflow-timeout-340min
+                                - id: p0-workflow-timeout-340min
 
 content: Workflow v2：設定 timeout-minutes: 340，確保在 GitHub-hosted runner 限制內
 
@@ -208,10 +208,10 @@ isProject: false
 
 - 在 `parse_deadline` 函數中加入日期合法性驗證
 - 驗證規則：
-                                - 年份必須在 2020-2100 範圍內
-                                - 月份必須在 1-12 範圍內
-                                - 日期必須符合該月份的有效天數
-                                - 拒絕明顯無效的日期（如 68-58-58）
+                                                                                                                                - 年份必須在 2020-2100 範圍內
+                                                                                                                                - 月份必須在 1-12 範圍內
+                                                                                                                                - 日期必須符合該月份的有效天數
+                                                                                                                                - 拒絕明顯無效的日期（如 68-58-58）
 - 若解析失敗或驗證失敗，返回 `None` 並記錄到 `risk_flags`（如 "invalid_deadline_format"）
 
 **實作細節**：
@@ -287,9 +287,9 @@ fn calculate_lead_content_hash(lead: &Lead) -> String {
 
 - 為每個 university source 新增 `index_urls[]` 配置（在 `sources.yml` 中）
 - 實作 `discover_from_index_pages` 函數：
-                                - 從索引頁 HTML 提取所有 `/scholarships/` 內的 links
-                                - 使用 `detail_url_regex` 過濾允許深入的 URL pattern
-                                - 限制 `max_depth`（通常 2 層）
+                                                                                                                                - 從索引頁 HTML 提取所有 `/scholarships/` 內的 links
+                                                                                                                                - 使用 `detail_url_regex` 過濾允許深入的 URL pattern
+                                                                                                                                - 限制 `max_depth`（通常 2 層）
 - 整合到 `scrape` 函數：先 discovery，再 scrape detail pages
 
 **實作細節**：
@@ -356,10 +356,10 @@ pub async fn discover_from_index_pages(
 - 在 Stage 1（Scrape Sources）之前新增 **Stage 0.5: Discovery**
 - 對每個 source 嘗試：
 
-                                1. `discovery::discover_urls`（robots.txt -> sitemap）
-                                2. `discovery::parse_sitemap`（解析 sitemap XML）
-                                3. 從 sitemap 提取的 URLs 過濾（含 `scholarship|funding|bursary|award` 關鍵字）
-                                4. 將候選 URLs 加入 `sources_to_scrape` 或建立新的 `discovered_sources` 列表
+                                                                                                                                1. `discovery::discover_urls`（robots.txt -> sitemap）
+                                                                                                                                2. `discovery::parse_sitemap`（解析 sitemap XML）
+                                                                                                                                3. 從 sitemap 提取的 URLs 過濾（含 `scholarship|funding|bursary|award` 關鍵字）
+                                                                                                                                4. 將候選 URLs 加入 `sources_to_scrape` 或建立新的 `discovered_sources` 列表
 
 **實作細節**：
 
@@ -402,8 +402,8 @@ println!("  Discovered {} candidate URLs", discovered_urls.len());
 
 - 確保 Stage 1.55（JS-Heavy Detection）只在 HTTP 抓取失敗或頁面是 SPA 時才觸發
 - 優化 `js_detector::needs_browser` 的觸發條件：
-                                - 只有在 `extraction_result` 為 `None` 或欄位不完整時才標記為需要 browser
-                                - 若 HTTP 抓取成功且有完整欄位，跳過 browser queue
+                                                                                                                                - 只有在 `extraction_result` 為 `None` 或欄位不完整時才標記為需要 browser
+                                                                                                                                - 若 HTTP 抓取成功且有完整欄位，跳過 browser queue
 
 ### Phase 3: 403/Timeout 分流策略
 
@@ -415,9 +415,9 @@ println!("  Discovered {} candidate URLs", discovered_urls.len());
 
 - 在 `SourceHealth` 結構中新增 `fallback_strategies: Vec<String>` 欄位（如 `["sitemap", "rss"]`）
 - 修改 `update_health` 函數：
-                                - 若遇到 403，不立即 auto-disable，而是標記 `fallback_strategies = ["sitemap", "rss"]`
-                                - 若遇到 timeout，標記 `fallback_strategies = ["sitemap", "rss", "head_request"]`
-                                - 只有在所有 fallback 策略都失敗後才 auto-disable
+                                                                                                                                - 若遇到 403，不立即 auto-disable，而是標記 `fallback_strategies = ["sitemap", "rss"]`
+                                                                                                                                - 若遇到 timeout，標記 `fallback_strategies = ["sitemap", "rss", "head_request"]`
+                                                                                                                                - 只有在所有 fallback 策略都失敗後才 auto-disable
 
 **實作細節**：
 
@@ -447,9 +447,9 @@ pub fn update_health(...) {
 **變更**：
 
 - 在 Stage 1 中，若 source 有 `fallback_strategies`，嘗試執行：
-                                - `sitemap`：使用 `discovery::parse_sitemap`
-                                - `rss`：使用 `discovery::discover_feeds`
-                                - `head_request`：先 HEAD 請求，再 GET
+                                                                                                                                - `sitemap`：使用 `discovery::parse_sitemap`
+                                                                                                                                - `rss`：使用 `discovery::discover_feeds`
+                                                                                                                                - `head_request`：先 HEAD 請求，再 GET
 
 **實作細節**：
 
@@ -530,12 +530,12 @@ if let Some(health) = health_file.sources.iter().find(|h| h.url == source.url) {
 
 1. **`discovery_mode: external_links_only`**
 
-      - 只抽「外部連結」：gov.uk、fcdo、chevening、cscuk、rotary、britishcouncil、charity/foundation 等
-      - 不追該校內部 scholarship detail pages（或追了也直接標記為 non-portable → C，且不輸出到主要報表）
+                        - 只抽「外部連結」：gov.uk、fcdo、chevening、cscuk、rotary、britishcouncil、charity/foundation 等
+                        - 不追該校內部 scholarship detail pages（或追了也直接標記為 non-portable → C，且不輸出到主要報表）
 
 2. **`allow_domains_outbound: [...]`**
 
-      - 白名單外部域名，避免 crawler 任意發散
+                        - 白名單外部域名，避免 crawler 任意發散
 
 這樣你就能回答你自己問的那句話：
 
@@ -546,11 +546,11 @@ if let Some(health) = health_file.sources.iter().find(|h| h.url == source.url) {
 **變更**：
 
 - 新增 Russell Group 大學的 scholarships index pages：
-                                - Edinburgh: `https://www.ed.ac.uk/student-funding/postgraduate/international`
-                                - St Andrews: `https://www.st-andrews.ac.uk/study/fees-and-funding/postgraduate/`
-                                - Strathclyde: `https://www.strath.ac.uk/studywithus/scholarships/`
-                                - Manchester: `https://www.manchester.ac.uk/study/international/finance/scholarships/`
-                                - 等（共 10-15 個）
+                                                                                                                                - Edinburgh: `https://www.ed.ac.uk/student-funding/postgraduate/international`
+                                                                                                                                - St Andrews: `https://www.st-andrews.ac.uk/study/fees-and-funding/postgraduate/`
+                                                                                                                                - Strathclyde: `https://www.strath.ac.uk/studywithus/scholarships/`
+                                                                                                                                - Manchester: `https://www.manchester.ac.uk/study/international/finance/scholarships/`
+                                                                                                                                - 等（共 10-15 個）
 - 每個 source 配置 `discovery_mode: external_links_only` 和 `allow_domains_outbound` 白名單
 
 **實作細節**：
@@ -650,10 +650,10 @@ pub fn extract_external_links(
 **變更**：
 
 - 科技/工程向基金會（以官方頁為主，避免第三方 403）：
-                                - IEEE Foundation
-                                - Google Scholarships
-                                - Microsoft Scholarships
-                                - 等（共 5-10 個）
+                                                                                                                                - IEEE Foundation
+                                                                                                                                - Google Scholarships
+                                                                                                                                - Microsoft Scholarships
+                                                                                                                                - 等（共 5-10 個）
 
 ### Phase 5: GitHub Actions 優化
 
@@ -833,8 +833,8 @@ jobs:
 - 你需要的是"global index + country filter"，不是隨便抓某國頁
 - GREAT Scholarships 是分國家頁，例如 2026–27 對西班牙的頁面、對越南的頁面內容完全不同。
 - 你的 sources.yaml 應該：
-    - 先放 GREAT 的 global / hub 入口（或 British Council 的總表頁）
-    - triage 時再判斷是否包含 Taiwan（多半不含，就直接 C）
+                - 先放 GREAT 的 global / hub 入口（或 British Council 的總表頁）
+                - triage 時再判斷是否包含 Taiwan（多半不含，就直接 C）
 
 **Saltire Scholarships**：
 
@@ -928,12 +928,12 @@ criteria:
 **改法**：
 
 - 在 profile 增加：
-    - `gpa_undergrad: 2.92`
-    - `gpa_postgrad: 3.96`
+                - `gpa_undergrad: 2.92`
+                - `gpa_postgrad: 3.96`
 - 在 rules 增加：
-    - 若頁面出現 undergraduate GPA / bachelor GPA → 用 undergrad 判斷
-    - 若頁面出現 current postgraduate / master GPA → 用 postgrad 判斷
-    - 若不明確 → 不 hard reject，降權到 B（需要人工確認）
+                - 若頁面出現 undergraduate GPA / bachelor GPA → 用 undergrad 判斷
+                - 若頁面出現 current postgraduate / master GPA → 用 postgrad 判斷
+                - 若不明確 → 不 hard reject，降權到 B（需要人工確認）
 
 **具體修改**：
 
@@ -993,8 +993,8 @@ hard_reject_rules:
 
 - E-NONTARGET-001 只應套用在「明確為某校專屬、且不可攜」的頁面。
 - 對於 foundation / corporate / government 類來源，應改成：
-    - 若未提 Glasgow，但提 "any UK university" 或 "UK institutions" → 允許進 B
-    - 若完全只提某校且該校不在你的 target list → 才 C
+                - 若未提 Glasgow，但提 "any UK university" 或 "UK institutions" → 允許進 B
+                - 若完全只提某校且該校不在你的 target list → 才 C
 
 **具體修改**：
 
@@ -1027,8 +1027,8 @@ hard_reject_rules:
 **改法**：
 
 - 加一個 retry_policy（每網域）：
-    - 429：指數退避 + 降低併發
-    - 403：換 UA / 增加瀏覽器 fallback（對於 listing page 特別重要）
+                - 429：指數退避 + 降低併發
+                - 403：換 UA / 增加瀏覽器 fallback（對於 listing page 特別重要）
 
 **新增規則**：
 
@@ -1061,8 +1061,8 @@ positive_scoring_rules:
 **檔案**：`.github/workflows/scholarshipops-search.yml`
 
 - `mode: focused | wide`
-    - focused：只跑 Tier1 + 少量 Tier2（快、穩）
-    - wide：跑 Tier1 + Tier2 + 開啟 discovery（crawl depth + sitemap），用 matrix 切分到多個 jobs（每個 job 控制 <6h）
+                - focused：只跑 Tier1 + 少量 Tier2（快、穩）
+                - wide：跑 Tier1 + Tier2 + 開啟 discovery（crawl depth + sitemap），用 matrix 切分到多個 jobs（每個 job 控制 <6h）
 
 **具體修改**：
 
@@ -1142,8 +1142,8 @@ PY
 
 - 當讀取 sources.yaml 時，根據穩定 hash（例如 sha1(url) % SHARD_TOTAL == SHARD_INDEX）分割 sources。
 - 在 MODE=wide 時，啟用：
-    - 更深的內部爬取（UofG `/scholarships/…` allow-path）
-    - 更廣泛的第三方索引遍歷（但限制每個網域的頁數）
+                - 更深的內部爬取（UofG `/scholarships/…` allow-path）
+                - 更廣泛的第三方索引遍歷（但限制每個網域的頁數）
 
 ## 預期成果（v2 patch 後）
 
