@@ -208,12 +208,10 @@ async fn main() -> Result<()> {
         
         // Check if source has fallback strategies
         let mut fallback_leads: Vec<Lead> = Vec::new();
-        let mut use_fallback = false;
         
         if let Some(health) = health_file.sources.iter().find(|h| h.url == source.url) {
             if !health.fallback_strategies.is_empty() {
                 println!("    Source has fallback strategies: {:?}", health.fallback_strategies);
-                use_fallback = true;
                 
                 let base_url = if let Some(pos) = source.url.find("://") {
                     let rest = &source.url[pos + 3..];

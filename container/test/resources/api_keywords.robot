@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    可重用的 API 請求關鍵字庫
 Library           RequestsLibrary
-Variables         ${CURDIR}/../variables/config.robot
+Variables         variables/config.robot
 
 *** Keywords ***
 GET Request

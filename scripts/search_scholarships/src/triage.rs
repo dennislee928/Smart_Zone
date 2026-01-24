@@ -201,24 +201,30 @@ fn parse_deadline_date(deadline: &str) -> Option<NaiveDate> {
     
     for fmt in &formats {
         if let Ok(date) = NaiveDate::parse_from_str(deadline, fmt) {
-            // Validate date: check year, month, and day validity
-            let year = date.year();
-            let month = date.month();
-            let day = date.day();
-            
-            // Validate year range (2020-2100)
-            if year < 2020 || year > 2100 {
-                continue; // Try next format
-            }
-            
-            // Validate month range (1-12)
-            if month < 1 || month > 12 {
-                continue; // Try next format
-            }
-            
-            // Validate day - from_ymd_opt would have failed if invalid, but double-check
-            if NaiveDate::from_ymd_opt(year, month, day).is_some() {
-                return Some(date);
+            // Validate date: check year, month, and day validity using format
+            let formatted = date.format("%Y-%m-%d").to_string();
+            let parts: Vec<&str> = formatted.split('-').collect();
+            if parts.len() == 3 {
+                if let (Ok(year), Ok(month), Ok(day)) = (
+                    parts[0].parse::<i32>(),
+                    parts[1].parse::<u32>(),
+                    parts[2].parse::<u32>(),
+                ) {
+                    // Validate year range (2020-2100)
+                    if year < 2020 || year > 2100 {
+                        continue; // Try next format
+                    }
+                    
+                    // Validate month range (1-12)
+                    if month < 1 || month > 12 {
+                        continue; // Try next format
+                    }
+                    
+                    // Validate day - from_ymd_opt would have failed if invalid, but double-check
+                    if NaiveDate::from_ymd_opt(year, month, day).is_some() {
+                        return Some(date);
+                    }
+                }
             }
         }
     }
