@@ -13,6 +13,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-venv/
+# Note: venv/ is kept in git for convenience, but can be added here if preferred
 env/
 .venv

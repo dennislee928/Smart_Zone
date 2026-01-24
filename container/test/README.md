@@ -4,9 +4,43 @@
 
 ## 安裝依賴
 
+### 快速設置（推薦）
+
 ```bash
+# 從 container 目錄執行
+npm run test:setup
+```
+
+這會自動建立虛擬環境並安裝所有依賴。
+
+### 手動設置
+
+```bash
+# 建立虛擬環境
+cd test
+python3 -m venv venv
+
+# 啟動虛擬環境
+source venv/bin/activate
+
+# 安裝依賴
 pip install -r requirements.txt
 ```
+
+### 其他安裝方法
+
+**使用 pipx（適用於應用程式）:**
+```bash
+pipx install robotframework
+pipx install robotframework-requests
+```
+
+**使用系統 pip（不推薦）:**
+```bash
+pip3 install --user -r requirements.txt
+```
+
+**注意**: 使用 `npm run test` 腳本會自動偵測並使用虛擬環境中的 robot 命令。
 
 ## 執行測試
 

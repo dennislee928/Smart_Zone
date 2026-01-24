@@ -30,7 +30,8 @@ pub async fn scrape_source(source: &Source) -> Result<ScrapeResult> {
         }
         "university" => {
             let url = source.url.clone();
-            tokio::task::spawn_blocking(move || university::scrape(&url))
+            let source_clone = source.clone();
+            tokio::task::spawn_blocking(move || university::scrape_with_source(&url, Some(&source_clone)))
                 .await
                 .unwrap_or_else(|e| Ok(ScrapeResult {
                     leads: vec![],
