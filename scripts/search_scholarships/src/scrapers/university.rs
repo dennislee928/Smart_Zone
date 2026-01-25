@@ -1,5 +1,6 @@
 use crate::types::{Lead, ScrapeResult, SourceStatus, Source};
 use crate::normalize;
+use crate::filter;
 use anyhow::Result;
 use scraper::{Html, Selector};
 use std::collections::{HashSet, VecDeque};
@@ -776,7 +777,12 @@ fn extract_deadline(text: &str) -> Option<String> {
     if let Ok(re) = regex::Regex::new(r"(?i)(deadline|closes?|due|by)[:\s]+(\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4}|\d{1,2}\s+\w+\s+\d{4}|\w+\s+\d{1,2},?\s+\d{4})") {
         if let Some(caps) = re.captures(text) {
             if let Some(date) = caps.get(2) {
-                return Some(date.as_str().to_string());
+                let date_str = date.as_str();
+                // Validate the extracted date using parse_deadline
+                if filter::parse_deadline(date_str).is_ok() {
+                    return Some(date_str.to_string());
+                }
+                // If validation fails, return None (invalid date format)
             }
         }
     }

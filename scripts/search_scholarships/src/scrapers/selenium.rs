@@ -1,4 +1,5 @@
 use crate::types::Lead;
+use crate::filter;
 use anyhow::{Result, Context};
 use thirtyfour::prelude::*;
 use std::time::Duration;
@@ -230,7 +231,6 @@ fn extract_amount(text: &str) -> Option<String> {
 
 fn extract_deadline(text: &str) -> Option<String> {
     use regex::Regex;
-    use chrono::NaiveDate;
     
     // 匹配日期格式
     let patterns = [
@@ -243,12 +243,11 @@ fn extract_deadline(text: &str) -> Option<String> {
         if let Ok(re) = Regex::new(pattern) {
             if let Some(cap) = re.captures(text) {
                 let date_str = cap.get(1).map(|m| m.as_str()).unwrap_or(cap.get(0).unwrap().as_str());
-                // 嘗試解析日期以驗證格式
-                if NaiveDate::parse_from_str(date_str, "%d/%m/%Y").is_ok()
-                    || NaiveDate::parse_from_str(date_str, "%Y-%m-%d").is_ok()
-                {
+                // Validate the extracted date using parse_deadline
+                if filter::parse_deadline(date_str).is_ok() {
                     return Some(date_str.to_string());
                 }
+                // If validation fails, continue to next pattern (invalid date format)
             }
         }
     }

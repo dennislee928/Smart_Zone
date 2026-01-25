@@ -216,6 +216,43 @@ hard_reject_rules:
       bucket: "C"
       reason: "Scam-like marketing language detected."
 
+  # === Content Type Gate ===
+  - id: "C-INFO-001"
+    name: "Information/Guide Page (Not Scholarship)"
+    stage: "content"
+    description: "Page is informational/guide content, not an actual scholarship"
+    when:
+      any_regex:
+        - "(?i)how\\s+to\\s+(find|apply\\s+for|get)"
+        - "(?i)guide\\s+to\\s+(finding|applying)"
+        - "(?i)tips?\\s+for\\s+(finding|applying)"
+        - "(?i)types?\\s+of\\s+scholarships?"
+        - "(?i)what\\s+are\\s+scholarships?"
+        - "(?i)explaining\\s+scholarships?"
+      not_any_regex:
+        - "(?i)apply\\s+now"
+        - "(?i)application\\s+form"
+        - "(?i)eligibility\\s+criteria"
+    action:
+      bucket: "C"
+      reason: "Information/guide page, not an actual scholarship application page."
+
+  - id: "C-GOV-DEGREE-001"
+    name: "GOV.UK Degree Recognition (Not Funding)"
+    stage: "content"
+    description: "GOV.UK page about degree recognition, not funding"
+    when:
+      any_regex:
+        - "(?i)award\\s+a\\s+degree"
+        - "(?i)recognised\\s+awards?"
+        - "(?i)recognised\\s+uk\\s+degrees?"
+        - "(?i)degree\\s+recognition"
+        - "(?i)recognised\\s+qualifications?"
+        - "(?i)Office\\s+for\\s+Students"
+    action:
+      bucket: "C"
+      reason: "GOV.UK degree recognition page, not funding-related."
+
 # ============================================
 # 軟降權規則 (Soft Downgrade Rules)
 # ============================================

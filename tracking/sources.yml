@@ -147,7 +147,18 @@ sources:
     url: "https://www.prospects.ac.uk/postgraduate-study/funding-postgraduate-study"
     enabled: true
     priority: 2
-    scraper: "third_party"
+    scraper: "university"  # Changed to university scraper to support external_links_only
+    discovery_mode: "external_links_only"  # Only extract external links, not scholarship details
+    allow_domains_outbound:
+      - "gov.uk"
+      - "fcdo.gov.uk"
+      - "cscuk.fcdo.gov.uk"
+      - "chevening.org"
+      - "rotary.org"
+      - "britishcouncil.org"
+      - "ukri.org"
+      - "sfc.ac.uk"
+      - "charitycommission.gov.uk"
 
   # Scottish-specific
   - name: "SAAS - Student Awards Agency Scotland"

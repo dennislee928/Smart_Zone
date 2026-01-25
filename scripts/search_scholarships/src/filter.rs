@@ -939,6 +939,28 @@ pub fn update_trust_info(lead: &mut Lead) {
     }
 }
 
+// ============================================
+// Funding Intent Gate
+// ============================================
+
+/// Check if lead has funding-related keywords (funding intent gate)
+/// Returns false if the lead doesn't contain any funding-related keywords
+pub fn has_funding_intent(lead: &Lead) -> bool {
+    let search_text = format!("{} {} {}", lead.name, lead.url, lead.notes);
+    let text_lower = search_text.to_lowercase();
+    
+    let funding_keywords = [
+        "scholarship", "bursary", "funding", "grant", "loan",
+        "financial aid", "award", "fellowship", "stipend"
+    ];
+    
+    funding_keywords.iter().any(|kw| text_lower.contains(kw))
+}
+
+// ============================================
+// Criteria Matching
+// ============================================
+
 /// Basic criteria matching (keywords)
 pub fn matches_criteria(lead: &Lead, criteria: &Criteria) -> bool {
     let text = format!("{} {} {}", lead.name, lead.notes, lead.eligibility.join(" ")).to_lowercase();
@@ -1119,7 +1141,7 @@ pub fn filter_by_profile(lead: &mut Lead, profile: &Profile) -> bool {
 
 /// Parse various deadline formats with validation
 /// Rejects invalid dates like "68-58-58" by validating year (2020-2100), month (1-12), and day validity
-fn parse_deadline(deadline: &str) -> Result<NaiveDate, ()> {
+pub fn parse_deadline(deadline: &str) -> Result<NaiveDate, ()> {
     let formats = [
         "%Y-%m-%d",
         "%d/%m/%Y",

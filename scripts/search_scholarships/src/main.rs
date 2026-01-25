@@ -387,6 +387,12 @@ async fn main() -> Result<()> {
                         continue;
                     }
                     
+                    // Funding intent gate: check if lead has funding-related keywords
+                    if !filter::has_funding_intent(&lead) {
+                        filtered_out.push((lead.name.clone(), vec!["No funding intent".to_string()]));
+                        continue;
+                    }
+                    
                     // Create unique key using improved dedup logic
                     let key = filter::generate_dedup_key(&lead);
                     
@@ -406,6 +412,20 @@ async fn main() -> Result<()> {
                     filter::update_country_eligibility(&mut lead);
                     filter::update_structured_dates(&mut lead);
                     filter::update_trust_info(&mut lead);
+                    
+                    // Validate deadline format - clear invalid formats like "68-58-58"
+                    if !lead.deadline.is_empty() && 
+                       lead.deadline != "Check website" && 
+                       lead.deadline != "See website" &&
+                       lead.deadline != "See official page" &&
+                       !lead.deadline.to_lowercase().contains("tbd") {
+                        if filter::parse_deadline(&lead.deadline).is_err() {
+                            // Invalid deadline format - clear it
+                            lead.deadline = String::new();
+                            lead.deadline_date = None;
+                            lead.deadline_confidence = Some("invalid_format".to_string());
+                        }
+                    }
                     
                     // Handle unknown eligibility - lower trust for untrusted sources
                     filter::handle_unknown_eligibility(&mut lead);
