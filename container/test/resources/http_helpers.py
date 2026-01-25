@@ -44,11 +44,12 @@ def post_request_with_error_handling(url, json_data=None, headers=None, timeout=
     })
     
     # 處理 Robot Framework 傳遞的數據
-    # Robot Framework 會自動將字典變量轉換為 Python 字典
-    # 如果 json_data 已經是字典，直接使用
+    # Robot Framework 會自動將字典變量轉換為 Python 字典或 DotDict
+    # 如果 json_data 已經是字典類型（包括 DotDict），轉換為標準 dict
     if isinstance(json_data, dict):
-        # 已經是字典，直接使用
-        pass
+        # 轉換 DotDict 或其他字典類型為標準 Python dict
+        # 使用 dict() 構造函數可以處理 DotDict
+        json_data = dict(json_data)
     elif json_data is None or json_data == "${EMPTY}" or json_data == "":
         # 空值情況，轉換為空字典
         json_data = {}
@@ -88,11 +89,12 @@ def put_request_with_error_handling(url, json_data=None, headers=None, timeout=1
     })
     
     # 處理 Robot Framework 傳遞的數據
-    # Robot Framework 會自動將字典變量轉換為 Python 字典
-    # 如果 json_data 已經是字典，直接使用
+    # Robot Framework 會自動將字典變量轉換為 Python 字典或 DotDict
+    # 如果 json_data 已經是字典類型（包括 DotDict），轉換為標準 dict
     if isinstance(json_data, dict):
-        # 已經是字典，直接使用
-        pass
+        # 轉換 DotDict 或其他字典類型為標準 Python dict
+        # 使用 dict() 構造函數可以處理 DotDict
+        json_data = dict(json_data)
     elif json_data is None or json_data == "${EMPTY}" or json_data == "":
         # 空值情況，轉換為空字典
         json_data = {}

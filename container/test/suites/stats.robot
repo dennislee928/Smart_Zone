@@ -32,14 +32,22 @@ Get Stats Should Return Correct Numeric Types
     ${response}=    GET Request    ${API_STATS}
     ${json}=    Validate JSON Response    ${response}
     ${stats}=    Set Variable    ${json}[stats]
-    Should Be True    isinstance(${stats}[totalLeads], int)    totalLeads should be integer
-    Should Be True    isinstance(${stats}[totalApplications], int)    totalApplications should be integer
-    Should Be True    isinstance(${stats}[inProgress], int)    inProgress should be integer
-    Should Be True    isinstance(${stats}[completed], int)    completed should be integer
-    Should Be True    isinstance(${stats}[notStarted], int)    notStarted should be integer
-    Should Be True    isinstance(${stats}[upcoming7], int)    upcoming7 should be integer
-    Should Be True    isinstance(${stats}[upcoming14], int)    upcoming14 should be integer
-    Should Be True    isinstance(${stats}[upcoming21], int)    upcoming21 should be integer
+    ${total_leads_type}=    Evaluate    type(${stats}[totalLeads]).__name__
+    Should Be Equal    ${total_leads_type}    int    totalLeads should be integer
+    ${total_apps_type}=    Evaluate    type(${stats}[totalApplications]).__name__
+    Should Be Equal    ${total_apps_type}    int    totalApplications should be integer
+    ${in_progress_type}=    Evaluate    type(${stats}[inProgress]).__name__
+    Should Be Equal    ${in_progress_type}    int    inProgress should be integer
+    ${completed_type}=    Evaluate    type(${stats}[completed]).__name__
+    Should Be Equal    ${completed_type}    int    completed should be integer
+    ${not_started_type}=    Evaluate    type(${stats}[notStarted]).__name__
+    Should Be Equal    ${not_started_type}    int    notStarted should be integer
+    ${upcoming7_type}=    Evaluate    type(${stats}[upcoming7]).__name__
+    Should Be Equal    ${upcoming7_type}    int    upcoming7 should be integer
+    ${upcoming14_type}=    Evaluate    type(${stats}[upcoming14]).__name__
+    Should Be Equal    ${upcoming14_type}    int    upcoming14 should be integer
+    ${upcoming21_type}=    Evaluate    type(${stats}[upcoming21]).__name__
+    Should Be Equal    ${upcoming21_type}    int    upcoming21 should be integer
 
 Get Stats With Empty Database Should Return Zeros
     [Documentation]    測試空資料庫時統計應返回零值

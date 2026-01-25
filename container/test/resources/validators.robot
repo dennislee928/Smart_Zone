@@ -39,18 +39,24 @@ Lead Should Match Schema
     [Arguments]    ${lead_data}
     Dictionary Should Contain Key    ${lead_data}    id
     Dictionary Should Contain Key    ${lead_data}    name
-    Should Be True    isinstance(${lead_data}[id], int)    Lead ID should be integer
-    Should Be True    isinstance(${lead_data}[name], str)    Lead name should be string
-    Run Keyword If    'status' in ${{list(${lead_data}.keys())}}    Should Be True    isinstance(${lead_data}[status], str)    Lead status should be string
+    ${id_type}=    Evaluate    type(${lead_data}[id]).__name__
+    Should Be Equal    ${id_type}    int    Lead ID should be integer
+    ${name_type}=    Evaluate    type(${lead_data}[name]).__name__
+    Should Be Equal    ${name_type}    str    Lead name should be string
+    Run Keyword If    'status' in ${{list(${lead_data}.keys())}}
+    ...    Evaluate    type(${lead_data}[status]).__name__ == 'str'    Lead status should be string
 
 Application Should Match Schema
     [Documentation]    驗證 Application 資料結構
     [Arguments]    ${app_data}
     Dictionary Should Contain Key    ${app_data}    id
     Dictionary Should Contain Key    ${app_data}    name
-    Should Be True    isinstance(${app_data}[id], int)    Application ID should be integer
-    Should Be True    isinstance(${app_data}[name], str)    Application name should be string
-    Run Keyword If    'status' in ${{list(${app_data}.keys())}}    Should Be True    isinstance(${app_data}[status], str)    Application status should be string
+    ${id_type}=    Evaluate    type(${app_data}[id]).__name__
+    Should Be Equal    ${id_type}    int    Application ID should be integer
+    ${name_type}=    Evaluate    type(${app_data}[name]).__name__
+    Should Be Equal    ${name_type}    str    Application name should be string
+    Run Keyword If    'status' in ${{list(${app_data}.keys())}}
+    ...    Evaluate    type(${app_data}[status]).__name__ == 'str'    Application status should be string
 
 Criteria Should Match Schema
     [Documentation]    驗證 Criteria 資料結構
@@ -66,7 +72,8 @@ Stats Should Match Schema
     [Arguments]    ${stats_data}
     Should Not Be Empty    ${stats_data}    Stats data should not be empty
     # Stats 結構可能包含各種統計欄位，這裡只驗證基本結構
-    Should Be True    isinstance(${stats_data}, dict)    Stats should be a dictionary
+    ${stats_type}=    Evaluate    type(${stats_data}).__name__
+    Should Be Equal    ${stats_type}    dict    Stats should be a dictionary
 
 Response Should Contain Error
     [Documentation]    驗證錯誤響應
