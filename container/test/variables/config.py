@@ -1,6 +1,6 @@
 # API 基礎配置
 API_BASE_URL = 'http://localhost:8787'
-API_TIMEOUT = '10s'
+API_TIMEOUT = 10  # 秒數（數字類型，RequestsLibrary 需要）
 
 # API 端點路徑
 API_HEALTH = f'{API_BASE_URL}/'
@@ -22,7 +22,7 @@ STATUS_INTERNAL_ERROR = 500
 
 # 測試資料變數
 TEST_LEAD_NAME = 'Test Scholarship'
-TEST_LEAD_AMOUNT = 5000
+TEST_LEAD_AMOUNT = '5000'
 TEST_LEAD_STATUS = 'qualified'
 TEST_LEAD_BUCKET = 'test-bucket'
 

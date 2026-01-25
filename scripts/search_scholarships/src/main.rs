@@ -93,82 +93,131 @@ async fn main() -> Result<()> {
     println!();
     
     // ==========================================
-    // Stage 0.5: Discovery (sitemap/RSS)
+    // Stage 0.5: Discovery Stage (重構)
     // ==========================================
-    println!("Stage 0.5: Discovering URLs from sitemaps/RSS...");
-    let client = reqwest::Client::builder()
+    println!("Stage 0.5: Discovering URLs from discovery_seed sources...");
+    let discovery_client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(10))
         .build()
         .context("Failed to create HTTP client for discovery")?;
     
-    let mut discovered_urls: Vec<discovery::CandidateUrl> = Vec::new();
-    let discovery_config = discovery::DiscoveryConfig::default();
+    // 分離 sources 為三種類型
+    let detail_sources: Vec<_> = enabled_sources.iter()
+        .filter(|s| s.mode.as_deref() == Some("detail") || s.mode.is_none())
+        .collect();
+        
+    let index_sources: Vec<_> = enabled_sources.iter()
+        .filter(|s| s.mode.as_deref() == Some("index"))
+        .collect();
+        
+    let discovery_seeds: Vec<_> = enabled_sources.iter()
+        .filter(|s| s.mode.as_deref() == Some("discovery_seed"))
+        .collect();
     
-    for source in &enabled_sources {
-        // Try discovery from robots.txt -> sitemap
-        if let Ok(candidates) = discovery::discover_urls(&client, source, &discovery_config).await {
-            for candidate in candidates {
-                // Filter by keywords
-                let url_lower = candidate.url.to_lowercase();
-                if url_lower.contains("scholarship") || 
-                   url_lower.contains("funding") || 
-                   url_lower.contains("bursary") || 
-                   url_lower.contains("award") ||
-                   url_lower.contains("grant") {
-                    discovered_urls.push(candidate);
-                }
+    println!("  Source types: {} detail, {} index, {} discovery_seed", 
+        detail_sources.len(), index_sources.len(), discovery_seeds.len());
+    
+    // 處理 discovery_seed sources
+    let mut discovered_candidates: Vec<discovery::CandidateUrl> = Vec::new();
+    for seed in &discovery_seeds {
+        println!("  Processing discovery seed: {}", seed.name);
+        match discovery::discover_from_seed(&discovery_client, seed).await {
+            Ok(candidates) => {
+                println!("    Found {} candidates", candidates.len());
+                discovered_candidates.extend(candidates);
+            }
+            Err(e) => {
+                println!("    Error: {}", e);
             }
         }
-        
-        // Try parsing sitemap directly
-        let base_url = if let Some(pos) = source.url.find("://") {
-            let rest = &source.url[pos + 3..];
-            if let Some(path_pos) = rest.find('/') {
-                format!("{}://{}", &source.url[..pos + 3], &rest[..path_pos])
-            } else {
-                source.url.clone()
-            }
+    }
+    
+    // 保存 candidates
+    if !discovered_candidates.is_empty() {
+        if let Err(e) = storage::save_candidates(&root, &discovered_candidates) {
+            println!("  Warning: Failed to save candidates: {}", e);
         } else {
-            source.url.clone()
-        };
+            println!("  Saved {} candidates to candidate_urls.jsonl", discovered_candidates.len());
+        }
+    }
+    
+    // ==========================================
+    // Stage 0.6: Candidate Normalization + Heavy Validation
+    // ==========================================
+    println!("Stage 0.6: Normalizing and validating candidates...");
+    
+    let discovered_count = discovered_candidates.len();
+    let mut validated_candidates: Vec<discovery::CandidateUrl> = Vec::new();
+    let validation_client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(30))
+        .build()
+        .context("Failed to create validation client")?;
+    
+    for mut candidate in discovered_candidates {
+        // URL 正規化
+        candidate.url = normalize::canonicalize_candidate_url(&candidate.url);
         
-        let common_sitemaps = vec![
-            format!("{}/sitemap.xml", base_url),
-            format!("{}/sitemap_index.xml", base_url),
-        ];
+        // Confidence 過濾（初步）
+        if candidate.confidence < 0.6 {
+            continue;
+        }
         
-        for sitemap_url in common_sitemaps {
-            if let Ok(sitemap_candidates) = discovery::parse_sitemap(&client, &sitemap_url, &discovery_config).await {
-                for candidate in sitemap_candidates {
-                    // Filter by keywords
-                    let url_lower = candidate.url.to_lowercase();
-                    if url_lower.contains("scholarship") || 
-                       url_lower.contains("funding") || 
-                       url_lower.contains("bursary") || 
-                       url_lower.contains("award") ||
-                       url_lower.contains("grant") {
-                        discovered_urls.push(candidate);
-                    }
+        // 重量級驗證
+        match discovery::validate_candidate_heavy(&validation_client, &mut candidate).await {
+            Ok(is_valid) => {
+                if is_valid {
+                    validated_candidates.push(candidate);
+                } else {
+                    println!("  Rejected: {} (reason: {})", candidate.url, candidate.reason);
                 }
+            }
+            Err(e) => {
+                println!("  Validation error for {}: {}", candidate.url, e);
+                // 驗證失敗的 candidates 仍保留，但標記為需要手動檢查
+                candidate.tags.push("validation_failed".to_string());
+                validated_candidates.push(candidate);
             }
         }
     }
     
-    println!("  Discovered {} candidate URLs from sitemaps/RSS", discovered_urls.len());
-    if !discovered_urls.is_empty() {
-        println!("  Sample discovered URLs:");
-        for (idx, candidate) in discovered_urls.iter().take(5).enumerate() {
-            println!("    {}. {} ({:?})", idx + 1, candidate.url, candidate.discovered_from);
+    // 保存驗證後的 candidates
+    if !validated_candidates.is_empty() {
+        if let Err(e) = storage::save_candidates(&root, &validated_candidates) {
+            println!("  Warning: Failed to save validated candidates: {}", e);
+        } else {
+            println!("  Validated {} candidates (from {} discovered)", 
+                validated_candidates.len(), discovered_count);
         }
     }
+    
+    // 保存驗證後的 candidates
+    if !validated_candidates.is_empty() {
+        if let Err(e) = storage::save_candidates(&root, &validated_candidates) {
+            println!("  Warning: Failed to save validated candidates: {}", e);
+        } else {
+            println!("  Validated {} candidates (from {} discovered)", 
+                validated_candidates.len(), discovered_count);
+        }
+    }
+    
     println!();
     
     // ==========================================
     // Stage 1: Scrape Sources (with health tracking)
     // ==========================================
     let mut skipped_sources: Vec<(String, String)> = Vec::new();
+    
+    // 載入驗證後的 candidates
+    let candidate_urls = storage::load_candidates(&root).unwrap_or_default();
+    println!("  Loaded {} validated candidates from candidate_urls.jsonl", candidate_urls.len());
+    
     let mut sources_to_scrape: Vec<_> = enabled_sources.iter()
         .filter(|s| {
+            // 排除 discovery_seed sources（它們已經處理過了）
+            if s.mode.as_deref() == Some("discovery_seed") {
+                return false;
+            }
+            
             if let Some(reason) = source_health::should_skip_source(s, &health_file, &source_filter) {
                 skipped_sources.push((s.name.clone(), reason));
                 false
@@ -387,6 +436,12 @@ async fn main() -> Result<()> {
                         continue;
                     }
                     
+                    // Funding intent gate: check if lead has funding-related keywords
+                    if !filter::has_funding_intent(&lead) {
+                        filtered_out.push((lead.name.clone(), vec!["No funding intent".to_string()]));
+                        continue;
+                    }
+                    
                     // Create unique key using improved dedup logic
                     let key = filter::generate_dedup_key(&lead);
                     
@@ -406,6 +461,20 @@ async fn main() -> Result<()> {
                     filter::update_country_eligibility(&mut lead);
                     filter::update_structured_dates(&mut lead);
                     filter::update_trust_info(&mut lead);
+                    
+                    // Validate deadline format - clear invalid formats like "68-58-58"
+                    if !lead.deadline.is_empty() && 
+                       lead.deadline != "Check website" && 
+                       lead.deadline != "See website" &&
+                       lead.deadline != "See official page" &&
+                       !lead.deadline.to_lowercase().contains("tbd") {
+                        if filter::parse_deadline(&lead.deadline).is_err() {
+                            // Invalid deadline format - clear it
+                            lead.deadline = String::new();
+                            lead.deadline_date = None;
+                            lead.deadline_confidence = Some("invalid_format".to_string());
+                        }
+                    }
                     
                     // Handle unknown eligibility - lower trust for untrusted sources
                     filter::handle_unknown_eligibility(&mut lead);
@@ -449,6 +518,148 @@ async fn main() -> Result<()> {
         source_stats.success, source_stats.failed, source_stats.skipped);
     println!("  Total qualified leads: {}", all_leads.len());
     println!();
+    
+    // ==========================================
+    // Stage 1.1: Process Candidate URLs from Discovery Seeds
+    // ==========================================
+    if !candidate_urls.is_empty() {
+        println!("Stage 1.1: Processing {} candidate URLs from discovery seeds...", candidate_urls.len());
+        
+        let mut candidate_leads_added = 0;
+        for candidate in candidate_urls {
+            // 只處理 confidence >= 0.6 的 candidates
+            if candidate.confidence < 0.6 {
+                continue;
+            }
+            
+            // 建立臨時 Lead 物件（僅 URL，其他欄位待提取）
+            let mut lead = Lead {
+                name: format!("Discovered: {}", candidate.url),
+                amount: String::new(),
+                deadline: String::new(),
+                source: candidate.source_seed.clone(),
+                source_type: "discovered".to_string(),
+                status: "discovered".to_string(),
+                eligibility: vec![],
+                notes: format!("Discovered from {} via {}", candidate.source_seed, candidate.discovered_from),
+                added_date: chrono::Utc::now().format("%Y-%m-%d").to_string(),
+                url: candidate.url.clone(),
+                match_score: 0,
+                match_reasons: vec![],
+                hard_fail_reasons: vec![],
+                soft_flags: vec![],
+                bucket: None,
+                http_status: None,
+                effort_score: None,
+                trust_tier: Some("B".to_string()),
+                risk_flags: vec!["discovered_candidate".to_string()],
+                matched_rule_ids: vec![],
+                eligible_countries: vec![],
+                is_taiwan_eligible: None,
+                taiwan_eligibility_confidence: None,
+                deadline_date: None,
+                deadline_label: None,
+                intake_year: None,
+                study_start: None,
+                deadline_confidence: None,
+                canonical_url: Some(normalize::normalize_url(&candidate.url)),
+                is_directory_page: false,
+                official_source_url: Some(candidate.url.clone()),
+                source_domain: None,
+                confidence: Some(candidate.confidence),
+                eligibility_confidence: None,
+                tags: candidate.tags.clone(),
+                is_index_only: true,
+                first_seen_at: Some(candidate.discovered_at.clone()),
+                last_checked_at: Some(chrono::Utc::now().to_rfc3339()),
+                next_check_at: None,
+                persistence_status: Some("new".to_string()),
+                source_seed: Some(candidate.source_seed.clone()),
+                check_count: Some(0),
+                extraction_evidence: vec![],
+            };
+            
+            // 進入 detail extraction（使用現有 scrapers）
+            // 根據 URL domain 決定使用哪個 scraper
+            let url_lower = candidate.url.to_lowercase();
+            let scraper_type = if url_lower.contains(".ac.uk") || url_lower.contains(".edu") {
+                "university"
+            } else if url_lower.contains(".gov.uk") || url_lower.contains(".gov") {
+                "government"
+            } else {
+                "third_party"
+            };
+            
+            // 建立臨時 Source 物件
+            let temp_source = Source {
+                name: format!("Discovered: {}", candidate.url),
+                source_type: scraper_type.to_string(),
+                url: candidate.url.clone(),
+                enabled: true,
+                scraper: scraper_type.to_string(),
+                priority: Some(3),
+                discovery_mode: None,
+                allow_domains_outbound: None,
+                mode: Some("detail".to_string()),
+                max_depth: None,
+                deny_patterns: None,
+            };
+            
+            // 使用現有 scraper 提取詳細資訊
+            match scrapers::scrape_source(&temp_source).await {
+                Ok(result) => {
+                    if !result.leads.is_empty() {
+                        // 使用提取到的第一個 lead（應該只有一個）
+                        let mut extracted_lead = result.leads[0].clone();
+                        // 保留 discovery 相關的 metadata
+                        extracted_lead.source = candidate.source_seed.clone();
+                        extracted_lead.source_type = "discovered".to_string();
+                        extracted_lead.source_seed = Some(candidate.source_seed.clone());
+                        extracted_lead.tags.extend(candidate.tags.clone());
+                        extracted_lead.official_source_url = Some(candidate.url.clone());
+                        
+                        // 進入正常的 lead 處理流程
+                        filter::update_dedup_info(&mut extracted_lead);
+                        
+                        if !extracted_lead.is_directory_page &&
+                           filter::has_sufficient_detail(&extracted_lead) &&
+                           filter::has_funding_intent(&extracted_lead) {
+                            let key = filter::generate_dedup_key(&extracted_lead);
+                            if !existing_keys.contains(&key) && !seen_keys.contains(&key) {
+                                seen_keys.insert(key);
+                                
+                                if filter::matches_criteria(&extracted_lead, &criteria) {
+                                    filter::update_country_eligibility(&mut extracted_lead);
+                                    filter::update_structured_dates(&mut extracted_lead);
+                                    filter::update_trust_info(&mut extracted_lead);
+                                    
+                                    if let Some(ref profile) = criteria.profile {
+                                        if filter::filter_by_profile(&mut extracted_lead, profile) {
+                                            extracted_lead.status = "qualified".to_string();
+                                            extracted_lead.added_date = chrono::Utc::now().format("%Y-%m-%d").to_string();
+                                            all_leads.push(extracted_lead);
+                                            candidate_leads_added += 1;
+                                        }
+                                    } else {
+                                        extracted_lead.status = "qualified".to_string();
+                                        extracted_lead.added_date = chrono::Utc::now().format("%Y-%m-%d").to_string();
+                                        all_leads.push(extracted_lead);
+                                        candidate_leads_added += 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    println!("    Failed to scrape candidate {}: {}", candidate.url, e);
+                }
+            }
+        }
+        
+        println!("  Added {} leads from candidate URLs", candidate_leads_added);
+        println!();
+    }
     
     // ==========================================
     // Stage 1.5: Bulk Extraction Detection & URL Normalization/Deduplication

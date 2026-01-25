@@ -53,7 +53,8 @@ pub async fn scrape_source(source: &Source) -> Result<ScrapeResult> {
         }
         "third_party" => {
             let url = source.url.clone();
-            tokio::task::spawn_blocking(move || third_party::scrape(&url))
+            let source_clone = source.clone();
+            tokio::task::spawn_blocking(move || third_party::scrape_with_source(&url, Some(&source_clone)))
                 .await
                 .unwrap_or_else(|e| Ok(ScrapeResult {
                     leads: vec![],

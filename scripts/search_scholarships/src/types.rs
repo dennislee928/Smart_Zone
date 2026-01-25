@@ -461,9 +461,15 @@ pub struct Source {
     #[serde(default)]
     pub priority: Option<u8>,  // 1 = highest priority (Glasgow), None = default
     #[serde(default)]
-    pub discovery_mode: Option<String>,  // "external_links_only", "full", None
+    pub discovery_mode: Option<String>,  // "external_links_only", "full", None (deprecated, use mode instead)
     #[serde(default)]
     pub allow_domains_outbound: Option<Vec<String>>,  // Whitelist of external domains to crawl
+    #[serde(default)]
+    pub mode: Option<String>,  // "detail" | "index" | "discovery_seed"
+    #[serde(default)]
+    pub max_depth: Option<u8>,  // Max crawl depth for discovery_seed (default: 1)
+    #[serde(default)]
+    pub deny_patterns: Option<Vec<String>>,  // URL path patterns to reject
 }
 
 // ============================================

@@ -1,14 +1,20 @@
 *** Settings ***
 Documentation    響應驗證關鍵字
 Resource          api_keywords.robot
+Library           Collections
+Library           String
 
 *** Keywords ***
-Response Should Contain Field
-    [Documentation]    驗證響應包含特定欄位
-    [Arguments]    ${response}    ${field_path}
-    ${json}=    Validate JSON Response    ${response}
-    ${field_value}=    Get Value From Json    ${json}    ${field_path}
-    Should Not Be Empty    ${field_value}    Field ${field_path} not found in response
+Get Value From Json
+    [Documentation]    從 JSON 物件中取得欄位值（支援簡單 JSONPath 語法如 $.field 或 $.nested.field）
+    [Arguments]    ${json}    ${field_path}
+    ${path}=    Remove String    ${field_path}    $    .
+    ${path_parts}=    Split String    ${path}    .
+    ${value}=    Set Variable    ${json}
+    FOR    ${part}    IN    @{path_parts}
+        ${value}=    Get From Dictionary    ${value}    ${part}
+    END
+    RETURN    ${value}
 
 Response Should Have Status
     [Documentation]    驗證狀態碼

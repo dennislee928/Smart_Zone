@@ -1,4 +1,5 @@
-use crate::types::{Lead, ScrapeResult, SourceStatus};
+use crate::types::{Lead, ScrapeResult, SourceStatus, Source};
+use crate::filter;
 use anyhow::Result;
 use scraper::{Html, Selector};
 use regex::Regex;
@@ -197,6 +198,14 @@ pub fn enrich_from_official(lead: &mut Lead) -> bool {
     let deadline = if let Ok(re) = Regex::new(r"\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4}|\d{1,2}\s+\w+\s+\d{4}") {
         re.find(&text)
             .map(|m| html[m.start()..m.end()].to_string())
+            .and_then(|date_str| {
+                // Validate the extracted date using parse_deadline
+                if filter::parse_deadline(&date_str).is_ok() {
+                    Some(date_str)
+                } else {
+                    None  // Invalid date format, don't set it
+                }
+            })
             .unwrap_or_else(|| "See official page".to_string())
     } else {
         "See official page".to_string()
@@ -216,7 +225,27 @@ pub fn enrich_from_official(lead: &mut Lead) -> bool {
 
 /// Scrape a third-party source and return detailed result for health tracking
 pub fn scrape(url: &str) -> Result<ScrapeResult> {
+    scrape_with_source(url, None)
+}
+
+/// Scrape a third-party source with optional Source config
+pub fn scrape_with_source(url: &str, source: Option<&Source>) -> Result<ScrapeResult> {
     println!("Scraping third-party database: {}", url);
+
+    // Note: discovery_seed sources are handled by discover_from_seed() in discovery.rs
+    // This function only handles detail/index sources
+    if let Some(src) = source {
+        if src.mode.as_deref() == Some("discovery_seed") {
+            // Discovery seeds should not be scraped here - they are handled in discovery stage
+            println!("  Skipping discovery_seed source (handled in discovery stage)");
+            return Ok(ScrapeResult {
+                leads: vec![],
+                status: SourceStatus::Ok,
+                http_code: Some(200),
+                error_message: Some("Discovery seed - handled separately".to_string()),
+            });
+        }
+    }
 
     let client = reqwest::blocking::Client::builder()
         .user_agent("Mozilla/5.0 (compatible; ScholarshipBot/1.0)")

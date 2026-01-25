@@ -1,5 +1,6 @@
 use crate::types::{Lead, ScrapeResult, SourceStatus, Source};
 use crate::normalize;
+use crate::filter;
 use anyhow::Result;
 use scraper::{Html, Selector};
 use std::collections::{HashSet, VecDeque};
@@ -406,116 +407,30 @@ pub fn scrape(url: &str) -> Result<ScrapeResult> {
     scrape_with_source(url, None)
 }
 
-/// Scrape a university source with optional Source config for discovery_mode
+/// Scrape a university source with optional Source config
 pub fn scrape_with_source(url: &str, source: Option<&Source>) -> Result<ScrapeResult> {
     println!("Scraping university website: {}", url);
+
+    // Note: discovery_seed sources are handled by discover_from_seed() in discovery.rs
+    // This function only handles detail/index sources
+    if let Some(src) = source {
+        if src.mode.as_deref() == Some("discovery_seed") {
+            // Discovery seeds should not be scraped here - they are handled in discovery stage
+            println!("  Skipping discovery_seed source (handled in discovery stage)");
+            return Ok(ScrapeResult {
+                leads: vec![],
+                status: SourceStatus::Ok,
+                http_code: Some(200),
+                error_message: Some("Discovery seed - handled separately".to_string()),
+            });
+        }
+    }
 
     let client = reqwest::blocking::Client::builder()
         .user_agent("Mozilla/5.0 (compatible; ScholarshipBot/1.0)")
         .timeout(std::time::Duration::from_secs(30))
         .redirect(reqwest::redirect::Policy::limited(5))
         .build()?;
-
-    // Handle external_links_only mode
-    if let Some(src) = source {
-        if src.discovery_mode.as_deref() == Some("external_links_only") {
-            if let Some(ref allow_domains) = src.allow_domains_outbound {
-                println!("  Mode: external_links_only - extracting external links only");
-                let response = client.get(url).send();
-                
-                match response {
-                    Ok(resp) if resp.status().is_success() => {
-                        let html = resp.text()?;
-                        let external_links = extract_external_links(&html, url, allow_domains);
-                        
-                        println!("  Found {} external links", external_links.len());
-                        
-                        // Create leads from external links (these will be discovered sources, not scholarships)
-                        let mut leads = Vec::new();
-                        for ext_url in external_links {
-                            let ext_url_clone = ext_url.clone();
-                            // Create a discovery lead - will be processed as a new source candidate
-                            leads.push(Lead {
-                                name: format!("External funding source: {}", ext_url_clone),
-                                amount: String::new(),
-                                deadline: String::new(),
-                                source: url.to_string(),
-                                source_type: "discovered".to_string(),
-                                status: "discovered".to_string(),
-                                eligibility: vec![],
-                                notes: format!("Discovered from {} (external_links_only mode)", src.name),
-                                added_date: chrono::Utc::now().format("%Y-%m-%d").to_string(),
-                                url: ext_url_clone.clone(),
-                                match_score: 0,
-                                match_reasons: vec![],
-                                hard_fail_reasons: vec![],
-                                soft_flags: vec![],
-                                bucket: None,
-                                http_status: Some(200),
-                                effort_score: None,
-                                trust_tier: Some("B".to_string()), // External links are less trusted
-                                risk_flags: vec!["external_link_discovery".to_string()],
-                                matched_rule_ids: vec![],
-                                eligible_countries: vec![],
-                                is_taiwan_eligible: None,
-                                taiwan_eligibility_confidence: None,
-                                deadline_date: None,
-                                deadline_label: None,
-                                intake_year: None,
-                                study_start: None,
-                                deadline_confidence: None,
-                                canonical_url: None,
-                                is_directory_page: false,
-                                official_source_url: Some(ext_url_clone),
-                                source_domain: None,
-                                confidence: Some(0.5), // Lower confidence for discovered links
-                                eligibility_confidence: None,
-                                tags: vec!["external_discovery".to_string(), "needs_scraping".to_string()],
-                                is_index_only: true, // Mark as index-only, needs two-hop scraping
-                                first_seen_at: Some(chrono::Utc::now().to_rfc3339()),
-                                last_checked_at: Some(chrono::Utc::now().to_rfc3339()),
-                                next_check_at: None,
-                                persistence_status: Some("new".to_string()),
-                                source_seed: Some(url.to_string()),
-                                check_count: Some(0),
-                                extraction_evidence: vec![],
-                            });
-                        }
-                        
-                        return Ok(ScrapeResult {
-                            leads,
-                            status: SourceStatus::Ok,
-                            http_code: Some(200),
-                            error_message: None,
-                        });
-                    }
-                    Ok(resp) => {
-                        let status = match resp.status().as_u16() {
-                            404 => SourceStatus::NotFound,
-                            403 => SourceStatus::Forbidden,
-                            429 => SourceStatus::RateLimited,
-                            500..=599 => SourceStatus::ServerError,
-                            _ => SourceStatus::Unknown,
-                        };
-                        return Ok(ScrapeResult {
-                            leads: vec![],
-                            status,
-                            http_code: Some(resp.status().as_u16()),
-                            error_message: Some(format!("HTTP {}", resp.status().as_u16())),
-                        });
-                    }
-                    Err(e) => {
-                        return Ok(ScrapeResult {
-                            leads: vec![],
-                            status: SourceStatus::NetworkError,
-                            http_code: None,
-                            error_message: Some(e.to_string()),
-                        });
-                    }
-                }
-            }
-        }
-    }
 
     if is_glasgow_directory_url(url) {
         match crawl_glasgow_scholarships(&client, url) {
@@ -776,7 +691,12 @@ fn extract_deadline(text: &str) -> Option<String> {
     if let Ok(re) = regex::Regex::new(r"(?i)(deadline|closes?|due|by)[:\s]+(\d{1,2}[/\-]\d{1,2}[/\-]\d{2,4}|\d{1,2}\s+\w+\s+\d{4}|\w+\s+\d{1,2},?\s+\d{4})") {
         if let Some(caps) = re.captures(text) {
             if let Some(date) = caps.get(2) {
-                return Some(date.as_str().to_string());
+                let date_str = date.as_str();
+                // Validate the extracted date using parse_deadline
+                if filter::parse_deadline(date_str).is_ok() {
+                    return Some(date_str.to_string());
+                }
+                // If validation fails, return None (invalid date format)
             }
         }
     }

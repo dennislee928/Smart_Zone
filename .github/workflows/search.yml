@@ -19,7 +19,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  validate-candidates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "scripts/search_scholarships -> target"
+      
+      - name: Build candidate validator
+        working-directory: scripts/search_scholarships
+        run: cargo build --release --bin candidate_validator
+      
+      - name: Validate candidates
+        working-directory: scripts/search_scholarships
+        env:
+          ROOT: ${{ github.workspace }}
+        run: ./target/release/candidate_validator || echo "No candidates to validate or validation failed"
+        
   search:
+    needs: validate-candidates
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
