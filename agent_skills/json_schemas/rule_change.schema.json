@@ -113,12 +113,12 @@
     },
     "action": {
       "type": "object",
-      "required": ["bucket"],
+      "required": [],
       "properties": {
         "bucket": {
           "type": "string",
           "enum": ["A", "B", "C", "X"],
-          "description": "Target bucket for this rule"
+          "description": "Target bucket for this rule (required for hard_reject_rules and soft_downgrade_rules)"
         },
         "reason": {
           "type": "string",
@@ -126,7 +126,7 @@
         },
         "score_add": {
           "type": "integer",
-          "description": "Score adjustment (positive scoring rules only)"
+          "description": "Score adjustment (required for positive_scoring_rules)"
         },
         "effort_reduce": {
           "type": "integer",
@@ -137,7 +137,17 @@
           "description": "Whether to add lead to watchlist",
           "default": false
         }
-      }
+      },
+      "anyOf": [
+        {
+          "required": ["bucket"],
+          "description": "Hard reject or soft downgrade rule must have bucket"
+        },
+        {
+          "required": ["score_add"],
+          "description": "Positive scoring rule must have score_add"
+        }
+      ]
     }
   },
   "additionalProperties": false
