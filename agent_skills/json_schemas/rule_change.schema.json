@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Rule Change Schema",
+  "description": "Schema for triage rule configuration changes",
+  "type": "object",
+  "required": ["id", "name", "stage", "description", "when", "action"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[ESBT]-[A-Z0-9-]+$",
+      "description": "Rule identifier (e.g., E-FEE-001, P-INTL-001)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable rule name"
+    },
+    "stage": {
+      "type": "string",
+      "enum": ["eligibility", "triage", "scoring"],
+      "description": "Pipeline stage where rule is applied"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of what the rule checks"
+    },
+    "when": {
+      "type": "object",
+      "description": "Rule condition specification",
+      "properties": {
+        "any_regex": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of regex patterns (match if any matches)"
+        },
+        "not_any_regex": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of regex patterns (match if none match)"
+        },
+        "all_regex": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of regex patterns (match if all match)"
+        },
+        "deadline_condition": {
+          "type": "object",
+          "description": "Deadline-based condition"
+        },
+        "trust_tier": {
+          "type": "string",
+          "enum": ["S", "A", "B", "C"],
+          "description": "Required trust tier"
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "required": ["bucket"],
+      "properties": {
+        "bucket": {
+          "type": "string",
+          "enum": ["A", "B", "C", "X"],
+          "description": "Target bucket for this rule"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Human-readable rejection/reason message"
+        },
+        "score_add": {
+          "type": "integer",
+          "description": "Score adjustment (positive scoring rules only)"
+        },
+        "effort_reduce": {
+          "type": "integer",
+          "description": "Effort score reduction"
+        },
+        "add_to_watchlist": {
+          "type": "boolean",
+          "description": "Whether to add lead to watchlist",
+          "default": false
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

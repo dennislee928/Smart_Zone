@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Candidate URL Schema",
+  "description": "Schema for candidate URLs discovered from discovery seed sources",
+  "type": "object",
+  "required": ["url", "source_seed", "discovered_from", "confidence", "reason", "discovered_at"],
+  "properties": {
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "The candidate URL to be validated and potentially scraped"
+    },
+    "source_seed": {
+      "type": "string",
+      "format": "uri",
+      "description": "The discovery seed source URL that led to this candidate"
+    },
+    "discovered_from": {
+      "type": "string",
+      "format": "uri",
+      "description": "The specific page URL where this candidate link was found"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence score (0.0-1.0) indicating relevance to scholarship discovery"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Human-readable explanation of why this candidate was discovered and its confidence score"
+    },
+    "discovered_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when this candidate was discovered"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags for categorization (e.g., ['gov.uk', 'funding', 'university'])",
+      "default": []
+    },
+    "source_id": {
+      "type": "string",
+      "description": "Optional source identifier from sources.yml",
+      "default": ""
+    },
+    "discovery_source": {
+      "type": "string",
+      "enum": ["Sitemap", "ExternalLink", "IndexPage"],
+      "description": "Type of discovery method used",
+      "default": "ExternalLink"
+    }
+  },
+  "additionalProperties": false
+}

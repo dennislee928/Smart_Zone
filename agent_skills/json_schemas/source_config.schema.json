@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Source Configuration Schema",
+  "description": "Schema for source configuration validation results",
+  "type": "object",
+  "required": ["name", "type", "url", "enabled", "scraper"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Source name"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["university", "government", "third_party", "foundation"],
+      "description": "Source type"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Source URL"
+    },
+    "enabled": {
+      "type": "boolean",
+      "description": "Whether source is enabled"
+    },
+    "scraper": {
+      "type": "string",
+      "enum": ["university", "government", "third_party", "selenium"],
+      "description": "Scraper type to use"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["detail", "index", "discovery_seed"],
+      "description": "Source mode (detail page, index page, or discovery seed)"
+    },
+    "max_depth": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2,
+      "description": "Maximum crawl depth for discovery_seed sources"
+    },
+    "deny_patterns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URL path patterns to reject"
+    },
+    "allow_domains_outbound": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Whitelist of external domains to crawl"
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Source priority (1=highest, 5=lowest)"
+    },
+    "trust_tier": {
+      "type": "string",
+      "enum": ["S", "A", "B", "C"],
+      "description": "Trust tier for this source"
+    }
+  },
+  "additionalProperties": false
+}

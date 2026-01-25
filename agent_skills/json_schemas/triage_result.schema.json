@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Triage Result Schema",
+  "description": "Schema for triage bucket assignment results",
+  "type": "object",
+  "required": ["name", "url", "bucket"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Scholarship name"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Scholarship URL"
+    },
+    "bucket": {
+      "type": "string",
+      "enum": ["A", "B", "C", "X"],
+      "description": "Assigned bucket (A=apply now, B=prepare, C=rejected, X=missed)"
+    },
+    "match_score": {
+      "type": "integer",
+      "description": "Match score (higher = better match)"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Confidence score"
+    },
+    "matched_rule_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of rule IDs that matched"
+    },
+    "hard_fail_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Hard rejection reasons (if bucket is C)"
+    },
+    "soft_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Soft downgrade flags (if bucket is B)"
+    },
+    "match_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Positive scoring reasons (if bucket is A or B)"
+    },
+    "is_taiwan_eligible": {
+      "type": ["boolean", "null"],
+      "description": "Taiwan eligibility (true/false/null=unknown)"
+    },
+    "deadline_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "ISO date (YYYY-MM-DD) or null"
+    },
+    "trust_tier": {
+      "type": ["string", "null"],
+      "enum": ["S", "A", "B", "C", null],
+      "description": "Source trust tier"
+    }
+  },
+  "additionalProperties": false
+}

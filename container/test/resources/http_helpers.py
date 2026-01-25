@@ -38,21 +38,27 @@ def post_request_with_error_handling(url, json_data=None, headers=None, timeout=
         "json_data_type": str(type(json_data)),
         "json_data": json_data,
         "is_dict": isinstance(json_data, dict),
+        "is_str": isinstance(json_data, str),
         "headers": headers
     })
     
     # 處理 Robot Framework 傳遞的數據
-    # Robot Framework 會將字典自動轉換為 Python dict，但可能傳遞為字符串 "${EMPTY}"
+    # Robot Framework 可能會將字典轉換為字符串，或者傳遞為空字符串
     if json_data == "${EMPTY}" or json_data == "":
         json_data = {}
     elif json_data is None:
         json_data = {}
-    # 如果 json_data 是字符串但看起來像字典，嘗試解析
-    elif isinstance(json_data, str) and json_data.startswith("{"):
-        try:
-            json_data = json.loads(json_data)
-        except:
+    elif isinstance(json_data, str):
+        # 如果是字符串，嘗試解析為 JSON
+        if json_data.strip().startswith("{"):
+            try:
+                json_data = json.loads(json_data)
+            except:
+                json_data = {}
+        else:
+            # 空字符串或非 JSON 字符串
             json_data = {}
+    # 如果已經是字典，直接使用
     
     _log("POST request processed", {"url": url, "json_data": json_data, "headers": headers})
     session = requests.Session()
@@ -64,19 +70,35 @@ def post_request_with_error_handling(url, json_data=None, headers=None, timeout=
 @keyword("PUT Request With Error Handling")
 def put_request_with_error_handling(url, json_data=None, headers=None, timeout=10):
     """執行 PUT 請求，不拋出 HTTP 錯誤，總是返回響應對象"""
+    # 記錄接收到的數據類型和內容
+    _log("PUT request received", {
+        "url": url,
+        "json_data_type": str(type(json_data)),
+        "json_data": json_data,
+        "is_dict": isinstance(json_data, dict),
+        "is_str": isinstance(json_data, str),
+        "headers": headers
+    })
+    
     # 處理 Robot Framework 傳遞的數據
-    # Robot Framework 會將字典自動轉換為 Python dict，但可能傳遞為字符串 "${EMPTY}"
+    # Robot Framework 可能會將字典轉換為字符串，或者傳遞為空字符串
     if json_data == "${EMPTY}" or json_data == "":
         json_data = {}
     elif json_data is None:
         json_data = {}
-    # 如果 json_data 是字符串但看起來像字典，嘗試解析
-    elif isinstance(json_data, str) and json_data.startswith("{"):
-        try:
-            json_data = json.loads(json_data)
-        except:
+    elif isinstance(json_data, str):
+        # 如果是字符串，嘗試解析為 JSON
+        if json_data.strip().startswith("{"):
+            try:
+                json_data = json.loads(json_data)
+            except:
+                json_data = {}
+        else:
+            # 空字符串或非 JSON 字符串
             json_data = {}
-    _log("PUT request", {"url": url, "json_data": json_data, "headers": headers})
+    # 如果已經是字典，直接使用
+    
+    _log("PUT request processed", {"url": url, "json_data": json_data, "headers": headers})
     session = requests.Session()
     response = session.put(url, json=json_data, headers=headers, timeout=timeout)
     _log("PUT response", {"status": response.status_code, "url": url, "response_body": response.text[:200]})
