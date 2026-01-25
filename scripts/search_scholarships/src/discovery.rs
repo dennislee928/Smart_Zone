@@ -12,18 +12,26 @@ use reqwest::Client;
 use scraper::{Html, Selector};
 use std::collections::HashSet;
 use regex::Regex;
+use serde::{Deserialize, Serialize};
 
 /// Candidate URL for crawling
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CandidateUrl {
     pub url: String,
-    pub source_id: String,
-    pub discovered_from: DiscoverySource,
-    pub confidence: f32,
-    pub discovered_at: String,
+    pub source_seed: String,        // 哪個 seed 來的（Source name）
+    pub discovered_from: String,   // 在哪個頁面找到（URL）
+    pub confidence: f32,             // 0~1
+    pub reason: String,             // e.g. "contains scholarship keyword in url path"
+    pub discovered_at: String,     // ISO 8601
+    pub tags: Vec<String>,         // e.g. ["gov.uk", "funding"]
+    // 保留現有字段以向後相容
+    #[serde(default)]
+    pub source_id: String,          // 保留（等同 source_seed）
+    #[serde(default)]
+    pub discovery_source: DiscoverySource,  // 保留舊的 enum 字段
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum DiscoverySource {
     RobotsTxt,
     Sitemap,
@@ -32,6 +40,7 @@ pub enum DiscoverySource {
     AtomFeed,
     SearchEndpoint,
     Manual,
+    ExternalLink,  // 新增：從外部連結發現
 }
 
 /// Discovery configuration for a source
@@ -73,11 +82,15 @@ pub async fn discover_urls(
         for sitemap_url in sitemap_urls {
             if seen_urls.insert(sitemap_url.clone()) {
                 candidates.push(CandidateUrl {
-                    url: sitemap_url,
-                    source_id: source.name.clone(),
-                    discovered_from: DiscoverySource::RobotsTxt,
+                    url: sitemap_url.clone(),
+                    source_seed: source.name.clone(),
+                    discovered_from: base_url.clone(),
                     confidence: 0.9,
+                    reason: "Discovered from robots.txt sitemap".to_string(),
                     discovered_at: chrono::Utc::now().to_rfc3339(),
+                    tags: vec!["sitemap".to_string()],
+                    source_id: source.name.clone(),
+                    discovery_source: DiscoverySource::RobotsTxt,
                 });
             }
         }
@@ -93,11 +106,15 @@ pub async fn discover_urls(
     for sitemap_url in common_sitemaps {
         if seen_urls.insert(sitemap_url.clone()) {
             candidates.push(CandidateUrl {
-                url: sitemap_url,
-                source_id: source.name.clone(),
-                discovered_from: DiscoverySource::Sitemap,
+                url: sitemap_url.clone(),
+                source_seed: source.name.clone(),
+                discovered_from: base_url.clone(),
                 confidence: 0.7,
+                reason: "Common sitemap location".to_string(),
                 discovered_at: chrono::Utc::now().to_rfc3339(),
+                tags: vec!["sitemap".to_string()],
+                source_id: source.name.clone(),
+                discovery_source: DiscoverySource::Sitemap,
             });
         }
     }
@@ -107,11 +124,15 @@ pub async fn discover_urls(
     for feed_url in feed_urls {
         if seen_urls.insert(feed_url.url.clone()) {
             candidates.push(CandidateUrl {
-                url: feed_url.url,
-                source_id: source.name.clone(),
-                discovered_from: feed_url.source,
+                url: feed_url.url.clone(),
+                source_seed: source.name.clone(),
+                discovered_from: base_url.clone(),
                 confidence: 0.8,
+                reason: format!("Discovered from {:?} feed", feed_url.source),
                 discovered_at: chrono::Utc::now().to_rfc3339(),
+                tags: vec!["feed".to_string()],
+                source_id: source.name.clone(),
+                discovery_source: feed_url.source.clone(),
             });
         }
     }
@@ -122,11 +143,15 @@ pub async fn discover_urls(
             let search_url = format!("{}?q={}", search_endpoint, keyword);
             if seen_urls.insert(search_url.clone()) {
                 candidates.push(CandidateUrl {
-                    url: search_url,
-                    source_id: source.name.clone(),
-                    discovered_from: DiscoverySource::SearchEndpoint,
+                    url: search_url.clone(),
+                    source_seed: source.name.clone(),
+                    discovered_from: base_url.clone(),
                     confidence: 0.6,
+                    reason: format!("Search endpoint with keyword: {}", keyword),
                     discovered_at: chrono::Utc::now().to_rfc3339(),
+                    tags: vec!["search".to_string(), keyword.clone()],
+                    source_id: source.name.clone(),
+                    discovery_source: DiscoverySource::SearchEndpoint,
                 });
             }
         }
