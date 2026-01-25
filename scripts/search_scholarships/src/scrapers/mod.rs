@@ -10,7 +10,13 @@ use anyhow::Result;
 
 /// Scrape a source and return detailed result for health tracking
 pub async fn scrape_source(source: &Source) -> Result<ScrapeResult> {
-    match source.scraper.as_str() {
+    // Map foundation scraper type to third_party (they use similar extraction logic)
+    let scraper_type = match source.scraper.as_str() {
+        "foundation" => "third_party",  // Foundation sources use third_party scraper logic
+        other => other,
+    };
+    
+    match scraper_type {
         "selenium" => {
             // 使用 Selenium 爬蟲 - wrap in ScrapeResult
             match selenium::scrape_with_selenium(source.url.as_str()).await {

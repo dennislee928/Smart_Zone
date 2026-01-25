@@ -119,6 +119,19 @@ async fn main() -> Result<()> {
     
     // 處理 discovery_seed sources
     let mut discovered_candidates: Vec<discovery::CandidateUrl> = Vec::new();
+    
+    // W2: Glasgow-specific sitemap discovery (high ROI)
+    println!("  Running Glasgow sitemap discovery...");
+    match discovery::discover_glasgow_sitemap(&discovery_client).await {
+        Ok(glasgow_candidates) => {
+            println!("    Found {} Glasgow scholarship URLs from sitemap", glasgow_candidates.len());
+            discovered_candidates.extend(glasgow_candidates);
+        }
+        Err(e) => {
+            println!("    Glasgow sitemap discovery failed: {}", e);
+        }
+    }
+    
     for seed in &discovery_seeds {
         println!("  Processing discovery seed: {}", seed.name);
         match discovery::discover_from_seed(&discovery_client, seed).await {

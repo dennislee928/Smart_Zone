@@ -367,6 +367,59 @@ async fn parse_sitemap_internal(
     Ok(urls)
 }
 
+/// Glasgow-specific sitemap discovery
+/// 
+/// Fetches gla.ac.uk sitemap and extracts scholarship URLs with filtering:
+/// - Allow: /scholarships/, /funding/
+/// - Deny: /students/, /news/, UTM params, fragments
+/// - Deduplicates by normalized canonical form
+pub async fn discover_glasgow_sitemap(client: &Client) -> Result<Vec<CandidateUrl>> {
+    let sitemap_url = "https://www.gla.ac.uk/sitemap.xml";
+    
+    println!("  Fetching Glasgow sitemap: {}", sitemap_url);
+    
+    // Create config with scholarship-specific filtering
+    let mut config = DiscoveryConfig::default();
+    config.allowlist_path_regex = Some(Regex::new(r"(?i)/scholarships?/|/funding/|/fees-funding/")?);
+    config.max_sitemap_size = 10000;  // Reasonable limit for Glasgow
+    config.max_total_urls = 500;      // Focus on quality over quantity
+    
+    // Parse sitemap
+    let mut candidates = parse_sitemap(client, sitemap_url, &config).await?;
+    
+    // Additional filtering: deny patterns
+    let deny_patterns = [
+        "/students/", "/news/", "/events/", "/about/", "/contact/",
+        "?utm_", "#", "/staff/", "/research/", "/alumni/"
+    ];
+    
+    candidates.retain(|c| {
+        let url_lower = c.url.to_lowercase();
+        !deny_patterns.iter().any(|pattern| url_lower.contains(pattern))
+    });
+    
+    // Deduplicate by normalized URL
+    let mut seen: HashSet<String> = HashSet::new();
+    let mut unique_candidates: Vec<CandidateUrl> = Vec::new();
+    
+    for candidate in candidates {
+        let normalized = crate::normalize::normalize_url(&candidate.url);
+        if seen.insert(normalized) {
+            // Update candidate with Glasgow-specific metadata
+            let mut updated = candidate;
+            updated.source_seed = "Glasgow Sitemap Discovery".to_string();
+            updated.confidence = 0.85;  // High confidence for official sitemap
+            updated.tags.push("glasgow".to_string());
+            updated.tags.push("sitemap_discovery".to_string());
+            unique_candidates.push(updated);
+        }
+    }
+    
+    println!("  Found {} unique Glasgow scholarship URLs from sitemap", unique_candidates.len());
+    
+    Ok(unique_candidates)
+}
+
 /// Check content type and determine if URL should be crawled
 pub fn should_crawl_by_content_type(content_type: &str, url: &str) -> bool {
     let content_type_lower = content_type.to_lowercase();

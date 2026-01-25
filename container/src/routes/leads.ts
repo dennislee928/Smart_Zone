@@ -10,7 +10,7 @@ const app = new Hono<{ Bindings: Env }>()
 // Schema for lead validation
 const leadSchema = z.object({
   name: z.string().min(1),
-  amount: z.string().optional(),
+  amount: z.union([z.string(), z.number()]).transform((val) => typeof val === 'number' ? String(val) : val).optional(),
   deadline: z.string().optional(),
   source: z.string().optional(),
   sourceType: z.string().optional(),
@@ -55,87 +55,120 @@ const leadSchema = z.object({
 
 // GET /api/leads - 列出所有獎學金
 app.get('/', async (c) => {
-  const db = getDb(c.env.DB)
-  const status = c.req.query('status')
-  const bucket = c.req.query('bucket')
-  const search = c.req.query('search')
+  try {
+    const db = getDb(c.env.DB)
+    const status = c.req.query('status')
+    const bucket = c.req.query('bucket')
+    const search = c.req.query('search')
 
-  const filters = {
-    ...(status && { status }),
-    ...(bucket && { bucket }),
-    ...(search && { search }),
+    const filters = {
+      ...(status && { status }),
+      ...(bucket && { bucket }),
+      ...(search && { search }),
+    }
+
+    const leads = await leadsDb.getAllLeads(db, Object.keys(filters).length > 0 ? filters : undefined)
+    return c.json({ leads })
+  } catch (error) {
+    console.error('Error getting leads:', error)
+    return c.json({ error: 'Failed to get leads', details: String(error) }, 500)
   }
-
-  const leads = await leadsDb.getAllLeads(db, Object.keys(filters).length > 0 ? filters : undefined)
-  return c.json({ leads })
 })
 
 // GET /api/leads/:id - 取得單一獎學金
 app.get('/:id', async (c) => {
-  const db = getDb(c.env.DB)
-  const id = parseInt(c.req.param('id'))
+  try {
+    const db = getDb(c.env.DB)
+    const id = parseInt(c.req.param('id'))
 
-  if (isNaN(id)) {
-    return c.json({ error: 'Invalid ID' }, 400)
+    if (isNaN(id)) {
+      return c.json({ error: 'Invalid ID' }, 400)
+    }
+
+    const lead = await leadsDb.getLeadById(db, id)
+    if (!lead) {
+      return c.json({ error: 'Lead not found' }, 404)
+    }
+
+    return c.json({ lead })
+  } catch (error) {
+    console.error('Error getting lead:', error)
+    return c.json({ error: 'Failed to get lead', details: String(error) }, 500)
   }
-
-  const lead = await leadsDb.getLeadById(db, id)
-  if (!lead) {
-    return c.json({ error: 'Lead not found' }, 404)
-  }
-
-  return c.json({ lead })
 })
 
 // POST /api/leads - 新增獎學金
-app.post('/', zValidator('json', leadSchema), async (c) => {
-  const db = getDb(c.env.DB)
-  const data = c.req.valid('json')
-
+app.post('/', zValidator('json', leadSchema, (result, c) => {
+  if (!result.success) {
+    console.error('Validation error:', result.error.errors)
+    return c.json({ 
+      error: 'Validation failed',
+      details: result.error.errors 
+    }, 400)
+  }
+}), async (c) => {
   try {
+    const db = getDb(c.env.DB)
+    const data = c.req.valid('json')
+
     const lead = await leadsDb.createLead(db, data)
     return c.json({ lead }, 201)
   } catch (error) {
+    console.error('Error creating lead:', error)
     return c.json({ error: 'Failed to create lead', details: String(error) }, 500)
   }
 })
 
 // PUT /api/leads/:id - 更新獎學金
-app.put('/:id', zValidator('json', leadSchema.partial()), async (c) => {
-  const db = getDb(c.env.DB)
-  const id = parseInt(c.req.param('id'))
-  const data = c.req.valid('json')
-
-  if (isNaN(id)) {
-    return c.json({ error: 'Invalid ID' }, 400)
+app.put('/:id', zValidator('json', leadSchema.partial(), (result, c) => {
+  if (!result.success) {
+    console.error('Validation error:', result.error.errors)
+    return c.json({ 
+      error: 'Validation failed',
+      details: result.error.errors 
+    }, 400)
   }
-
+}), async (c) => {
   try {
+    const db = getDb(c.env.DB)
+    const id = parseInt(c.req.param('id'))
+    const data = c.req.valid('json')
+
+    if (isNaN(id)) {
+      return c.json({ error: 'Invalid ID' }, 400)
+    }
+
     const lead = await leadsDb.updateLead(db, id, data)
     if (!lead) {
       return c.json({ error: 'Lead not found' }, 404)
     }
     return c.json({ lead })
   } catch (error) {
+    console.error('Error updating lead:', error)
     return c.json({ error: 'Failed to update lead', details: String(error) }, 500)
   }
 })
 
 // DELETE /api/leads/:id - 刪除獎學金
 app.delete('/:id', async (c) => {
-  const db = getDb(c.env.DB)
-  const id = parseInt(c.req.param('id'))
+  try {
+    const db = getDb(c.env.DB)
+    const id = parseInt(c.req.param('id'))
 
-  if (isNaN(id)) {
-    return c.json({ error: 'Invalid ID' }, 400)
+    if (isNaN(id)) {
+      return c.json({ error: 'Invalid ID' }, 400)
+    }
+
+    const deleted = await leadsDb.deleteLead(db, id)
+    if (!deleted) {
+      return c.json({ error: 'Lead not found' }, 404)
+    }
+
+    return c.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting lead:', error)
+    return c.json({ error: 'Failed to delete lead', details: String(error) }, 500)
   }
-
-  const deleted = await leadsDb.deleteLead(db, id)
-  if (!deleted) {
-    return c.json({ error: 'Lead not found' }, 404)
-  }
-
-  return c.json({ success: true })
 })
 
 export default app

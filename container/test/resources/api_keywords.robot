@@ -20,25 +20,27 @@ GET Request
 POST Request
     [Documentation]    執行 POST 請求（含 JSON body，會捕獲 HTTP 錯誤並返回響應）
     [Arguments]    ${url}    ${data}=${EMPTY}    ${headers}=${EMPTY}
-    ${is_dict}=    Run Keyword And Return Status    Evaluate    isinstance(${data}, dict) if '${data}' != '${EMPTY}' else False
     ${default_headers}=    Create Dictionary    Content-Type=application/json
     ${has_headers}=    Run Keyword And Return Status    Evaluate    '${headers}' != '${EMPTY}' and isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
     ${final_headers}=    Run Keyword If    ${has_headers}    Create Dictionary    &{default_headers}    &{headers}
     ...    ELSE    Set Variable    ${default_headers}
-    ${response}=    Run Keyword If    ${is_dict}    POST Request With Error Handling    ${url}    json_data=${data}    headers=${final_headers}    timeout=${API_TIMEOUT}
-    ...    ELSE    POST Request With Error Handling    ${url}    headers=${final_headers}    timeout=${API_TIMEOUT}
+    # 將 Robot Framework 字典轉換為 Python dict：使用 Evaluate 確保正確傳遞
+    ${json_data}=    Run Keyword If    '${data}' != '${EMPTY}'    Evaluate    ${data} if isinstance(${data}, dict) else {}
+    ...    ELSE    Evaluate    {}
+    ${response}=    POST Request With Error Handling    ${url}    json_data=${json_data}    headers=${final_headers}    timeout=${API_TIMEOUT}
     RETURN    ${response}
 
 PUT Request
     [Documentation]    執行 PUT 請求（會捕獲 HTTP 錯誤並返回響應）
     [Arguments]    ${url}    ${data}=${EMPTY}    ${headers}=${EMPTY}
-    ${is_dict}=    Run Keyword And Return Status    Evaluate    isinstance(${data}, dict) if '${data}' != '${EMPTY}' else False
     ${default_headers}=    Create Dictionary    Content-Type=application/json
     ${has_headers}=    Run Keyword And Return Status    Evaluate    '${headers}' != '${EMPTY}' and isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
     ${final_headers}=    Run Keyword If    ${has_headers}    Create Dictionary    &{default_headers}    &{headers}
     ...    ELSE    Set Variable    ${default_headers}
-    ${response}=    Run Keyword If    ${is_dict}    PUT Request With Error Handling    ${url}    json_data=${data}    headers=${final_headers}    timeout=${API_TIMEOUT}
-    ...    ELSE    PUT Request With Error Handling    ${url}    headers=${final_headers}    timeout=${API_TIMEOUT}
+    # 將 Robot Framework 字典轉換為 Python dict：使用 Evaluate 確保正確傳遞
+    ${json_data}=    Run Keyword If    '${data}' != '${EMPTY}'    Evaluate    ${data} if isinstance(${data}, dict) else {}
+    ...    ELSE    Evaluate    {}
+    ${response}=    PUT Request With Error Handling    ${url}    json_data=${json_data}    headers=${final_headers}    timeout=${API_TIMEOUT}
     RETURN    ${response}
 
 DELETE Request

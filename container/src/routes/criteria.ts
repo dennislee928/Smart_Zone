@@ -35,18 +35,31 @@ const criteriaSchema = z.object({
 
 // GET /api/criteria - 取得搜尋條件
 app.get('/', async (c) => {
-  const db = getDb(c.env.DB)
-  const criteria = await criteriaDb.getCriteria(db)
-  
-  if (!criteria) {
-    return c.json({ criteria: null })
-  }
+  try {
+    const db = getDb(c.env.DB)
+    const criteria = await criteriaDb.getCriteria(db)
+    
+    if (!criteria) {
+      return c.json({ criteria: null })
+    }
 
-  return c.json({ criteria })
+    return c.json({ criteria })
+  } catch (error) {
+    console.error('Error getting criteria:', error)
+    return c.json({ error: 'Failed to get criteria', details: String(error) }, 500)
+  }
 })
 
 // PUT /api/criteria - 更新搜尋條件
-app.put('/', zValidator('json', criteriaSchema), async (c) => {
+app.put('/', zValidator('json', criteriaSchema, (result, c) => {
+  if (!result.success) {
+    console.error('Validation error:', result.error.errors)
+    return c.json({ 
+      error: 'Validation failed',
+      details: result.error.errors 
+    }, 400)
+  }
+}), async (c) => {
   const db = getDb(c.env.DB)
   const data = c.req.valid('json')
 
@@ -54,6 +67,7 @@ app.put('/', zValidator('json', criteriaSchema), async (c) => {
     const criteria = await criteriaDb.createOrUpdateCriteria(db, data)
     return c.json({ criteria })
   } catch (error) {
+    console.error('Error updating criteria:', error)
     return c.json({ error: 'Failed to update criteria', details: String(error) }, 500)
   }
 })

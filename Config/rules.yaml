@@ -56,6 +56,39 @@ hard_reject_rules:
       bucket: "C"
       reason: "PhD/Doctoral-only scholarship."
 
+  # === Programme Compatibility Gate ===
+  - id: "E-PROGRAM-001"
+    name: "Programme Explicitly Excluded"
+    stage: "eligibility"
+    description: "Scholarship is limited to programmes that do not include MSc Software Development"
+    when:
+      any_regex:
+        - "(?i)not\\s+available\\s+for\\s+(computing|software|engineering)"
+        - "(?i)excludes?\\s+(computing|software|engineering|science\\s+and\\s+engineering)"
+        - "(?i)only\\s+for\\s+(arts|humanities|social\\s+sciences|business|medicine|law)"
+        - "(?i)not\\s+eligible.*(computing|software|engineering)"
+      not_any_regex:
+        - "(?i)(computing|software|engineering|science\\s+and\\s+engineering)"
+    action:
+      bucket: "C"
+      reason: "Programme explicitly excluded; not compatible with MSc Software Development."
+
+  - id: "E-PROGRAM-002"
+    name: "Different University Only (Non-Portable)"
+    stage: "eligibility"
+    description: "Scholarship is limited to a different university and not portable to Glasgow"
+    when:
+      any_regex:
+        - "(?i)only\\s+for\\s+(students?\\s+at|applicants?\\s+to)\\s+[^Gg]"
+        - "(?i)exclusively\\s+for\\s+[^Gg]"
+        - "(?i)not\\s+available\\s+at\\s+University\\s+of\\s+Glasgow"
+      not_any_regex:
+        - "(?i)gla\\.ac\\.uk|glasgow"
+        - "(?i)any\\s+university|portable|transferable"
+    action:
+      bucket: "C"
+      reason: "Scholarship limited to different university; not portable to Glasgow."
+
   # === Special Identity Gate ===
   - id: "E-IDENTITY-001"
     name: "Care Leaver"
@@ -215,6 +248,37 @@ hard_reject_rules:
     action:
       bucket: "C"
       reason: "Scam-like marketing language detected."
+
+  - id: "E-FRAUD-001"
+    name: "Suspicious Payment Request"
+    stage: "trust"
+    description: "Requests bank credentials, crypto, or suspicious payment methods"
+    when:
+      any_regex:
+        - "(?i)bank\\s+(account|details|credentials)"
+        - "(?i)crypto(currency)?\\s+(deposit|payment|wallet)"
+        - "(?i)bitcoin|ethereum|usdt"
+        - "(?i)wire\\s+transfer.*before"
+        - "(?i)guaranteed\\s+award.*payment"
+        - "(?i)pay.*to\\s+receive"
+    action:
+      bucket: "C"
+      reason: "Suspicious payment request detected - likely fraud."
+
+  - id: "E-FRAUD-002"
+    name: "Domain Mismatch / Copycat"
+    stage: "trust"
+    description: "Domain doesn't match official source or appears to be copycat"
+    when:
+      any_regex:
+        - "(?i)chevening.*\\.(com|net)(?!\\.org)"
+        - "(?i)gates.*cambridge.*\\.(com|net)(?!\\.org)"
+        - "(?i)rhodes.*\\.(com|net)(?!\\.org)"
+      not_any_regex:
+        - "(?i)\\.org$|\\.ac\\.uk$|\\.gov\\.uk$"
+    action:
+      bucket: "C"
+      reason: "Domain mismatch - possible copycat/fraud site."
 
   # === Content Type Gate ===
   - id: "C-INFO-001"
@@ -522,9 +586,9 @@ scoring_weights:
 bucket_thresholds:
   A:
     min_final_score: 100
-    min_trust_tier: "B"
+    min_trust_tier: "A"  # Only official (S) or major foundations (A) can reach Bucket A
     max_effort_score: 60
   B:
     min_final_score: 50
-    min_trust_tier: "C"
+    min_trust_tier: "C"  # B allows any verified source (C or above)
   # C: 所有其他或被硬淘汰的

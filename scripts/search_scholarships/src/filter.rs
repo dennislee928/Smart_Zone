@@ -468,7 +468,9 @@ pub fn update_structured_dates(lead: &mut Lead) {
                     lead.deadline_confidence = Some("unknown".to_string());
                 }
             } else {
-                // Invalid date format (e.g., 68-58-58) - mark as risk
+                // Invalid date format (e.g., 68-58-58) - clear deadline and mark as invalid
+                lead.deadline = String::new();  // Clear invalid deadline
+                lead.deadline_date = None;
                 lead.deadline_confidence = Some("invalid_format".to_string());
                 if !lead.risk_flags.contains(&"invalid_deadline_format".to_string()) {
                     lead.risk_flags.push("invalid_deadline_format".to_string());

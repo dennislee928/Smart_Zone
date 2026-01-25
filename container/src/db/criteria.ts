@@ -27,6 +27,10 @@ export async function createOrUpdateCriteria(
       .returning()
       .get()
 
+    if (!result) {
+      throw new Error('Failed to update criteria')
+    }
+
     return mapCriteriaFromDb(result)
   } else {
     // Create new
@@ -34,6 +38,10 @@ export async function createOrUpdateCriteria(
       criteriaJson: criteriaData.criteriaJson,
       profileJson: criteriaData.profileJson,
     }).returning().get()
+
+    if (!result) {
+      throw new Error('Failed to create criteria')
+    }
 
     return mapCriteriaFromDb(result)
   }

@@ -3,6 +3,10 @@ name = "search_scholarships"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "search_scholarships"
+path = "src/lib.rs"
+
 [[bin]]
 name = "search_scholarships"
 path = "src/main.rs"
@@ -10,6 +14,10 @@ path = "src/main.rs"
 [[bin]]
 name = "candidate_validator"
 path = "src/bin/candidate_validator.rs"
+
+[[bin]]
+name = "validate_sources"
+path = "src/bin/validate_sources.rs"
 
 [dependencies]
 reqwest = { version = "0.11", features = ["json", "rustls-tls", "blocking"] }
