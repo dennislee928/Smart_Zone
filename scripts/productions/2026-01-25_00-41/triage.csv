@@ -1,0 +1,9 @@
+bucket,name,amount,deadline,score,effort,trust_tier,reason,url
+B,Glasgow College of Science & Engineering Excellence Scholarship,"£5,000 - £10,000 tuition fee discount",2026-05-31,245,30,S,🎯 Target university (Glasgow),https://www.gla.ac.uk/scholarships/scienceengineeringexcellence/
+B,Glasgow Global Leadership Scholarship 2026,"£10,000 tuition fee discount",TBD (Summer 2026),205,30,S,🎯 Target university (Glasgow),https://www.gla.ac.uk/scholarships/globalleadershipscholarship/
+B,Chevening Scholarships 2027/28,Full tuition + living costs + flights,2026-11-03,110,60,A,🇬🇧 UK scholarship,https://www.chevening.org/scholarships/
+B,Rotary Foundation Global Grant Scholarship,"$30,000+ (varies by district)",2026-03-31,65,50,C,🌍 International students,https://www.rotary.org/en/our-programs/scholarships
+B,GREAT Scholarships,"£10,000 minimum",2026-05-15,60,40,B,🇬🇧 UK scholarship,https://study-uk.britishcouncil.org/scholarships/great-scholarships
+C,Glasgow GREAT Scholarships 2026,"£10,000 tuition discount",2026-04-30,105,25,S,🎯 Target university (Glasgow),https://www.gla.ac.uk/scholarships/greatscholarships2026/
+C,Glasgow MSc International & Comparative Education Scholarship,"£5,000 tuition fee discount",2026-07-31,105,10,S,🎯 Target university (Glasgow),https://www.gla.ac.uk/scholarships/mscinternationalandcomparativeeducationscholarship/
+C,Commonwealth Scholarships (Taught Masters),Full tuition + stipend + travel,2026-10-18,80,50,S,🇬🇧 UK scholarship,https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/
