@@ -24,11 +24,9 @@ POST Request
     ${has_headers}=    Run Keyword And Return Status    Evaluate    isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
     ${final_headers}=    Run Keyword If    ${has_headers}    Create Dictionary    &{default_headers}    &{headers}
     ...    ELSE    Set Variable    ${default_headers}
-    # 檢查 data 是否為字典：使用 Get Length 來避免字符串比較的語法錯誤
-    ${is_dict}=    Run Keyword And Return Status    Evaluate    isinstance(${data}, dict)
-    ${json_data}=    Run Keyword If    ${is_dict}    Evaluate    ${data}
-    ...    ELSE    Evaluate    {}
-    ${response}=    POST Request With Error Handling    ${url}    json_data=${json_data}    headers=${final_headers}    timeout=${API_TIMEOUT}
+    # 直接傳遞 data 給 Python，讓 Robot Framework 自動處理類型轉換
+    # Python 端會處理空值情況
+    ${response}=    POST Request With Error Handling    ${url}    json_data=${data}    headers=${final_headers}    timeout=${API_TIMEOUT}
     RETURN    ${response}
 
 PUT Request
@@ -38,11 +36,9 @@ PUT Request
     ${has_headers}=    Run Keyword And Return Status    Evaluate    isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
     ${final_headers}=    Run Keyword If    ${has_headers}    Create Dictionary    &{default_headers}    &{headers}
     ...    ELSE    Set Variable    ${default_headers}
-    # 檢查 data 是否為字典：使用 Get Length 來避免字符串比較的語法錯誤
-    ${is_dict}=    Run Keyword And Return Status    Evaluate    isinstance(${data}, dict)
-    ${json_data}=    Run Keyword If    ${is_dict}    Evaluate    ${data}
-    ...    ELSE    Evaluate    {}
-    ${response}=    PUT Request With Error Handling    ${url}    json_data=${json_data}    headers=${final_headers}    timeout=${API_TIMEOUT}
+    # 直接傳遞 data 給 Python，讓 Robot Framework 自動處理類型轉換
+    # Python 端會處理空值情況
+    ${response}=    PUT Request With Error Handling    ${url}    json_data=${data}    headers=${final_headers}    timeout=${API_TIMEOUT}
     RETURN    ${response}
 
 DELETE Request
