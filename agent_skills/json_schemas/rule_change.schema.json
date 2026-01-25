@@ -7,8 +7,8 @@
   "properties": {
     "id": {
       "type": "string",
-      "pattern": "^[ESBT]-[A-Z0-9-]+$",
-      "description": "Rule identifier (e.g., E-FEE-001, P-INTL-001)"
+      "pattern": "^[ESBTCP]-[A-Z0-9-]+$",
+      "description": "Rule identifier (e.g., E-FEE-001, T-DEAD-PAST-001, S-SCAM-001, B-COUNTRY-UNK-001, C-INFO-001, P-TARGET-001)"
     },
     "name": {
       "type": "string",
