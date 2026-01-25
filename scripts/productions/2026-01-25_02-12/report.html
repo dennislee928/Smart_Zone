@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScholarshipOps Triage Report</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+       line-height: 1.6; color: #333; background: #f5f5f5; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+h1 { color: #2c3e50; margin-bottom: 10px; }
+h2 { color: #34495e; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+.timestamp { color: #7f8c8d; font-size: 0.9em; margin-bottom: 20px; }
+.stats { display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap; }
+.stat-box { background: #ecf0f1; padding: 15px 25px; border-radius: 8px; text-align: center; flex: 1; min-width: 120px; }
+.stat-box.a { background: #d5f5e3; border-left: 4px solid #27ae60; }
+.stat-box.b { background: #fdebd0; border-left: 4px solid #f39c12; }
+.stat-box.c { background: #fadbd8; border-left: 4px solid #e74c3c; }
+.stat-box.filtered { background: #e8e8e8; border-left: 4px solid #95a5a6; }
+.stat-number { font-size: 2em; font-weight: bold; }
+table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+th { background: #3498db; color: white; padding: 12px; text-align: left; }
+td { padding: 10px; border-bottom: 1px solid #ddd; }
+tr:hover { background: #f8f9fa; }
+a { color: #3498db; }
+.bucket-a { background: #d5f5e3; }
+.bucket-b { background: #fdebd0; }
+.bucket-c { background: #fadbd8; }
+.filtered-row { background: #f5f5f5; }
+.reason { font-size: 0.9em; color: #7f8c8d; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔍 ScholarshipOps Triage Report</h1>
+<p class="timestamp">📅 2026-01-25 02:09 UTC</p>
+<h2>👤 Your Profile</h2>
+<ul>
+<li><strong>Nationality:</strong> Taiwan</li>
+<li><strong>Target:</strong> University of Glasgow (2026-09-14)</li>
+<li><strong>Level:</strong> master</li>
+</ul>
+<div class="stats">
+<div class="stat-box a"><div class="stat-number">0</div>Bucket A</div>
+<div class="stat-box b"><div class="stat-number">7</div>Bucket B</div>
+<div class="stat-box c"><div class="stat-number">3</div>Bucket C</div>
+<div class="stat-box filtered"><div class="stat-number">3</div>Filtered</div>
+</div>
+<h2>📋 Bucket B - Medium Priority</h2>
+<table><thead><tr><th>#</th><th>Name</th><th>Amount</th><th>Deadline</th><th>Score</th><th>Link</th></tr></thead><tbody>
+<tr class="bucket-b"><td>1</td><td>Glasgow College of Science & Engineering Excellence Scholarship</td><td>£5,000 - £10,000 tuition fee discount</td><td>2026-05-31</td><td>245</td><td><a href="https://www.gla.ac.uk/scholarships/scienceengineeringexcellence/" target="_blank">Link</a></td></tr>
+<tr class="bucket-b"><td>2</td><td>Glasgow Global Leadership Scholarship 2026</td><td>£10,000 tuition fee discount</td><td>TBD (Summer 2026)</td><td>205</td><td><a href="https://www.gla.ac.uk/scholarships/globalleadershipscholarship/" target="_blank">Link</a></td></tr>
+<tr class="bucket-b"><td>3</td><td>Chevening Scholarships 2027/28</td><td>Full tuition + living costs + flights</td><td>2026-11-03</td><td>110</td><td><a href="https://www.chevening.org/scholarships/" target="_blank">Link</a></td></tr>
+<tr class="bucket-b"><td>4</td><td>GREAT Scholarships</td><td>£10,000 minimum</td><td>2026-05-15</td><td>60</td><td><a href="https://study-uk.britishcouncil.org/scholarships/great-scholarships" target="_blank">Link</a></td></tr>
+<tr class="bucket-b"><td>5</td><td>Rotary Foundation Global Grant Scholarship</td><td>$30,000+ (varies by district)</td><td>2026-03-31</td><td>65</td><td><a href="https://www.rotary.org/en/our-programs/scholarships" target="_blank">Link</a></td></tr>
+<tr class="bucket-b"><td>6</td><td>DCMS/Wolfson Fund announce £4m of new funding to support regional museums and galleries</td><td>£4</td><td>Check website</td><td>30</td><td><a href="https://www.wolfson.org.uk/" target="_blank">Link</a></td></tr>
+<tr class="bucket-b"><td>7</td><td>Apply for funding</td><td>£4</td><td>Check website</td><td>30</td><td><a href="https://www.wolfson.org.uk/" target="_blank">Link</a></td></tr>
+</tbody></table>
+<h2>❌ Bucket C - Rejected</h2>
+<table><thead><tr><th>#</th><th>Name</th><th>Amount</th><th>Deadline</th><th>Rejection Reason</th><th>Link</th></tr></thead><tbody>
+<tr class="bucket-c"><td>1</td><td>Glasgow GREAT Scholarships 2026</td><td>£10,000 tuition discount</td><td>2026-04-30</td><td class="reason">E-COUNTRY-001</td><td><a href="https://www.gla.ac.uk/scholarships/greatscholarships2026/" target="_blank">Link</a></td></tr>
+<tr class="bucket-c"><td>2</td><td>Glasgow MSc International & Comparative Education Scholarship</td><td>£5,000 tuition fee discount</td><td>2026-07-31</td><td class="reason">T-TIMELINE-001</td><td><a href="https://www.gla.ac.uk/scholarships/mscinternationalandcomparativeeducationscholarship/" target="_blank">Link</a></td></tr>
+<tr class="bucket-c"><td>3</td><td>Commonwealth Scholarships (Taught Masters)</td><td>Full tuition + stipend + travel</td><td>2026-10-18</td><td class="reason">E-COUNTRY-001</td><td><a href="https://cscuk.fcdo.gov.uk/scholarships/commonwealth-masters-scholarships/" target="_blank">Link</a></td></tr>
+</tbody></table>
+<h2>⏭️ Filtered Out</h2>
+<table><thead><tr><th>#</th><th>Name</th><th>Filter Reasons</th></tr></thead><tbody>
+<tr class="filtered-row"><td>1</td><td>Marshall Scholarships</td><td class="reason">Keyword mismatch</td></tr>
+<tr class="filtered-row"><td>2</td><td>Gates Cambridge Scholarship 2026/27</td><td class="reason">❌ Deadline 2025-12-03 is too early</td></tr>
+<tr class="filtered-row"><td>3</td><td>Marshall Scholarship 2026/27</td><td class="reason">Keyword mismatch</td></tr>
+</tbody></table>
+<h2>📊 Statistics</h2>
+<p><strong>Total leads in database:</strong> 18</p>
+<p><strong>Duplicates removed:</strong> 0 (0 unique keys with duplicates)</p>
+</div>
+</body>
+</html>
