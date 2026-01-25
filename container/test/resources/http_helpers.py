@@ -32,9 +32,20 @@ def get_request_with_error_handling(url, params=None, headers=None, timeout=10):
 @keyword("POST Request With Error Handling")
 def post_request_with_error_handling(url, json_data=None, headers=None, timeout=10):
     """執行 POST 請求，不拋出 HTTP 錯誤，總是返回響應對象"""
+    # 記錄接收到的數據類型和內容
+    _log("POST request received", {
+        "url": url,
+        "json_data_type": str(type(json_data)),
+        "json_data": json_data,
+        "is_dict": isinstance(json_data, dict),
+        "headers": headers
+    })
+    
     # 處理 Robot Framework 傳遞的數據
-    # 如果 json_data 是字符串 "${EMPTY}"，轉換為 None
-    if json_data == "${EMPTY}" or json_data == "" or json_data is None:
+    # Robot Framework 會將字典自動轉換為 Python dict，但可能傳遞為字符串 "${EMPTY}"
+    if json_data == "${EMPTY}" or json_data == "":
+        json_data = {}
+    elif json_data is None:
         json_data = {}
     # 如果 json_data 是字符串但看起來像字典，嘗試解析
     elif isinstance(json_data, str) and json_data.startswith("{"):
@@ -42,7 +53,8 @@ def post_request_with_error_handling(url, json_data=None, headers=None, timeout=
             json_data = json.loads(json_data)
         except:
             json_data = {}
-    _log("POST request", {"url": url, "json_data": json_data, "headers": headers})
+    
+    _log("POST request processed", {"url": url, "json_data": json_data, "headers": headers})
     session = requests.Session()
     response = session.post(url, json=json_data, headers=headers, timeout=timeout)
     _log("POST response", {"status": response.status_code, "url": url, "response_body": response.text[:200]})
@@ -53,8 +65,10 @@ def post_request_with_error_handling(url, json_data=None, headers=None, timeout=
 def put_request_with_error_handling(url, json_data=None, headers=None, timeout=10):
     """執行 PUT 請求，不拋出 HTTP 錯誤，總是返回響應對象"""
     # 處理 Robot Framework 傳遞的數據
-    # 如果 json_data 是字符串 "${EMPTY}"，轉換為 None
-    if json_data == "${EMPTY}" or json_data == "" or json_data is None:
+    # Robot Framework 會將字典自動轉換為 Python dict，但可能傳遞為字符串 "${EMPTY}"
+    if json_data == "${EMPTY}" or json_data == "":
+        json_data = {}
+    elif json_data is None:
         json_data = {}
     # 如果 json_data 是字符串但看起來像字典，嘗試解析
     elif isinstance(json_data, str) and json_data.startswith("{"):

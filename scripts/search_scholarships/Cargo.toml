@@ -11,6 +11,10 @@ path = "src/main.rs"
 name = "candidate_validator"
 path = "src/bin/candidate_validator.rs"
 
+[[bin]]
+name = "validate_sources"
+path = "src/bin/validate_sources.rs"
+
 [dependencies]
 reqwest = { version = "0.11", features = ["json", "rustls-tls", "blocking"] }
 tokio = { version = "1", features = ["full", "time"] }

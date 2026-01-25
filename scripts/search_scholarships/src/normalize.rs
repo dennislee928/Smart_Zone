@@ -225,6 +225,8 @@ pub fn generate_dedup_key(lead: &Lead) -> String {
 /// Uses: provider + title + deadline + award + level
 /// This is more robust than URL-based deduplication for cases where
 /// the same scholarship appears on multiple pages or domains
+/// 
+/// Enhanced version: Also includes hash of normalized name + canonical_url for stronger uniqueness
 pub fn generate_entity_dedup_key(lead: &Lead) -> String {
     // Provider: source domain or source name
     let provider = lead.source_domain.as_ref()
@@ -254,7 +256,18 @@ pub fn generate_entity_dedup_key(lead: &Lead) -> String {
     // Level: extract from eligibility or notes (postgraduate, undergraduate, etc.)
     let level = extract_level(lead);
     
-    format!("{}|{}|{}|{}|{}", provider, title, deadline, award, level)
+    // Create base key
+    let base_key = format!("{}|{}|{}|{}|{}", provider, title, deadline, award, level);
+    
+    // Add hash of normalized name + canonical_url for stronger uniqueness (as per plan)
+    let canonical = lead.canonical_url.as_ref()
+        .map(|s| s.as_str())
+        .unwrap_or(&lead.url);
+    let hash_input = format!("{}|{}", normalize_text(&lead.name), normalize_url(canonical));
+    let hash = crate::url_state::UrlStateStorage::calculate_content_hash(hash_input.as_bytes());
+    
+    // Combine base key with hash for stronger deduplication
+    format!("{}|{}", base_key, &hash[..16])  // Use first 16 chars of hash
 }
 
 /// Extract programme level from lead
