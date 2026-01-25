@@ -9,8 +9,11 @@ Variables         ${EXECDIR}/variables/config.py
 GET Request
     [Documentation]    執行 GET 請求（會捕獲 HTTP 錯誤並返回響應）
     [Arguments]    ${url}    ${params}=${EMPTY}    ${headers}=${EMPTY}
-    ${has_params}=    Run Keyword And Return Status    Evaluate    isinstance(${params}, dict) if '${params}' != '${EMPTY}' else False
-    ${has_headers}=    Run Keyword And Return Status    Evaluate    isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
+    # 使用 Get Length 來檢查字典是否為空，避免字符串比較導致的語法錯誤
+    ${params_length}=    Run Keyword And Return Status    Get Length    ${params}
+    ${headers_length}=    Run Keyword And Return Status    Get Length    ${headers}
+    ${has_params}=    Run Keyword And Return Status    Evaluate    isinstance(${params}, dict) if ${params_length} else False
+    ${has_headers}=    Run Keyword And Return Status    Evaluate    isinstance(${headers}, dict) if ${headers_length} else False
     ${response}=    Run Keyword If    ${has_params} and ${has_headers}    GET Request With Error Handling    ${url}    params=${params}    headers=${headers}    timeout=${API_TIMEOUT}
     ...    ELSE IF    ${has_params}    GET Request With Error Handling    ${url}    params=${params}    timeout=${API_TIMEOUT}
     ...    ELSE IF    ${has_headers}    GET Request With Error Handling    ${url}    headers=${headers}    timeout=${API_TIMEOUT}
@@ -21,7 +24,8 @@ POST Request
     [Documentation]    執行 POST 請求（含 JSON body，會捕獲 HTTP 錯誤並返回響應）
     [Arguments]    ${url}    ${data}=${EMPTY}    ${headers}=${EMPTY}
     ${default_headers}=    Create Dictionary    Content-Type=application/json
-    ${has_headers}=    Run Keyword And Return Status    Evaluate    isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
+    ${headers_length}=    Run Keyword And Return Status    Get Length    ${headers}
+    ${has_headers}=    Run Keyword And Return Status    Evaluate    isinstance(${headers}, dict) if ${headers_length} else False
     ${final_headers}=    Run Keyword If    ${has_headers}    Create Dictionary    &{default_headers}    &{headers}
     ...    ELSE    Set Variable    ${default_headers}
     # 直接傳遞 data 給 Python，讓 Robot Framework 自動處理類型轉換
@@ -33,7 +37,8 @@ PUT Request
     [Documentation]    執行 PUT 請求（會捕獲 HTTP 錯誤並返回響應）
     [Arguments]    ${url}    ${data}=${EMPTY}    ${headers}=${EMPTY}
     ${default_headers}=    Create Dictionary    Content-Type=application/json
-    ${has_headers}=    Run Keyword And Return Status    Evaluate    isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
+    ${headers_length}=    Run Keyword And Return Status    Get Length    ${headers}
+    ${has_headers}=    Run Keyword And Return Status    Evaluate    isinstance(${headers}, dict) if ${headers_length} else False
     ${final_headers}=    Run Keyword If    ${has_headers}    Create Dictionary    &{default_headers}    &{headers}
     ...    ELSE    Set Variable    ${default_headers}
     # 直接傳遞 data 給 Python，讓 Robot Framework 自動處理類型轉換
@@ -44,7 +49,8 @@ PUT Request
 DELETE Request
     [Documentation]    執行 DELETE 請求（會捕獲 HTTP 錯誤並返回響應）
     [Arguments]    ${url}    ${headers}=${EMPTY}
-    ${has_headers}=    Run Keyword And Return Status    Evaluate    isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
+    ${headers_length}=    Run Keyword And Return Status    Get Length    ${headers}
+    ${has_headers}=    Run Keyword And Return Status    Evaluate    isinstance(${headers}, dict) if ${headers_length} else False
     ${response}=    Run Keyword If    ${has_headers}    DELETE Request With Error Handling    ${url}    headers=${headers}    timeout=${API_TIMEOUT}
     ...    ELSE    DELETE Request With Error Handling    ${url}    timeout=${API_TIMEOUT}
     RETURN    ${response}

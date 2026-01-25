@@ -19,6 +19,12 @@ def _log(message, data=None):
         pass
 
 
+@keyword("Is Dictionary")
+def is_dictionary(value):
+    """安全地檢查值是否為字典類型"""
+    return isinstance(value, dict)
+
+
 @keyword("GET Request With Error Handling")
 def get_request_with_error_handling(url, params=None, headers=None, timeout=10):
     """執行 GET 請求，不拋出 HTTP 錯誤，總是返回響應對象"""
