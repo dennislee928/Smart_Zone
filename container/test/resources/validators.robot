@@ -16,6 +16,13 @@ Get Value From Json
     END
     RETURN    ${value}
 
+Response Should Contain Field
+    [Documentation]    驗證響應包含特定欄位
+    [Arguments]    ${response}    ${field_path}
+    ${json}=    Validate JSON Response    ${response}
+    ${field_value}=    Get Value From Json    ${json}    ${field_path}
+    Should Not Be Empty    ${field_value}    Field ${field_path} not found in response
+
 Response Should Have Status
     [Documentation]    驗證狀態碼
     [Arguments]    ${response}    ${expected_status}
