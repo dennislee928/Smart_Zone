@@ -348,11 +348,15 @@ async fn parse_sitemap_internal(
                 if let Some(loc_text) = element.text().next() {
                     let url = loc_text.trim().to_string();
                     urls.push(CandidateUrl {
-                        url,
-                        source_id: String::new(), // Will be set by caller
-                        discovered_from: DiscoverySource::Sitemap,
+                        url: url.clone(),
+                        source_seed: String::new(), // Will be set by caller
+                        discovered_from: sitemap_url.to_string(),
                         confidence: 0.8,
+                        reason: "Found in sitemap".to_string(),
                         discovered_at: chrono::Utc::now().to_rfc3339(),
+                        tags: vec!["sitemap".to_string()],
+                        source_id: String::new(),
+                        discovery_source: DiscoverySource::Sitemap,
                     });
                 }
             }
