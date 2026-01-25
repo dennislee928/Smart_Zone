@@ -3,6 +3,7 @@ Documentation    響應驗證關鍵字
 Resource          api_keywords.robot
 Library           Collections
 Library           String
+Library           ${EXECDIR}/resources/http_helpers.py
 
 *** Keywords ***
 Get Value From Json
@@ -40,10 +41,10 @@ Lead Should Match Schema
     Dictionary Should Contain Key    ${lead_data}    id
     Dictionary Should Contain Key    ${lead_data}    name
     ${id_value}=    Get From Dictionary    ${lead_data}    id
-    ${id_type}=    Evaluate    type($id_value).__name__    modules=sys
+    ${id_type}=    Get Type Name    ${id_value}
     Should Be Equal    ${id_type}    int    Lead ID should be integer
     ${name_value}=    Get From Dictionary    ${lead_data}    name
-    ${name_type}=    Evaluate    type($name_value).__name__    modules=sys
+    ${name_type}=    Get Type Name    ${name_value}
     Should Be Equal    ${name_type}    str    Lead name should be string
     Run Keyword If    'status' in ${{list(${lead_data}.keys())}}
     ...    Evaluate    type(${lead_data}[status]).__name__ == 'str'    Lead status should be string
@@ -54,10 +55,10 @@ Application Should Match Schema
     Dictionary Should Contain Key    ${app_data}    id
     Dictionary Should Contain Key    ${app_data}    name
     ${id_value}=    Get From Dictionary    ${app_data}    id
-    ${id_type}=    Evaluate    type($id_value).__name__    modules=sys
+    ${id_type}=    Get Type Name    ${id_value}
     Should Be Equal    ${id_type}    int    Application ID should be integer
     ${name_value}=    Get From Dictionary    ${app_data}    name
-    ${name_type}=    Evaluate    type($name_value).__name__    modules=sys
+    ${name_type}=    Get Type Name    ${name_value}
     Should Be Equal    ${name_type}    str    Application name should be string
     Run Keyword If    'status' in ${{list(${app_data}.keys())}}
     ...    Evaluate    type(${app_data}[status]).__name__ == 'str'    Application status should be string

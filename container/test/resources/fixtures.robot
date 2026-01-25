@@ -63,11 +63,9 @@ Cleanup Created Applications
     Set Suite Variable    @{CREATED_APPLICATION_IDS}    @{EMPTY}
 
 Cleanup Criteria
-    [Documentation]    清理 criteria（透過 PUT 設定為空對象）
-    ${empty_dict}=    Evaluate    dict()
-    ${empty_criteria}=    Create Dictionary
-    ...    criteriaJson    ${empty_dict}
-    ...    profileJson    ${empty_dict}
+    [Documentation]    清理 criteria（透過 PUT 設定為 null）
+    # 發送 null 值來清空 criteria
+    ${empty_criteria}=    Evaluate    {'criteriaJson': None, 'profileJson': None}
     PUT Request    ${API_CRITERIA}    ${empty_criteria}
 
 Cleanup Created Criteria

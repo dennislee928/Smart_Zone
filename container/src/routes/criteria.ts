@@ -13,7 +13,7 @@ const criteriaSchema = z.object({
     required: z.array(z.string()),
     preferred: z.array(z.string()),
     excluded_keywords: z.array(z.string()),
-  }).optional(),
+  }).optional().nullable(),
   profileJson: z.object({
     nationality: z.string(),
     target_university: z.string(),
@@ -30,7 +30,7 @@ const criteriaSchema = z.object({
     })),
     min_deadline: z.string().optional(),
     max_gpa_requirement: z.number().optional(),
-  }).optional(),
+  }).optional().nullable(),
 })
 
 // GET /api/criteria - 取得搜尋條件
