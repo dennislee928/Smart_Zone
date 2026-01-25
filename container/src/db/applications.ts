@@ -28,6 +28,10 @@ export async function createApplication(
     notes: application.notes,
   }).returning().get()
 
+  if (!result) {
+    throw new Error('Failed to create application')
+  }
+
   return mapApplicationFromDb(result)
 }
 

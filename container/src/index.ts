@@ -1,5 +1,7 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { HTTPException } from 'hono/http-exception'
+import { ZodError } from 'zod'
 import leadsRoutes from './routes/leads'
 import applicationsRoutes from './routes/applications'
 import criteriaRoutes from './routes/criteria'
@@ -41,6 +43,25 @@ app.notFound((c) => {
 // Error handler
 app.onError((err, c) => {
   console.error('Error:', err)
+  console.error('Error type:', err.constructor.name)
+  console.error('Error message:', err.message)
+  
+  // Handle HTTPException (from zValidator)
+  if (err instanceof HTTPException) {
+    const response = err.getResponse()
+    console.error('HTTPException status:', err.status)
+    console.error('HTTPException response:', await response.text())
+    return response
+  }
+  
+  // Handle Zod validation errors (shouldn't happen directly, but just in case)
+  if (err instanceof ZodError) {
+    return c.json({ 
+      error: 'Validation error',
+      details: err.errors 
+    }, 400)
+  }
+  
   return c.json({ 
     error: 'Internal server error',
     message: err.message 

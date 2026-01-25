@@ -86,6 +86,10 @@ export async function createLead(db: ReturnType<typeof getDb>, lead: Omit<Lead, 
     checkCount: lead.checkCount,
   }).returning().get()
 
+  if (!result) {
+    throw new Error('Failed to create lead')
+  }
+
   return mapLeadFromDb(result)
 }
 
