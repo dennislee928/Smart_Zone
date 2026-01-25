@@ -451,6 +451,19 @@ pub fn extract_domain(url: &str) -> String {
     url.to_string()
 }
 
+/// Canonicalize candidate URL for deduplication
+/// 
+/// Specifically designed for candidate URLs from discovery:
+/// - Removes UTM parameters and other tracking params
+/// - Removes fragment (#section)
+/// - Normalizes trailing slash
+/// - Lowercases domain
+/// 
+/// This is a wrapper around normalize_url with candidate-specific semantics
+pub fn canonicalize_candidate_url(url: &str) -> String {
+    normalize_url(url)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
