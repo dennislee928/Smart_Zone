@@ -16,7 +16,7 @@
     },
     "stage": {
       "type": "string",
-      "enum": ["eligibility", "triage", "scoring"],
+      "enum": ["eligibility", "triage", "scoring", "timeline", "trust", "content", "link_health", "effort"],
       "description": "Pipeline stage where rule is applied"
     },
     "description": {
@@ -48,9 +48,61 @@
           },
           "description": "List of regex patterns (match if all match)"
         },
-        "deadline_condition": {
+        "deadline": {
           "type": "object",
-          "description": "Deadline-based condition"
+          "description": "Deadline-based condition",
+          "properties": {
+            "lt_today": {
+              "type": "boolean",
+              "description": "Deadline is less than today"
+            },
+            "is_null": {
+              "type": "boolean",
+              "description": "Deadline is null/empty"
+            },
+            "gt_study_start": {
+              "type": "boolean",
+              "description": "Deadline is greater than study start date"
+            },
+            "safety_margin_days": {
+              "type": "integer",
+              "description": "Days before study start to reject (default: 60)"
+            }
+          }
+        },
+        "http_status": {
+          "type": "object",
+          "description": "HTTP status condition",
+          "properties": {
+            "any_of": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "Match if HTTP status is any of these values"
+            }
+          }
+        },
+        "effort_score": {
+          "type": "object",
+          "description": "Effort score condition",
+          "properties": {
+            "gt": {
+              "type": "integer",
+              "description": "Effort score greater than this value"
+            }
+          }
+        },
+        "is_taiwan_eligible": {
+          "oneOf": [
+            {"type": "boolean"},
+            {"type": "string", "enum": ["unknown"]}
+          ],
+          "description": "Taiwan eligibility gate (bool or 'unknown')"
+        },
+        "is_directory_page": {
+          "type": "boolean",
+          "description": "Directory/index page gate - skip rules for discovery pages"
         },
         "trust_tier": {
           "type": "string",

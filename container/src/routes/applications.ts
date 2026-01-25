@@ -15,7 +15,13 @@ const applicationSchema = z.object({
   currentStage: z.string().optional(),
   nextAction: z.string().optional(),
   requiredDocs: z.array(z.string()).optional(),
-  progress: z.number().min(0).max(100).optional(),
+  progress: z.union([z.string(), z.number()]).transform((val) => {
+    if (typeof val === 'string') {
+      const num = parseInt(val, 10)
+      return isNaN(num) ? undefined : num
+    }
+    return val
+  }).pipe(z.number().min(0).max(100)).optional(),
   notes: z.string().optional(),
 })
 
