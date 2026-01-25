@@ -490,6 +490,23 @@ sources:
     enabled: true
     priority: 2
     scraper: "foundation"
+    mode: "discovery_seed"  # High-trust discovery seed - only extract external links to partner pages
+    max_depth: 1  # Only crawl seed page + direct external links
+    emit_self_as_lead: false  # Seed page itself is not a scholarship (catalog/directory page)
+    deny_patterns:
+      - "about"
+      - "contact"
+      - "news"
+      - "grants"
+      - "funding-for-people"  # The catalog page itself
+    allow_domains_outbound:
+      - "thebritishacademy.ac.uk"  # British Academy Wolfson Research Professorships
+      - "royalsociety.org"  # Royal Society Wolfson Research Fellowships
+      - "ac.uk"  # Participating universities (e.g., *.ac.uk for UK universities)
+      - "ox.ac.uk"  # Oxford (common partner)
+      - "cam.ac.uk"  # Cambridge (common partner)
+      - "ed.ac.uk"  # Edinburgh (common partner)
+      - "gla.ac.uk"  # Glasgow (target university)
 
   - name: "British Council Scholarships"
     type: "foundation"

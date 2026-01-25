@@ -63,6 +63,10 @@
       "type": "string",
       "enum": ["S", "A", "B", "C"],
       "description": "Trust tier for this source"
+    },
+    "emit_self_as_lead": {
+      "type": "boolean",
+      "description": "For discovery_seed mode: whether to scrape seed page itself as lead (default: true)"
     }
   },
   "additionalProperties": false

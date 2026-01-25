@@ -470,6 +470,8 @@ pub struct Source {
     pub max_depth: Option<u8>,  // Max crawl depth for discovery_seed (default: 1)
     #[serde(default)]
     pub deny_patterns: Option<Vec<String>>,  // URL path patterns to reject
+    #[serde(default)]
+    pub emit_self_as_lead: Option<bool>,  // For discovery_seed mode: whether to scrape seed page itself as lead (default: true)
 }
 
 // ============================================

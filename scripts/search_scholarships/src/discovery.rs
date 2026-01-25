@@ -701,6 +701,50 @@ pub fn calculate_confidence(
     let mut confidence: f32 = 0.0;
     let url_lower = url.to_lowercase();
     
+    // Build search text for hard reject pattern matching
+    let search_text = format!("{} {} {}", 
+        url,
+        anchor_text.unwrap_or(""),
+        page_title.unwrap_or("")
+    ).to_lowercase();
+    
+    // Hard reject patterns - if found, return 0.0 immediately (filters UG/PhD/fellowship/research)
+    let hard_reject_patterns = [
+        // Undergraduate patterns
+        r"(?i)\bundergraduate\b",
+        r"(?i)\bUG\b",
+        r"(?i)\bbachelor'?s?\b",
+        r"(?i)\bfoundation\s*year\b",
+        // PhD/Doctoral patterns
+        r"(?i)\bPhD\b",
+        r"(?i)\bdoctoral\b",
+        r"(?i)\bpostdoc\b",
+        r"(?i)\bresearch\s*degree\b",
+        r"(?i)\bMPhil\b",
+        // Fellowship/Research patterns
+        r"(?i)\bfellowship\b",
+        r"(?i)\bprofessorship\b",
+        r"(?i)\bresearcher\b",
+        r"(?i)\bacademic\s*position\b",
+        // Humanities-specific (Wolfson Postgraduate Scholarships)
+        r"(?i)\bhumanities\b",
+        r"(?i)\bhistory\b.*\bscholarship\b",
+        r"(?i)\bliterature\b.*\bscholarship\b",
+        // Medical/Professional patterns
+        r"(?i)\bintercalated\b",
+        r"(?i)\bpalliative\s*care\b",
+        r"(?i)\bat-risk\s*academics\b",
+    ];
+    
+    // Check for hard reject patterns first
+    for pattern in &hard_reject_patterns {
+        if let Ok(re) = Regex::new(pattern) {
+            if re.is_match(&search_text) {
+                return 0.0; // Immediate rejection - confidence too low to proceed
+            }
+        }
+    }
+    
     // URL path patterns (+0.5)
     let path_patterns = [
         "/scholarship", "/funding", "/bursary", "/studentship", "/fees-funding",
