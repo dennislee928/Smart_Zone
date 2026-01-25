@@ -12,6 +12,8 @@ Test Teardown     Delete All Sessions
 *** Test Cases ***
 Get Criteria When Not Exists Should Return Null
     [Documentation]    測試 GET /api/criteria 取得搜尋條件（不存在，應返回 null）
+    # 確保清理 criteria
+    Cleanup Criteria
     ${response}=    GET Request    ${API_CRITERIA}
     Response Should Have Status    ${response}    ${STATUS_OK}
     ${json}=    Validate JSON Response    ${response}
