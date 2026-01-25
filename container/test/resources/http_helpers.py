@@ -125,6 +125,12 @@ def put_request_with_error_handling(url, json_data=None, headers=None, timeout=1
     return response
 
 
+@keyword("Get Type Name")
+def get_type_name(value):
+    """獲取值的類型名稱，避免 Robot Framework 變量展開問題"""
+    return type(value).__name__
+
+
 @keyword("DELETE Request With Error Handling")
 def delete_request_with_error_handling(url, headers=None, timeout=10):
     """執行 DELETE 請求，不拋出 HTTP 錯誤，總是返回響應對象"""

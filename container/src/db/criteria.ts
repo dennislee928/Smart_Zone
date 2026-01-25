@@ -10,10 +10,17 @@ export async function getCriteria(db: ReturnType<typeof getDb>): Promise<Criteri
     return null
   }
   
-  // Check if the record is effectively empty (both JSON fields are null or empty objects)
+  // Check if the record is effectively empty (both JSON fields are null, undefined, or empty objects)
   const mapped = mapCriteriaFromDb(result)
-  const isEmpty = (!mapped.criteriaJson || Object.keys(mapped.criteriaJson).length === 0) &&
-                   (!mapped.profileJson || Object.keys(mapped.profileJson).length === 0)
+  const isEmpty = (
+    !mapped.criteriaJson || 
+    mapped.criteriaJson === null ||
+    (typeof mapped.criteriaJson === 'object' && Object.keys(mapped.criteriaJson).length === 0)
+  ) && (
+    !mapped.profileJson || 
+    mapped.profileJson === null ||
+    (typeof mapped.profileJson === 'object' && Object.keys(mapped.profileJson).length === 0)
+  )
   
   return isEmpty ? null : mapped
 }
