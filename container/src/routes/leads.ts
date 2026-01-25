@@ -10,7 +10,7 @@ const app = new Hono<{ Bindings: Env }>()
 // Schema for lead validation
 const leadSchema = z.object({
   name: z.string().min(1),
-  amount: z.string().optional(),
+  amount: z.union([z.string(), z.number()]).transform((val) => typeof val === 'number' ? String(val) : val).optional(),
   deadline: z.string().optional(),
   source: z.string().optional(),
   sourceType: z.string().optional(),

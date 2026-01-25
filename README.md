@@ -1,5 +1,17 @@
 # ScholarshipOps automation
 
+[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Rust](https://img.shields.io/badge/Rust-2021-orange?logo=rust&logoColor=white)](https://www.rust-lang.org/)
+[![Go](https://img.shields.io/badge/Go-1.21-00ADD8?logo=go&logoColor=white)](https://golang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://hub.docker.com)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-7%20workflows-2088FF?logo=github-actions&logoColor=white)](.github/workflows)
+[![MCP](https://img.shields.io/badge/MCP-Compatible-purple.svg)](https://github.com/dennislee928/Smart_Zone)
+[![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers%20%2B%20D1-F38020?logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
+[![Version](https://img.shields.io/badge/Version-0.1.0-orange.svg)](https://github.com/dennislee928/Smart_Zone/releases)
+[![Stars](https://img.shields.io/github/stars/dennislee928/Smart_Zone?style=social)](https://github.com/dennislee928/Smart_Zone)
+
 This repository automates scholarship reminder pushes (lunch, evening, weekend) via GitHub Actions and optional Telegram/Slack/Discord notifications. It also supports scholarship search (Rust + web scraping), application scheduling (Go), and progress tracking (Go).
 
 ## Schedule (Asia/Taipei)
@@ -128,8 +140,13 @@ Reports are saved in date-based folders (`scripts/productions/YYYY-MM-DD_HH-MM/`
 
 ## Updating
 
-- Daily changes: edit the YAML files under `tasks/` and push.
-- Weekly: update `tasks/deadlines.yml` with new confirmed deadlines.
-- Scholarship search: update `tracking/sources.yml` to add new scraping targets.
-- Application tracking: update `tracking/applications.json` manually or via scripts.
-- Search criteria: update `tracking/criteria.yml` to modify eligibility requirements and profile information.
+- **Daily changes**: Edit the YAML files under `tasks/` and push.
+- **Weekly**: Update `tasks/deadlines.yml` with new confirmed deadlines.
+- **Scholarship search**: Update `tracking/sources.yml` to add new scraping targets.
+- **Application tracking**: Update `tracking/applications.json` manually or via scripts.
+- **Search criteria**: Update `tracking/criteria.yml` to modify eligibility requirements and profile information.
+
+## Language
+
+- [English](README.md)
+- [繁體中文](readme_zhTW.md)

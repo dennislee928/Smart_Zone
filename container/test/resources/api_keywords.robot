@@ -25,8 +25,10 @@ POST Request
     ${has_headers}=    Run Keyword And Return Status    Evaluate    '${headers}' != '${EMPTY}' and isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
     ${final_headers}=    Run Keyword If    ${has_headers}    Create Dictionary    &{default_headers}    &{headers}
     ...    ELSE    Set Variable    ${default_headers}
-    ${response}=    Run Keyword If    ${is_dict}    POST Request With Error Handling    ${url}    json_data=${data}    headers=${final_headers}    timeout=${API_TIMEOUT}
-    ...    ELSE    POST Request With Error Handling    ${url}    headers=${final_headers}    timeout=${API_TIMEOUT}
+    # 確保字典正確傳遞：使用 Evaluate 將字典轉換為 Python dict
+    ${json_data}=    Run Keyword If    ${is_dict}    Evaluate    dict(${data})
+    ...    ELSE    Set Variable    {}
+    ${response}=    POST Request With Error Handling    ${url}    json_data=${json_data}    headers=${final_headers}    timeout=${API_TIMEOUT}
     RETURN    ${response}
 
 PUT Request
@@ -37,8 +39,10 @@ PUT Request
     ${has_headers}=    Run Keyword And Return Status    Evaluate    '${headers}' != '${EMPTY}' and isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
     ${final_headers}=    Run Keyword If    ${has_headers}    Create Dictionary    &{default_headers}    &{headers}
     ...    ELSE    Set Variable    ${default_headers}
-    ${response}=    Run Keyword If    ${is_dict}    PUT Request With Error Handling    ${url}    json_data=${data}    headers=${final_headers}    timeout=${API_TIMEOUT}
-    ...    ELSE    PUT Request With Error Handling    ${url}    headers=${final_headers}    timeout=${API_TIMEOUT}
+    # 確保字典正確傳遞：使用 Evaluate 將字典轉換為 Python dict
+    ${json_data}=    Run Keyword If    ${is_dict}    Evaluate    dict(${data})
+    ...    ELSE    Set Variable    {}
+    ${response}=    PUT Request With Error Handling    ${url}    json_data=${json_data}    headers=${final_headers}    timeout=${API_TIMEOUT}
     RETURN    ${response}
 
 DELETE Request

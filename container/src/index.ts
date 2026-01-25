@@ -48,10 +48,8 @@ app.onError((err, c) => {
   
   // Handle HTTPException (from zValidator)
   if (err instanceof HTTPException) {
-    const response = err.getResponse()
     console.error('HTTPException status:', err.status)
-    console.error('HTTPException response:', await response.text())
-    return response
+    return err.getResponse()
   }
   
   // Handle Zod validation errors (shouldn't happen directly, but just in case)
