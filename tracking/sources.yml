@@ -20,6 +20,7 @@ sources:
     enabled: true
     priority: 1
     scraper: "selenium"  # JS-templated listing ({{scholar.title}}); needs browser-render
+    mode: "index"  # Scholarship listing/index page
 
   - name: "Glasgow Scholarship Search"
     type: "university"
@@ -27,6 +28,7 @@ sources:
     enabled: true
     priority: 1
     scraper: "selenium"  # search UI is also JS-heavy on UofG scholarships
+    mode: "index"  # Search/index page
 
   - name: "Glasgow Scholarships Landing"
     type: "university"
@@ -34,6 +36,7 @@ sources:
     enabled: true
     priority: 1
     scraper: "university"
+    mode: "index"  # Landing/index page
 
   - name: "Glasgow Global Leadership Scholarship"
     type: "university"
@@ -41,6 +44,7 @@ sources:
     enabled: true
     priority: 1
     scraper: "university"
+    mode: "detail"  # Direct scholarship detail page
 
   - name: "Glasgow PGT Fees & Funding"
     type: "university"
@@ -48,6 +52,7 @@ sources:
     enabled: true
     priority: 1
     scraper: "university"
+    mode: "index"  # Fees & funding index page
 
   - name: "Glasgow International Fees & Funding"
     type: "university"
@@ -82,6 +87,7 @@ sources:
     enabled: true
     priority: 2
     scraper: "government"
+    mode: "index"  # Scholarship listing page
 
   - name: "Commonwealth Scholarships"
     type: "government"
@@ -148,7 +154,13 @@ sources:
     enabled: true
     priority: 2
     scraper: "university"  # Changed to university scraper to support external_links_only
-    discovery_mode: "external_links_only"  # Only extract external links, not scholarship details
+    mode: "discovery_seed"  # Information/guide page - only extract external links
+    max_depth: 1  # Only crawl seed page + direct external links
+    deny_patterns:
+      - "check-university-award-degree"
+      - "visa"
+      - "cookies"
+      - "privacy"
     allow_domains_outbound:
       - "gov.uk"
       - "fcdo.gov.uk"

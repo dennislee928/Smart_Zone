@@ -7,6 +7,10 @@ edition = "2021"
 name = "search_scholarships"
 path = "src/main.rs"
 
+[[bin]]
+name = "candidate_validator"
+path = "src/bin/candidate_validator.rs"
+
 [dependencies]
 reqwest = { version = "0.11", features = ["json", "rustls-tls", "blocking"] }
 tokio = { version = "1", features = ["full", "time"] }

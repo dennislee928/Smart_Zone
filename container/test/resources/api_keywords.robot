@@ -9,48 +9,44 @@ Variables         ${EXECDIR}/variables/config.py
 GET Request
     [Documentation]    執行 GET 請求（會捕獲 HTTP 錯誤並返回響應）
     [Arguments]    ${url}    ${params}=${EMPTY}    ${headers}=${EMPTY}
-    ${session}=    Get Session    api
     ${has_params}=    Run Keyword And Return Status    Evaluate    '${params}' != '${EMPTY}' and isinstance(${params}, dict) if '${params}' != '${EMPTY}' else False
     ${has_headers}=    Run Keyword And Return Status    Evaluate    '${headers}' != '${EMPTY}' and isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
-    ${response}=    Run Keyword If    ${has_params} and ${has_headers}    GET Request With Error Handling    ${session}    ${url}    params=${params}    headers=${headers}    timeout=${API_TIMEOUT}
-    ...    ELSE IF    ${has_params}    GET Request With Error Handling    ${session}    ${url}    params=${params}    timeout=${API_TIMEOUT}
-    ...    ELSE IF    ${has_headers}    GET Request With Error Handling    ${session}    ${url}    headers=${headers}    timeout=${API_TIMEOUT}
-    ...    ELSE    GET Request With Error Handling    ${session}    ${url}    timeout=${API_TIMEOUT}
+    ${response}=    Run Keyword If    ${has_params} and ${has_headers}    GET Request With Error Handling    ${url}    params=${params}    headers=${headers}    timeout=${API_TIMEOUT}
+    ...    ELSE IF    ${has_params}    GET Request With Error Handling    ${url}    params=${params}    timeout=${API_TIMEOUT}
+    ...    ELSE IF    ${has_headers}    GET Request With Error Handling    ${url}    headers=${headers}    timeout=${API_TIMEOUT}
+    ...    ELSE    GET Request With Error Handling    ${url}    timeout=${API_TIMEOUT}
     RETURN    ${response}
 
 POST Request
     [Documentation]    執行 POST 請求（含 JSON body，會捕獲 HTTP 錯誤並返回響應）
     [Arguments]    ${url}    ${data}=${EMPTY}    ${headers}=${EMPTY}
-    ${session}=    Get Session    api
     ${is_dict}=    Run Keyword And Return Status    Evaluate    isinstance(${data}, dict) if '${data}' != '${EMPTY}' else False
     ${default_headers}=    Create Dictionary    Content-Type=application/json
     ${has_headers}=    Run Keyword And Return Status    Evaluate    '${headers}' != '${EMPTY}' and isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
     ${final_headers}=    Run Keyword If    ${has_headers}    Create Dictionary    &{default_headers}    &{headers}
     ...    ELSE    Set Variable    ${default_headers}
-    ${response}=    Run Keyword If    ${is_dict}    POST Request With Error Handling    ${session}    ${url}    json_data=${data}    headers=${final_headers}    timeout=${API_TIMEOUT}
-    ...    ELSE    POST Request With Error Handling    ${session}    ${url}    headers=${final_headers}    timeout=${API_TIMEOUT}
+    ${response}=    Run Keyword If    ${is_dict}    POST Request With Error Handling    ${url}    json_data=${data}    headers=${final_headers}    timeout=${API_TIMEOUT}
+    ...    ELSE    POST Request With Error Handling    ${url}    headers=${final_headers}    timeout=${API_TIMEOUT}
     RETURN    ${response}
 
 PUT Request
     [Documentation]    執行 PUT 請求（會捕獲 HTTP 錯誤並返回響應）
     [Arguments]    ${url}    ${data}=${EMPTY}    ${headers}=${EMPTY}
-    ${session}=    Get Session    api
     ${is_dict}=    Run Keyword And Return Status    Evaluate    isinstance(${data}, dict) if '${data}' != '${EMPTY}' else False
     ${default_headers}=    Create Dictionary    Content-Type=application/json
     ${has_headers}=    Run Keyword And Return Status    Evaluate    '${headers}' != '${EMPTY}' and isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
     ${final_headers}=    Run Keyword If    ${has_headers}    Create Dictionary    &{default_headers}    &{headers}
     ...    ELSE    Set Variable    ${default_headers}
-    ${response}=    Run Keyword If    ${is_dict}    PUT Request With Error Handling    ${session}    ${url}    json_data=${data}    headers=${final_headers}    timeout=${API_TIMEOUT}
-    ...    ELSE    PUT Request With Error Handling    ${session}    ${url}    headers=${final_headers}    timeout=${API_TIMEOUT}
+    ${response}=    Run Keyword If    ${is_dict}    PUT Request With Error Handling    ${url}    json_data=${data}    headers=${final_headers}    timeout=${API_TIMEOUT}
+    ...    ELSE    PUT Request With Error Handling    ${url}    headers=${final_headers}    timeout=${API_TIMEOUT}
     RETURN    ${response}
 
 DELETE Request
     [Documentation]    執行 DELETE 請求（會捕獲 HTTP 錯誤並返回響應）
     [Arguments]    ${url}    ${headers}=${EMPTY}
-    ${session}=    Get Session    api
     ${has_headers}=    Run Keyword And Return Status    Evaluate    '${headers}' != '${EMPTY}' and isinstance(${headers}, dict) if '${headers}' != '${EMPTY}' else False
-    ${response}=    Run Keyword If    ${has_headers}    DELETE Request With Error Handling    ${session}    ${url}    headers=${headers}    timeout=${API_TIMEOUT}
-    ...    ELSE    DELETE Request With Error Handling    ${session}    ${url}    timeout=${API_TIMEOUT}
+    ${response}=    Run Keyword If    ${has_headers}    DELETE Request With Error Handling    ${url}    headers=${headers}    timeout=${API_TIMEOUT}
+    ...    ELSE    DELETE Request With Error Handling    ${url}    timeout=${API_TIMEOUT}
     RETURN    ${response}
 
 Validate Status Code
