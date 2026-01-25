@@ -8,3 +8,4 @@ structure.txt
 *.env
 /.cursor/plans
 .claude/skills/skills_list.txt
+.cursor/debug.log

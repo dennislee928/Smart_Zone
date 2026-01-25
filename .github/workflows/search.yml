@@ -58,25 +58,24 @@ jobs:
         run: |
           if [ -f tracking/candidate_urls.jsonl ]; then
             python3 -c "
-import json
-import sys
-from jsonschema import validate, ValidationError
-import json
-
-schema = json.load(open('agent_skills/json_schemas/candidate_url.schema.json'))
-with open('tracking/candidate_urls.jsonl') as f:
-    for i, line in enumerate(f, 1):
-        try:
-            data = json.loads(line)
-            validate(instance=data, schema=schema)
-        except ValidationError as e:
-            print(f'Line {i}: Validation error: {e.message}')
-            sys.exit(1)
-        except json.JSONDecodeError as e:
-            print(f'Line {i}: JSON decode error: {e}')
-            sys.exit(1)
-print('All candidate URLs valid')
-"
+          import json
+          import sys
+          from jsonschema import validate, ValidationError
+          
+          schema = json.load(open('agent_skills/json_schemas/candidate_url.schema.json'))
+          with open('tracking/candidate_urls.jsonl') as f:
+              for i, line in enumerate(f, 1):
+                  try:
+                      data = json.loads(line)
+                      validate(instance=data, schema=schema)
+                  except ValidationError as e:
+                      print(f'Line {i}: Validation error: {e.message}')
+                      sys.exit(1)
+                  except json.JSONDecodeError as e:
+                      print(f'Line {i}: JSON decode error: {e}')
+                      sys.exit(1)
+          print('All candidate URLs valid')
+          "
           else
             echo "No candidate_urls.jsonl found, skipping validation"
           fi
@@ -85,30 +84,31 @@ print('All candidate URLs valid')
         run: |
           if [ -f Config/rules.yaml ]; then
             python3 -c "
-import yaml
-import json
-import sys
-from jsonschema import validate, ValidationError
-
-# Load rules.yaml
-with open('Config/rules.yaml') as f:
-    rules = yaml.safe_load(f)
-
-# Load schema
-schema = json.load(open('agent_skills/json_schemas/rule_change.schema.json'))
-
-# Validate each rule
-for rule_type in ['hard_reject_rules', 'soft_downgrade_rules', 'positive_scoring_rules']:
-    if rule_type in rules:
-        for i, rule in enumerate(rules[rule_type], 1):
-            try:
-                validate(instance=rule, schema=schema)
-            except ValidationError as e:
-                print(f'{rule_type}[{i}]: Validation error: {e.message}')
-                print(f'  Rule ID: {rule.get(\"id\", \"unknown\")}')
-                sys.exit(1)
-print('All rules valid')
-"
+          import yaml
+          import json
+          import sys
+          from jsonschema import validate, ValidationError
+          
+          # Load rules.yaml
+          with open('Config/rules.yaml') as f:
+              rules = yaml.safe_load(f)
+          
+          # Load schema
+          schema = json.load(open('agent_skills/json_schemas/rule_change.schema.json'))
+          
+          # Validate each rule
+          for rule_type in ['hard_reject_rules', 'soft_downgrade_rules', 'positive_scoring_rules']:
+              if rule_type in rules:
+                  for i, rule in enumerate(rules[rule_type], 1):
+                      try:
+                          validate(instance=rule, schema=schema)
+                      except ValidationError as e:
+                          print(f'{rule_type}[{i}]: Validation error: {e.message}')
+                          print(f'  Rule ID: {rule.get(\"id\", \"unknown\")}')
+                          sys.exit(1)
+          
+          print('All rules valid')
+          "
           else
             echo "No rules.yaml found, skipping validation"
           fi
