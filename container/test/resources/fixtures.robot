@@ -2,6 +2,7 @@
 Documentation    測試資料設置和清理
 Resource          api_keywords.robot
 Variables         ${EXECDIR}/variables/config.py
+Library           Collections
 
 *** Variables ***
 @{CREATED_LEAD_IDS}    
