@@ -1,0 +1,80 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-01-28T14:01:35Z",
+  "rules_file": "Config/rules.yaml",
+  "total_rules": 37,
+  "items_processed": 10,
+  "buckets": {
+    "a": 0,
+    "b": 7,
+    "c": 3,
+    "x": 0
+  },
+  "rule_hits": [
+    {
+      "rule_id": "P-TARGET-001",
+      "rule_name": "Target University",
+      "hit_count": 2
+    },
+    {
+      "rule_id": "P-MERIT-001",
+      "rule_name": "Merit Based",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "P-LEVEL-001",
+      "rule_name": "Postgraduate Taught",
+      "hit_count": 2
+    },
+    {
+      "rule_id": "B-LINK-001",
+      "rule_name": "Rate Limited",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "E-COUNTRY-001",
+      "rule_name": "Taiwan Not Eligible (Explicit)",
+      "hit_count": 2
+    },
+    {
+      "rule_id": "B-NONTARGET-001",
+      "rule_name": "Non-Target (Needs Portability Proof)",
+      "hit_count": 2
+    },
+    {
+      "rule_id": "P-INTL-001",
+      "rule_name": "International Students",
+      "hit_count": 3
+    },
+    {
+      "rule_id": "B-DEADLINE-001",
+      "rule_name": "Deadline Missing",
+      "hit_count": 2
+    },
+    {
+      "rule_id": "P-COMPUTING-001",
+      "rule_name": "Computing/Software",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "P-FULL-001",
+      "rule_name": "Full Funding",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "B-EFFORT-001",
+      "rule_name": "High Effort",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "T-TIMELINE-001",
+      "rule_name": "Wrong Intake Cycle (Pre-entry Only)",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "B-COUNTRY-UNK-001",
+      "rule_name": "Taiwan Eligibility Unknown",
+      "hit_count": 2
+    }
+  ]
+}
