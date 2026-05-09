@@ -1,0 +1,29 @@
+🔍 **ScholarshipOps Search Report**
+📅 2026-05-09 14:20 UTC
+
+👤 **Your Profile:**
+• Nationality: Taiwan
+• Target: University of Glasgow (2026-09-14)
+• Level: master
+
+📊 **Results:** A=1 | B=6 | C=3
+🔄 **Deduplication:** 0 duplicates removed (0 unique keys with duplicates)
+
+## 🎯 Bucket A (主攻)
+
+1. **Glasgow College of Science & Engineering Excellence Scholarship**
+   💰 £5,000 - £10,000 tuition fee discount | ⏰ 2026-05-31 | Score: 245
+   🔗 https://www.gla.ac.uk/scholarships/scienceengineeringexcellence/
+
+## 📋 Bucket B (備援)
+
+1. Glasgow Global Leadership Scholarship 2026 - £10,000 tuition fee discount (Score: 205)
+2. GREAT Scholarships - £10,000 minimum (Score: 60)
+3. Chevening Scholarships 2027/28 - Full tuition + living costs + flights (Score: 110)
+4. £16m awarded to projects across the UK in our latest funding round - £16 (Score: 30)
+5. Apply for funding - £4 (Score: 30)
+6. Latest DCMS/Wolfson funding awarded to 24 museums to champion the heritage on our doorstep - £4 (Score: 30)
+
+⏭️ **Filtered out:** 3 scholarships
+
+📁 **Total in database:** 23
