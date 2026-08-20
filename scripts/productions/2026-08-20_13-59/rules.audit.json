@@ -1,0 +1,65 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-08-20T13:59:06Z",
+  "rules_file": "Config/rules.yaml",
+  "total_rules": 37,
+  "items_processed": 10,
+  "buckets": {
+    "a": 0,
+    "b": 4,
+    "c": 2,
+    "x": 4
+  },
+  "rule_hits": [
+    {
+      "rule_id": "P-MERIT-001",
+      "rule_name": "Merit Based",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "B-DEADLINE-001",
+      "rule_name": "Deadline Missing",
+      "hit_count": 2
+    },
+    {
+      "rule_id": "P-TARGET-001",
+      "rule_name": "Target University",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "P-FULL-001",
+      "rule_name": "Full Funding",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "T-DEAD-PAST-001",
+      "rule_name": "Deadline Passed",
+      "hit_count": 4
+    },
+    {
+      "rule_id": "B-COUNTRY-UNK-001",
+      "rule_name": "Taiwan Eligibility Unknown",
+      "hit_count": 2
+    },
+    {
+      "rule_id": "P-INTL-001",
+      "rule_name": "International Students",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "B-NONTARGET-001",
+      "rule_name": "Non-Target (Needs Portability Proof)",
+      "hit_count": 2
+    },
+    {
+      "rule_id": "P-LEVEL-001",
+      "rule_name": "Postgraduate Taught",
+      "hit_count": 1
+    },
+    {
+      "rule_id": "E-COUNTRY-001",
+      "rule_name": "Taiwan Not Eligible (Explicit)",
+      "hit_count": 2
+    }
+  ]
+}
