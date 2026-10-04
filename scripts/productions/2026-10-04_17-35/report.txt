@@ -1,0 +1,25 @@
+🔍 **ScholarshipOps Search Report**
+📅 2026-10-04 17:33 UTC
+
+👤 **Your Profile:**
+• Nationality: Taiwan
+• Target: University of Glasgow (2026-09-14)
+• Level: master
+
+📊 **Results:** A=1 | B=2 | C=2
+🔄 **Deduplication:** 0 duplicates removed (0 unique keys with duplicates)
+
+## 🎯 Bucket A (主攻)
+
+1. **Chevening Scholarships 2027/28**
+   💰 Full tuition + living costs + flights | ⏰ 2026-11-03 | Score: 110
+   🔗 https://www.chevening.org/scholarships/
+
+## 📋 Bucket B (備援)
+
+1. Glasgow Global Leadership Scholarship 2026 - £10,000 tuition fee discount (Score: 205)
+2. Apply for funding - £100,000 (Score: 30)
+
+⏭️ **Filtered out:** 3 scholarships
+
+📁 **Total in database:** 23
